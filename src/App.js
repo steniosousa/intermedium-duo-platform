@@ -13,12 +13,12 @@ function App() {
   const navigate = useNavigate();
   useEffect(() => {
     const manager = localStorage.getItem('manager')
-    // if (manager) {
-    //   setUser(manager)
-    //   navigate('/dashboard')
-    // } else {
-    //   navigate('/auth/login')
-    // }
+    if (manager) {
+      setUser(manager)
+      navigate('/dashboard')
+    } else {
+      navigate('/auth/login')
+    }
   }, [])
   return (
     <ThemeProvider theme={theme}>

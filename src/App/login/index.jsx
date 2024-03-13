@@ -95,9 +95,7 @@ const LoginApp = ({ title, subtitle, subtext }) => {
                                         variant="contained"
                                         size="large"
                                         fullWidth
-                                        component={Link}
-                                        type="submit"
-                                        onClick={(e) => handleLogin(e)}
+                                        onClick={() => navigate('/app/home')}
                                     >
                                         Acessar
                                     </Button>
