@@ -58,7 +58,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
     }, [userId])
 
     function newPage(page) {
-        if (parseInt(page.target.innerText) == NaN) return
+        if (!parseInt(page.target.innerText)) return
         getAllDatas(parseInt(page.target.innerText))
 
     }
@@ -161,9 +161,14 @@ const ProductPerformance = ({ userId, setCleaning }) => {
 
                             )
                         })}
-                        <Pagination count={paginations} color="primary" onClick={(e) => newPage(e)} />
                     </TableBody>
                 </Table>
+                <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
+                    {cleanings.length > 0 ? (
+                        <Pagination count={paginations} color="primary" onClick={(e) => newPage(e)} hideNextButton hidePrevButton />
+
+                    ) : null}
+                </div>
             </Box>
         </DashboardCard>
     );
