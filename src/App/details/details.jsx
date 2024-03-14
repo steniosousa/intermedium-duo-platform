@@ -24,6 +24,7 @@ export default function DetailsApp() {
     const [observation1, setObservation1] = React.useState('')
     const [observation2, setObservation2] = React.useState('')
     const [isLoading, setIsLoading] = React.useState(false)
+    const [status, setStatus] = React.useState('')
     const webcamRef = React.useRef(null);
     const style = {
         position: "absolute",
@@ -59,15 +60,16 @@ export default function DetailsApp() {
             updatedImages = JSON.parse(currentImages);
             const alredyExist = updatedImages.find((item) => TypeEvidence === item.type)
             if (alredyExist) return
-            updatedImages.push({ "type": TypeEvidence, id: clear.id, evidenceUrl: imageSrc });
+            updatedImages.push({ "type": TypeEvidence, evidenceUrl: imageSrc });
         } else {
-            updatedImages.push({ "type": TypeEvidence, id: clear.id, evidenceUrl: imageSrc });
+            updatedImages.push({ "type": TypeEvidence, evidenceUrl: imageSrc });
         }
 
         localStorage.setItem(clear.id, JSON.stringify(updatedImages));
         setOpen(false)
     }
-    async function handleSubmit() {
+
+    async function finishCleaning() {
         setIsLoading(true)
         if (isLoading) return
         if (!entrance || !exit) {
@@ -80,12 +82,13 @@ export default function DetailsApp() {
                 denyButtonText: 'Cancelar',
                 confirmButtonText: 'Confirmar'
             })
+            setIsLoading(false)
             return
         }
         getEvidences()
         const jsonCurrentImages = JSON.parse(currentImages)
         try {
-            await Api.post('/cleaning/update', { body: { Evidences: jsonCurrentImages } });
+            await Api.post('/cleaning/update', { body: { Evidences: jsonCurrentImages, id: clear.id, status: "CONCLUIDO" } });
             navigate('/app/home')
         } catch {
             await Swal.fire({
@@ -99,6 +102,28 @@ export default function DetailsApp() {
             })
         }
         setIsLoading(false)
+    }
+    async function handleSubmit() {
+        if (status == "PENDENTE") {
+            editStatusCleaning("ASSUMIDO")
+            return
+        }
+        finishCleaning()
+    }
+
+    async function editStatusCleaning(status) {
+        setIsLoading(true)
+        const objSand = {
+            id: clear.id, status
+        }
+        try {
+            const { data } = await Api.post('/cleaning/update/status', objSand);
+            setStatus(data.status)
+            setIsLoading(false)
+        } catch (error) {
+            setIsLoading(false)
+
+        }
     }
 
 
@@ -131,6 +156,7 @@ export default function DetailsApp() {
 
     React.useEffect(() => {
         getEvidences()
+        setStatus(clear.status)
     }, [open])
 
     return (
@@ -209,10 +235,10 @@ export default function DetailsApp() {
                     </div>
                 </div>
             </List>
-            <Button variant={isLoading ? "outlined" : "contained"} color="primary" style={{ width: '80%', marginLeft: '10%' }} onClick={handleSubmit}>
+            <Button variant={isLoading ? "outlined" : "contained"} color="primary" style={{ width: '80%', marginLeft: '10%' }} onClick={() => handleSubmit()}>
                 {isLoading ? (<CircularProgress />) : (
                     <span>
-                        Enviar
+                        {status == 'ASSUMIDO' ? "CONCLUIR" : "ASSUMIR"}
                     </span>
                 )}
             </Button>

@@ -26,7 +26,7 @@ export const AuthProvider = ({ children }) => {
     catch (error) {
       await Swal.fire({
         icon: 'error',
-        title: error.response.data,
+        title: "Erro ao efetuar login",
         showDenyButton: false,
         showCancelButton: false,
         showConfirmButton: true,

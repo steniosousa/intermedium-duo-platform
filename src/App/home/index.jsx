@@ -15,10 +15,6 @@ function HomeApp() {
 
     async function getCleanings() {
         setIsLoading(true)
-        if (!operator) {
-            setIsLoading(false)
-            return
-        }
         const userId = JSON.parse(operator).id
         try {
             const { data } = await Api.get('cleaning/recover/app', { params: { userId } })
@@ -39,6 +35,7 @@ function HomeApp() {
     }
 
     useEffect(() => {
+        if(!operator) return
         getCleanings()
     }, [operator])
 

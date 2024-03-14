@@ -7,7 +7,7 @@ export default function ListHome({ datas, onPress }) {
     const dateObject = moment(datas.createdAt);
     const data = dateObject.format("DD-MM-YYYY - h:m");
     return (
-        <ListItem style={{ background: datas.evidences.length > 0 ? "orange" : "transparent" }}>
+        <ListItem style={{ background: datas.evidences.length > 0 ? "orange" : "transparent", cursor: "pointer" }} onClick={() => onPress(datas)}>
             <ListItemAvatar>
                 <Avatar style={{ background: "#add8e6" }}>
                     <CleaningServicesIcon />
@@ -18,8 +18,8 @@ export default function ListHome({ datas, onPress }) {
                 <span>Falhou</span>
             ) :
                 (
-                    <Button onClick={() => onPress(datas)} variant={0 == 0 ? "contained" : "outlined"} color="primary" style={{ height: 30 }}>
-                        Ver
+                    <Button onClick={() => onPress(datas)} variant={0 == 0 ? "contained" : "outlined"} color={datas.status == 'ASSUMIDO' ? "primary" : "secondary"} style={{ height: 30, color:'white' }}>
+                        {datas.status == 'ASSUMIDO' ? "CONCLUIR" : "ASSUMIR"}
                     </Button>
 
                 )}

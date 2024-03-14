@@ -18,10 +18,11 @@ import PageContainer from 'src/components/container/PageContainer';
 import AuthContext from 'src/contexto/AuthContext';
 
 const LoginApp = ({ subtitle }) => {
-    const [key, setKey] = useState('0GQE1S')
+    const [key, setKey] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
     const { LoginApp } = useContext(AuthContext)
+
     async function handleLogin() {
         setIsLoading(true)
         if (isLoading) return
