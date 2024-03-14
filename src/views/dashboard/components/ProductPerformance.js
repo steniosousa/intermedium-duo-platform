@@ -166,14 +166,17 @@ const ProductPerformance = ({ userId, setCleaning }) => {
                         })}
                     </TableBody>
                 </Table>
+
                 <div style={{ width: '100%', display: 'flex', justifyContent: 'center' }}>
                     {cleanings.length > 0 ? (
                         <Pagination count={paginations} color="primary" onClick={(e) => newPage(e)} hideNextButton hidePrevButton />
 
-                    ) : null}
+                    ) : (
+                        <span>Sem Histórico</span>
+                    )}
                 </div>
             </Box>
-        </DashboardCard>
+        </DashboardCard >
     );
 };
 

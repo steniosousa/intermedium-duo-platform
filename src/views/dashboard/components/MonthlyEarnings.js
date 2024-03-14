@@ -188,6 +188,7 @@ const MonthlyEarnings = ({ companies }) => {
             <MenuItem value={"objects"}>Objeto</MenuItem>
             <MenuItem value={"epis"}>EPI</MenuItem>
             <MenuItem value={"companies"}>Empresa</MenuItem>
+            <MenuItem value={"user"}>Funcionário</MenuItem>
             {JSON.parse(user).role == "ADMIN" ? (
               <MenuItem value={"manager"}>Gerente</MenuItem>
 
