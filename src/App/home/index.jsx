@@ -4,24 +4,25 @@ import Api from 'src/api/service';
 import AuthContext from 'src/contexto/AuthContext';
 import Swal from 'sweetalert2';
 import ListHome from '../components/listHome';
-import { Button, List } from '@mui/material';
+import { Button, CircularProgress, List } from '@mui/material';
 import { useNavigate } from "react-router-dom";
 
 function HomeApp() {
     const { operator } = useContext(AuthContext)
     const [cleanings, setCleanings] = useState([])
+    const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
 
 
     async function getCleanings() {
+        setIsLoading(true)
         if (!operator) return
         const userId = JSON.parse(operator).id
         try {
             const { data } = await Api.get('cleaning/recover/app', { params: { userId } })
             setCleanings(data)
         }
-        catch (error) {
-
+        catch {
             await Swal.fire({
                 icon: 'error',
                 title: "Não foi possível recuperar solicitações",
@@ -39,7 +40,7 @@ function HomeApp() {
     }, [operator])
 
     function press(e) {
-        navigate('/app/details', { state:  e  })
+        navigate('/app/details', { state: e })
     }
 
     return (
@@ -48,8 +49,17 @@ function HomeApp() {
             <List sx={{ width: '100%', bgcolor: 'background.paper' }} style={{ alignItems: 'center' }}>
                 {cleanings.length == 0 ? (
                     <div style={{ width: '100vw', textAlign: 'center', display: 'flex', flexDirection: 'column', }}>
-                        <span >Nenhuma solicitação vigente no momento</span>
-                        <Button onClick={getCleanings}>Atualizar</Button>
+                        {isLoading ? (
+                            <div style={{width:'100%', alignItems:'center'}}>
+                                <CircularProgress />
+                            </div>
+                        ) : (
+                            <>
+                                <span >Nenhuma solicitação vigente no momento</span>
+                                <Button onClick={getCleanings}>Atualizar</Button>
+                            </>
+
+                        )}
                     </div>
                 ) : (
                     cleanings.map((item) => {
@@ -60,7 +70,7 @@ function HomeApp() {
                 )}
             </List>
 
-            
+
 
         </div >
     );

@@ -7,6 +7,7 @@ import {
     Stack,
     Grid,
     Card,
+    CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 
@@ -18,9 +19,12 @@ import AuthContext from 'src/contexto/AuthContext';
 
 const LoginApp = ({ subtitle }) => {
     const [key, setKey] = useState('0GQE1S')
+    const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
     const { LoginApp } = useContext(AuthContext)
     async function handleLogin() {
+        setIsLoading(true)
+        if (isLoading) return
         if (!key) {
             await Swal.fire({
                 icon: 'error',
@@ -34,7 +38,7 @@ const LoginApp = ({ subtitle }) => {
             return
         }
         LoginApp(key)
-        navigate('/app/home')
+        setIsLoading(false)
     }
     return (
         <PageContainer title="Login" description="this is Login page">
@@ -93,15 +97,27 @@ const LoginApp = ({ subtitle }) => {
                                     </Stack>
                                 </Stack>
                                 <Box>
-                                    <Button
-                                        color="primary"
-                                        variant="contained"
-                                        size="large"
-                                        fullWidth
-                                        onClick={handleLogin}
-                                    >
-                                        Acessar
-                                    </Button>
+                                    {isLoading ? (
+                                        <Button
+                                            color="secondary"
+                                            variant="contained"
+                                            size="large"
+                                            fullWidth
+                                        >
+                                            <CircularProgress />
+                                        </Button>
+                                    ) : (
+
+                                        <Button
+                                            color="primary"
+                                            variant="contained"
+                                            size="large"
+                                            fullWidth
+                                            onClick={handleLogin}
+                                        >
+                                            Acessar
+                                        </Button>
+                                    )}
                                 </Box>
                                 {subtitle}
                             </>
