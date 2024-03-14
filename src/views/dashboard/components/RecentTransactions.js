@@ -6,28 +6,11 @@ import Swal from 'sweetalert2';
 import Api from 'src/api/service';
 import ListOperator from 'src/layouts/operator/listOperator';
 
-const RecentTransactions = ({ choseUser }) => {
-  const [companies, setCompanies] = useState([])
+const RecentTransactions = ({ choseUser, companies }) => {
   const [companySelected, setCompanySelected] = useState('')
   const [users, setUsers] = useState([])
 
-  async function getCompanies() {
-    try {
-      const { data } = await Api.get('/companies/recover/')
-      setCompanies(data)
-    } catch (error) {
-      await Swal.fire({
-        icon: 'error',
-        title: 'Erro ao recuperar dados',
-        showDenyButton: true,
-        showCancelButton: false,
-        showConfirmButton: true,
-        denyButtonText: 'Cancelar',
-        confirmButtonText: 'Confirmar'
-      })
-    }
 
-  }
 
   async function getUsersForCompany() {
     if (!companySelected) return
@@ -47,9 +30,6 @@ const RecentTransactions = ({ choseUser }) => {
     }
   }
 
-  useEffect(() => {
-    getCompanies()
-  }, [])
 
   useEffect(() => {
     getUsersForCompany()

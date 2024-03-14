@@ -10,6 +10,7 @@ const MonthlyEarnings = ({ companies }) => {
   const [companySelected, setCompanySelected] = useState('')
   const [name, setName] = useState('')
   const [personName, setPersonName] = React.useState([]);
+  const [role, setRole] = useState('')
   const { user } = useContext(AuthContext)
 
 
@@ -90,20 +91,20 @@ const MonthlyEarnings = ({ companies }) => {
   };
 
   async function handleCreateManager() {
-    
+
     try {
       const send = {
         name,
         email: email,
         companyId: [],
-        role: "MANAGER",
+        role,
         permissions: ["OBJECTS", "PLACES", "COMPANIES", "EPIS"]
       }
       for (let i = 0; i < personName.length; i++) {
-          const existe = companies.find((item) => item.name == personName[i])
-          send.companyId.push(existe.id)
+        const existe = companies.find((item) => item.name == personName[i])
+        send.companyId.push(existe.id)
       }
-      console.log(send)
+
       await Api.post(`manager/create`, send)
       await Swal.fire({
         icon: 'success',
@@ -161,11 +162,14 @@ const MonthlyEarnings = ({ companies }) => {
             <MenuItem value={"objects"}>Objeto</MenuItem>
             <MenuItem value={"epis"}>EPI</MenuItem>
             <MenuItem value={"companies"}>Empresa</MenuItem>
-            <MenuItem value={"manager"}>Gerente</MenuItem>
+            {JSON.parse(user).role == "ADMIN" ? (
+              <MenuItem value={"manager"}>Gerente</MenuItem>
+
+            ) : null}
           </Select>
         </FormControl >
-        {createManager && JSON.parse(user).role == "ADMIN" ? (
-          <FormControl sx={{ m: 1, minWidth: 120 }}>
+        {createManager ? (
+        <FormControl sx={{ m: 1, minWidth: 120 }}>
             <InputLabel id="demo-multiple-chip-label">Empresa</InputLabel>
             <Select
               labelId="demo-multiple-chip-label"
@@ -192,7 +196,20 @@ const MonthlyEarnings = ({ companies }) => {
                 </MenuItem>
               ))}
             </Select>
-            <TextField label="Nome:" ariant="outline" onChange={(e) => setName(e.target.value)} />
+            <FormControl fullWidth sx={{mt:1, mb:1}}>
+              <InputLabel id="demo-simple-select-label">Hierarquia</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                value={role}
+                label="Age"
+                onChange={(e) => setRole(e.target.value)}
+              >
+                <MenuItem value={"MANAGER"}>Gerente</MenuItem>
+                <MenuItem value={"ADMIN"}>Administrador</MenuItem>
+              </Select>
+            </FormControl>
+            <TextField label="Nome:" ariant="outline" onChange={(e) => setName(e.target.value)} style={{marginBottom:7}}/>
             <TextField label="Email:" ariant="outline" onChange={(e) => setEmail(e.target.value)} />
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               <Button onClick={handleCreateManager} variant={companySelected ? "contained" : "outlined"} color="primary" style={{ height: 30 }}>
@@ -203,7 +220,7 @@ const MonthlyEarnings = ({ companies }) => {
         ) : (
           <>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
-              <TextField label="nome" ariant="outline" onChange={(e) => setName(e.target.value)} />
+              <TextField label="Nome:" ariant="outline" onChange={(e) => setName(e.target.value)} />
 
             </FormControl>
             <FormControl sx={{ m: 1, minWidth: 120 }}>

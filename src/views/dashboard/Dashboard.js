@@ -35,7 +35,7 @@ const Dashboard = () => {
             </Grid>
           </Grid>
           <Grid item xs={12} lg={4}>
-            <RecentTransactions choseUser={setUserId} />
+            <RecentTransactions choseUser={setUserId} companies={companies}/>
           </Grid>
           <Grid item xs={12} lg={8}>
             <ProductPerformance userId={userId} setCleaning={setCleaningId} />

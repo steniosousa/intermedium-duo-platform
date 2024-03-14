@@ -7,7 +7,8 @@ import {
     TableHead,
     TableRow,
     Chip,
-    CircularProgress
+    CircularProgress,
+    Pagination
 } from '@mui/material';
 import DashboardCard from '../../../components/shared/DashboardCard';
 import Api from 'src/api/service';
@@ -19,15 +20,24 @@ import moment from 'moment';
 const ProductPerformance = ({ userId, setCleaning }) => {
     const [cleanings, setCleanings] = useState([])
     const [isLoading, setLoading] = useState(false)
+    const [paginations, setPagination] = useState(1)
 
-    async function getAllDatas() {
+    function currentPage(totalPage) {
+        setPagination((totalPage / 5).toFixed(0))
+
+    }
+
+    async function getAllDatas(page) {
+        console.log(page)
         setLoading(true)
         if (!userId) return
         try {
             const { data } = await Api.get('/cleaning/recover', {
-                params: { userId }
+                params: { userId, page }
             });
-            setCleanings(data)
+            setCleanings(data.cleanings)
+            currentPage(data.total)
+
         } catch (error) {
             await Swal.fire({
                 icon: 'error',
@@ -43,10 +53,16 @@ const ProductPerformance = ({ userId, setCleaning }) => {
     }
     useEffect(() => {
         if (userId) {
-
-            getAllDatas()
+            getAllDatas(1)
         }
     }, [userId])
+
+    function newPage(page) {
+        if (parseInt(page.target.innerText) == NaN) return
+        getAllDatas(parseInt(page.target.innerText))
+
+    }
+
     return (
         <DashboardCard title="Hisórico de solicitações" action={isLoading ? (
             <CircularProgress size={25} />
@@ -145,6 +161,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
 
                             )
                         })}
+                        <Pagination count={paginations} color="primary" onClick={(e) => newPage(e)} />
                     </TableBody>
                 </Table>
             </Box>
