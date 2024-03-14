@@ -23,12 +23,16 @@ const ProductPerformance = ({ userId, setCleaning }) => {
     const [paginations, setPagination] = useState(1)
 
     function currentPage(totalPage) {
-        setPagination((totalPage / 5).toFixed(0))
+        if (totalPage % 5 != 0) {
+            setPagination(parseInt((totalPage / 5).toFixed(0)) + 1)
+        } else {
+            setPagination(totalPage)
+
+        }
 
     }
 
     async function getAllDatas(page) {
-        console.log(page)
         setLoading(true)
         if (!userId) return
         try {
@@ -97,7 +101,6 @@ const ProductPerformance = ({ userId, setCleaning }) => {
                                     Status
                                 </Typography>
                             </TableCell>
-
                         </TableRow>
                     </TableHead>
                     <TableBody>
