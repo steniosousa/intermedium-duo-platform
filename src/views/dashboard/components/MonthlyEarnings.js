@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { InputLabel, Select, FormControl, MenuItem, TextField, Button } from '@mui/material';
+import { InputLabel, Select, FormControl, MenuItem, TextField, Button, Grid } from '@mui/material';
 import DashboardCard from '../../../components/shared/DashboardCard';
 import Api from 'src/api/service';
 import Swal from 'sweetalert2';
@@ -52,7 +52,7 @@ const MonthlyEarnings = ({ companies }) => {
 
     }
   }
-  
+
   return (
     <DashboardCard
       title="Cadastros"
@@ -74,7 +74,7 @@ const MonthlyEarnings = ({ companies }) => {
       }
 
     >
-      <>
+      <Grid container spacing={2} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
         <FormControl sx={{ m: 1, minWidth: 120 }}>
           <InputLabel >Cadastrar</InputLabel>
           <Select
@@ -87,13 +87,17 @@ const MonthlyEarnings = ({ companies }) => {
             <MenuItem value={"epis"}>EPI</MenuItem>
             <MenuItem value={"companies"}>Empresa</MenuItem>
           </Select>
-        </FormControl>
+        </FormControl >
+        <FormControl sx={{ m: 1, minWidth: 120 }}>
+          <TextField label="nome" ariant="outline" onChange={(e) => setName(e.target.value)} />
 
-        <TextField label="nome" ariant="outline" onChange={(e) => setName(e.target.value)} />
-        <Button onClick={handleCreate} variant={companySelected ? "contained" : "outlined"} color="primary" style={{ height: 30 }}>
-          Criar
-        </Button>
-      </>
+        </FormControl>
+        <FormControl sx={{ m: 1, minWidth: 120 }}>
+          <Button onClick={handleCreate} variant={companySelected ? "contained" : "outlined"} color="primary" style={{ height: 30 }}>
+            Criar
+          </Button>
+        </FormControl>
+      </Grid>
     </DashboardCard>
   );
 };

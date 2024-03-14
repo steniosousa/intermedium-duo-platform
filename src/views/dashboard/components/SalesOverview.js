@@ -55,7 +55,7 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
                 }),
                 Api.get('/companies/recover/'),
             ]);
-
+            console.log(companyId,object.data )
             const objectForSelect = object.data.map((item) => {
                 return { name: item.name, id: item.id }
             })
@@ -157,7 +157,7 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
     return (
 
         <DashboardCard title="Criar solicitação" >
-            <Grid container spacing={3} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+            <Grid container spacing={1} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 
                 <FormControl sx={{ m: 1, minWidth: 120 }} >
                     <InputLabel >Empresa</InputLabel>
@@ -222,8 +222,6 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
                             )
                         })} */}
                 </FormControl>
-
-
                 {users.length > 0 ? (
                     <FormControl sx={{ m: 1, minWidth: 120 }} >
                         <InputLabel >Operário</InputLabel>
@@ -240,19 +238,22 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
                         </Select>
                     </FormControl>
                 ) : null}
-                <FormControlLabel control={<Checkbox onChange={() => setRepeat(!repeat)} />} label="REPETIR" />
-                <Button onClick={handleNextPass} variant={objectSelect && placesSelected && userSelected && days.length > 0 ? "contained" : "outlined"} color="primary" style={{ height: 30, }}>
-                    {isLoading ? (
-                        <CircularProgress size={20} />
-                    ) : (
-                        <span>
-                            Prox...
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                    <FormControlLabel control={<Checkbox onChange={() => setRepeat(!repeat)} />} label="REPETIR" />
 
-                        </span>
-                    )}
-                </Button>
+                </FormControl>
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                    <Button onClick={handleNextPass} variant={objectSelect && placesSelected && userSelected && days.length > 0 ? "contained" : "outlined"} color="primary" style={{ height: 30, }}>
+                        {isLoading ? (
+                            <CircularProgress size={20} />
+                        ) : (
+                            <span>
+                                Prox...
 
-
+                            </span>
+                        )}
+                    </Button>
+                </FormControl>
             </Grid>
 
             <DayPicker
