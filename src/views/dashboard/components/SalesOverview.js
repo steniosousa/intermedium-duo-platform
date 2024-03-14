@@ -38,32 +38,20 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
 
 
     async function findObjects() {
-
-        const companyId = JSON.parse(user).companyId[0].companyId
-
+        const managerId = JSON.parse(user).id
         try {
-            const [object, place, companies] = await Promise.all([
-                Api.get('objects/recover', {
-                    params: {
-                        companyId
-                    }
-                }),
-                Api.get('place/recover', {
-                    params: {
-                        companyId
-                    }
-                }),
-                Api.get('/companies/recover/'),
-            ]);
-            console.log(companyId,object.data )
-            const objectForSelect = object.data.map((item) => {
-                return { name: item.name, id: item.id }
+            const { data } = await Api.get('/companies/recover/companies', {
+                params: {
+                    managerId
+                }
             })
-            setObjects(objectForSelect);
 
-            setPlaces(place.data);
-            setCompanies(companies.data)
-            setCompaniesFind(companies.data)
+            const newComapnues = data.map((item) => {
+                return { name: item.company.name, id: item.company.id }
+            })
+
+            setCompanies(newComapnues)
+            setCompaniesFind(newComapnues)
         } catch (error) {
             await Swal.fire({
                 icon: 'error',
@@ -80,9 +68,30 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
 
     async function getUsersForCompany() {
         if (!companySelect) return
+
         try {
-            const { data } = await Api.get('/user/recover', { params: { companyId: companySelect } })
-            setUsers(data)
+            const [users, objects, places] = await Promise.all([
+                Api.get('/user/recover', {
+                    params: { companyId: companySelect }
+                }),
+                Api.get('objects/recover', {
+                    params: {
+                        companyId: companySelect
+                    }
+                }),
+                Api.get('place/recover', {
+                    params: {
+                        companyId: companySelect
+                    }
+                }),
+            ])
+            const objectForSelect = objects.data.map((item) => {
+                return { name: item.name, id: item.id }
+            })
+            setObjects(objectForSelect);
+            setPlaces(places.data);
+
+            setUsers(users.data)
         } catch (error) {
             await Swal.fire({
                 icon: 'error',
