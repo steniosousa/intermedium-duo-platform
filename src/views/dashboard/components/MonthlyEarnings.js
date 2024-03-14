@@ -12,7 +12,21 @@ const MonthlyEarnings = ({ companies }) => {
   const [personName, setPersonName] = React.useState([]);
   const [role, setRole] = useState('')
   const { user } = useContext(AuthContext)
+  const [qualifiedCompanies, setQualifiedCompanies] = useState([])
 
+  const [email, setEmail] = useState('')
+  const [createManager, setCreateManager] = useState(false)
+
+  const ITEM_HEIGHT = 48;
+  const ITEM_PADDING_TOP = 8;
+  const MenuProps = {
+    PaperProps: {
+      style: {
+        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+        width: 250,
+      },
+    },
+  };
 
   async function handleCreate() {
     if (!name || !companySelected) {
@@ -59,27 +73,6 @@ const MonthlyEarnings = ({ companies }) => {
   }
 
 
-  const [email, setEmail] = useState('')
-  const [createManager, setCreateManager] = useState(false)
-  useEffect(() => {
-    if (route == "manager") {
-      setCreateManager(true)
-    }
-    else {
-      setCreateManager(false)
-    }
-
-  }, [route])
-  const ITEM_HEIGHT = 48;
-  const ITEM_PADDING_TOP = 8;
-  const MenuProps = {
-    PaperProps: {
-      style: {
-        maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
-        width: 250,
-      },
-    },
-  };
 
   const handleChangeManager = (event) => {
     const {
@@ -91,7 +84,6 @@ const MonthlyEarnings = ({ companies }) => {
   };
 
   async function handleCreateManager() {
-
     try {
       const send = {
         name,
@@ -101,7 +93,7 @@ const MonthlyEarnings = ({ companies }) => {
         permissions: ["OBJECTS", "PLACES", "COMPANIES", "EPIS"]
       }
       for (let i = 0; i < personName.length; i++) {
-        const existe = companies.find((item) => item.name == personName[i])
+        const existe = qualifiedCompanies.find((item) => item.name == personName[i])
         send.companyId.push(existe.id)
       }
 
@@ -116,7 +108,7 @@ const MonthlyEarnings = ({ companies }) => {
         confirmButtonText: 'Confirmar'
       })
       window.location.reload()
-    } catch {
+    } catch (error) {
       await Swal.fire({
         icon: 'error',
         title: 'Erro ao criar gerente',
@@ -129,6 +121,40 @@ const MonthlyEarnings = ({ companies }) => {
     }
   }
 
+  async function getCompanies() {
+    try {
+      const { data } = await Api.get('companies/recover')
+      setQualifiedCompanies(data)
+    } catch {
+      await Swal.fire({
+        icon: 'error',
+        title: 'Erro ao listar empresas',
+        showDenyButton: false,
+        showCancelButton: false,
+        showConfirmButton: true,
+        denyButtonText: 'Cancelar',
+        confirmButtonText: 'ok'
+      })
+    }
+  }
+  useEffect(() => {
+    if (route == "manager") {
+
+      setCreateManager(true)
+    }
+    else {
+      setCreateManager(false)
+    }
+
+  }, [route])
+
+  useEffect(() => {
+    if (JSON.parse(user).role == "ADMIN") {
+      getCompanies()
+      return
+    }
+    setQualifiedCompanies(companies)
+  }, [companies])
   return (
     <DashboardCard
       title="Cadastros"
@@ -140,7 +166,7 @@ const MonthlyEarnings = ({ companies }) => {
             label="Age"
             onChange={(e) => setCompanySelected(e.target.value)}
           >
-            {companies.map((company) => {
+            {qualifiedCompanies.map((company) => {
               return (
                 <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
               )
@@ -169,7 +195,7 @@ const MonthlyEarnings = ({ companies }) => {
           </Select>
         </FormControl >
         {createManager ? (
-        <FormControl sx={{ m: 1, minWidth: 120 }}>
+          <FormControl sx={{ m: 1, minWidth: 120 }}>
             <InputLabel id="demo-multiple-chip-label">Empresa</InputLabel>
             <Select
               labelId="demo-multiple-chip-label"
@@ -187,7 +213,7 @@ const MonthlyEarnings = ({ companies }) => {
               )}
               MenuProps={MenuProps}
             >
-              {companies.map((name) => (
+              {qualifiedCompanies.map((name) => (
                 <MenuItem
                   key={name}
                   value={name.name}
@@ -196,7 +222,7 @@ const MonthlyEarnings = ({ companies }) => {
                 </MenuItem>
               ))}
             </Select>
-            <FormControl fullWidth sx={{mt:1, mb:1}}>
+            <FormControl fullWidth sx={{ mt: 1, mb: 1 }}>
               <InputLabel id="demo-simple-select-label">Hierarquia</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -209,7 +235,7 @@ const MonthlyEarnings = ({ companies }) => {
                 <MenuItem value={"ADMIN"}>Administrador</MenuItem>
               </Select>
             </FormControl>
-            <TextField label="Nome:" ariant="outline" onChange={(e) => setName(e.target.value)} style={{marginBottom:7}}/>
+            <TextField label="Nome:" ariant="outline" onChange={(e) => setName(e.target.value)} style={{ marginBottom: 7 }} />
             <TextField label="Email:" ariant="outline" onChange={(e) => setEmail(e.target.value)} />
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               <Button onClick={handleCreateManager} variant={companySelected ? "contained" : "outlined"} color="primary" style={{ height: 30 }}>
