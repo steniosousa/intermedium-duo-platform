@@ -3,6 +3,7 @@ import { Navigate } from 'react-router-dom';
 import Loadable from '../layouts/full/shared/loadable/Loadable';
 import HomeApp from 'src/App/home';
 import LoginApp from 'src/App/login';
+import DetailsApp from 'src/App/details/details';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -48,6 +49,7 @@ const Router = [
       { path: '404', element: <Error /> },
       { path: '/app/login', element: <LoginApp /> },
       { path: '/app/home', element: <HomeApp /> },
+      { path: '/app/details', element: <DetailsApp /> },
 
     ]
   }

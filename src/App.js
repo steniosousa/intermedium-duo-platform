@@ -9,15 +9,22 @@ import { useNavigate } from "react-router-dom";
 function App() {
   const routing = useRoutes(Router);
   const theme = baselightTheme;
-  const { setUser } = useContext(AuthContext)
+  const { setUser, setOperator } = useContext(AuthContext)
   const navigate = useNavigate();
   useEffect(() => {
-    const manager = localStorage.getItem('manager')
-    if (manager) {
-      setUser(manager)
+    const plataform = localStorage.getItem('manager')
+    const app = localStorage.getItem("userApp")
+    if (plataform && app) {
+      navigate('/auth/login')
+    } else if (plataform) {
+      setUser(plataform)
       navigate('/dashboard')
+    } else if (app) {
+      setOperator(app)
+      navigate('/app/home')
     } else {
       navigate('/auth/login')
+
     }
   }, [])
   return (

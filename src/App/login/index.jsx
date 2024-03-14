@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import {
     Box,
     Typography,
@@ -8,29 +8,32 @@ import {
     Grid,
     Card,
 } from '@mui/material';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import CustomTextField from 'src/components/forms/theme-elements/CustomTextField';
 import PageContainer from 'src/components/container/PageContainer';
+import AuthContext from 'src/contexto/AuthContext';
 
-const LoginApp = ({ title, subtitle, subtext }) => {
-    const [email, setEmail] = useState('')
+const LoginApp = ({ subtitle }) => {
+    const [key, setKey] = useState('0GQE1S')
     const navigate = useNavigate()
+    const { LoginApp } = useContext(AuthContext)
     async function handleLogin() {
-        // if (!email) {
-        //     await Swal.fire({
-        //         icon: 'error',
-        //         title: "Preencha todos os campos",
-        //         showDenyButton: false,
-        //         showCancelButton: false,
-        //         showConfirmButton: true,
-        //         denyButtonText: 'Cancelar',
-        //         confirmButtonText: 'Ok'
-        //     })
-        //     return
-        // }
+        if (!key) {
+            await Swal.fire({
+                icon: 'error',
+                title: "Preencha todos os campos",
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Ok'
+            })
+            return
+        }
+        LoginApp(key)
         navigate('/app/home')
     }
     return (
@@ -71,8 +74,8 @@ const LoginApp = ({ title, subtitle, subtext }) => {
                                 <Stack>
                                     <Box>
                                         <Typography variant="subtitle1"
-                                            fontWeight={600} component="label" htmlFor='username' mb="5px">Acessar com hash:</Typography>
-                                        <CustomTextField id="username" variant="outlined" fullWidth onChange={(e) => setEmail(e.target.value)} />
+                                            fontWeight={600} component="label" htmlFor='username' mb="5px">Digite sua chave de acesso</Typography>
+                                        <CustomTextField id="username" variant="outlined" fullWidth onChange={(e) => setKey(e.target.value)} />
                                     </Box>
 
                                     <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
@@ -95,7 +98,7 @@ const LoginApp = ({ title, subtitle, subtext }) => {
                                         variant="contained"
                                         size="large"
                                         fullWidth
-                                        onClick={() => navigate('/app/home')}
+                                        onClick={handleLogin}
                                     >
                                         Acessar
                                     </Button>

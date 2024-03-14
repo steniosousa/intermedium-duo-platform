@@ -1,27 +1,66 @@
-import React from 'react';
-import Webcam from 'react-webcam';
+import React, { useContext, useEffect, useState } from 'react';
+import Header from '../components/header';
+import Api from 'src/api/service';
+import AuthContext from 'src/contexto/AuthContext';
+import Swal from 'sweetalert2';
+import ListHome from '../components/listHome';
+import { Button, List } from '@mui/material';
+import { useNavigate } from "react-router-dom";
 
 function HomeApp() {
-    const webcamRef = React.useRef(null);
-    const capture = React.useCallback(
-        () => {
-            const imageSrc = webcamRef.current.getScreenshot();
-            console.log(imageSrc)
-        },
-        [webcamRef]
-    );
+    const { operator } = useContext(AuthContext)
+    const [cleanings, setCleanings] = useState([])
+    const navigate = useNavigate()
+
+
+    async function getCleanings() {
+        if (!operator) return
+        const userId = JSON.parse(operator).id
+        try {
+            const { data } = await Api.get('cleaning/recover/app', { params: { userId } })
+            setCleanings(data)
+        }
+        catch (error) {
+
+            await Swal.fire({
+                icon: 'error',
+                title: "Não foi possível recuperar solicitações",
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Confirmar'
+            })
+        }
+    }
+
+    useEffect(() => {
+        getCleanings()
+    }, [operator])
+
+    function press(e) {
+        navigate('/app/details', { state:  e  })
+    }
 
     return (
         <div>
+            <Header />
+            <List sx={{ width: '100%', bgcolor: 'background.paper' }} style={{ alignItems: 'center' }}>
+                {cleanings.length == 0 ? (
+                    <div style={{ width: '100vw', textAlign: 'center', display: 'flex', flexDirection: 'column', }}>
+                        <span >Nenhuma solicitação vigente no momento</span>
+                        <Button onClick={getCleanings}>Atualizar</Button>
+                    </div>
+                ) : (
+                    cleanings.map((item) => {
+                        return (
+                            <ListHome datas={item} key={item.id} onPress={press} />
+                        )
+                    })
+                )}
+            </List>
 
-            <Webcam
-                audio={false}
-                height={720}
-                ref={webcamRef}
-                screenshotFormat="image/jpeg"
-                width={1280}
-            />
-            <button onClick={capture}>Capture photo</button>
+            
 
         </div >
     );

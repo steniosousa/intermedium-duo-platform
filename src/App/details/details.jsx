@@ -1,0 +1,170 @@
+import { useLocation } from "react-router-dom";
+import * as React from 'react';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemText from '@mui/material/ListItemText';
+import ListItemAvatar from '@mui/material/ListItemAvatar';
+import Avatar from '@mui/material/Avatar';
+import ImageIcon from '@mui/icons-material/Gite';
+import WorkIcon from '@mui/icons-material/Work';
+import Header from "../components/header";
+import { Box, Button, Modal } from "@mui/material";
+import CameraAltIcon from '@mui/icons-material/CameraAlt';
+import Webcam from 'react-webcam';
+import Api from "src/api/service";
+import { useNavigate } from "react-router-dom";
+import Swal from "sweetalert2";
+
+export default function DetailsApp() {
+    const location = useLocation();
+    const navigate = useNavigate()
+    const webcamRef = React.useRef(null);
+    const style = {
+        position: "absolute",
+        width: "100%",
+        height: "auto",
+        display: 'flex',
+        flexDirection: 'column',
+        border: "none"
+    };
+    const [type, setType] = React.useState('')
+    let clear = location.state;
+    const [open, setOpen] = React.useState(false);
+    const currentImages = localStorage.getItem(clear.id);
+
+    function handleOpenModal(TypeEvidence) {
+        setType(TypeEvidence)
+        setOpen(true)
+    }
+    ;
+    const handleClose = () => setOpen(false);
+
+    async function capture(TypeEvidence) {
+        if (!TypeEvidence) return
+        const imageSrc = await webcamRef.current.getScreenshot();
+        let updatedImages = [];
+        if (currentImages) {
+            updatedImages = JSON.parse(currentImages);
+            const alredyExist = updatedImages.find((item) => TypeEvidence === item.type)
+            if (alredyExist) return
+            updatedImages.push({ "type": TypeEvidence, id: clear.id, evidenceUrl: imageSrc });
+        } else {
+            updatedImages.push({ "type": TypeEvidence, id: clear.id, evidenceUrl: imageSrc });
+        }
+
+        localStorage.setItem(clear.id, JSON.stringify(updatedImages));
+    }
+    async function handleSubmit() {
+        const jsonCurrentImages = JSON.parse(currentImages)
+        try {
+            await Api.post('/cleaning/update', { body: { Evidences: jsonCurrentImages } });
+            navigate('/app/home')
+        } catch {
+            await Swal.fire({
+                icon: 'error',
+                title: "Não foi possível atualizar solicitações",
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Confirmar'
+            })
+        }
+    }
+
+    function getEvidences() {
+        const jsonCurrentImages = JSON.parse(currentImages)
+        console.log(jsonCurrentImages)
+
+    }
+
+    React.useEffect(() => {
+        getEvidences()
+    }, [])
+
+    return (
+        <>
+            <Header />
+            <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
+                <ListItem>
+                    <ListItemAvatar>
+                        <Avatar>
+                            <ImageIcon />
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Ambiente" secondary={clear.Place.name} />
+                </ListItem>
+                <ListItem>
+                    <ListItemAvatar>
+                        <Avatar>
+                            <WorkIcon />
+                        </Avatar>
+                    </ListItemAvatar>
+                    <ListItemText primary="Objetos" secondary={clear.ObjectOfCleaning.map((object) => object.object.name)} />
+                </ListItem>
+                <div style={{ height: 300, display: 'flex', flexDirection: 'column', justifyContent: 'space-around' }}>
+                    <div style={{ display: 'flex', flexDirection: "row", justifyContent: 'space-around' }}>
+                        <div onClick={() => handleOpenModal("ENTRANCE")} style={{ background: 'orange', borderRadius: 10, height: 100, width: 90, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <Avatar>
+                                <CameraAltIcon />
+                            </Avatar>
+                        </div>
+                        <div onClick={() => handleOpenModal("EXIT")} style={{ background: 'blue', borderRadius: 10, height: 100, width: 90, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <Avatar>
+                                <CameraAltIcon />
+                            </Avatar>
+
+                        </div>
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: "row", justifyContent: 'space-around' }}>
+                        <div onClick={() => handleOpenModal("OBSERVATION")} style={{ background: 'blue', borderRadius: 10, height: 100, width: 90, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <Avatar>
+                                <CameraAltIcon />
+                            </Avatar>
+
+                        </div>
+                        <div onClick={() => handleOpenModal("OBSERVATION1")} style={{ background: 'blue', borderRadius: 10, height: 100, width: 90, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <Avatar>
+                                <CameraAltIcon />
+                            </Avatar>
+
+                        </div>
+                        <div onClick={() => handleOpenModal("OBSERVATION2")} style={{ background: 'blue', borderRadius: 10, height: 100, width: 90, display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <Avatar>
+                                <CameraAltIcon />
+                            </Avatar>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+
+            </List>
+            <Button variant={0 == 0 ? "contained" : "outlined"} color="primary" style={{ width: '80%', marginLeft: '10%' }} onClick={handleSubmit}>
+                Enviar
+            </Button>
+            <Modal
+                open={open}
+                onClose={handleClose}
+                aria-labelledby="modal-modal-title"
+                aria-describedby="modal-modal-description"
+            >
+                <Box sx={style}>
+                    <Webcam
+                        audio={false}
+                        ref={webcamRef}
+                        screenshotFormat="image/jpeg"
+                    />
+                    <button onClick={() => capture(type)} style={{ border: "none", marginTop: 10, background: 'transparent', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+                        <Avatar>
+                            <CameraAltIcon />
+                        </Avatar>
+                    </button>
+                </Box>
+            </Modal>
+        </>
+
+    )
+}

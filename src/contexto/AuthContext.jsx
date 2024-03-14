@@ -7,6 +7,7 @@ import Api from "src/api/service";
 const AuthContext = createContext({});
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [operator, setOperator] = useState(null)
   const navigate = useNavigate();
 
   async function Login(email, password) {
@@ -17,7 +18,6 @@ export const AuthProvider = ({ children }) => {
           password
         }
       });
-      localStorage.setItem('token', data.id);
       localStorage.setItem('manager', JSON.stringify(data))
       const manager = localStorage.getItem('manager')
       setUser(manager)
@@ -43,8 +43,30 @@ export const AuthProvider = ({ children }) => {
     return null
   }
 
+  async function LoginApp(key) {
+    try {
+      const { data } = await Api.get('user/find', { params: { key } })
+      localStorage.setItem('userApp', JSON.stringify(data));
+      navigate('/app/home')
+    } catch {
+      await Swal.fire({
+        icon: 'error',
+        title: "Hash inválido",
+        showDenyButton: false,
+        showCancelButton: false,
+        showConfirmButton: true,
+        denyButtonText: 'Cancelar',
+        confirmButtonText: 'Confirmar'
+      })
+    }
+  }
+
+  function LogoutApp() {
+    localStorage.removeItem('userApp');
+    navigate('/app/login')
+  }
   return (
-    <AuthContext.Provider value={{ signed: Boolean(user), user, setUser, Login, Logout }}>
+    <AuthContext.Provider value={{ signed: Boolean(user), user, setUser, Login, Logout, LoginApp, setOperator, operator, LogoutApp }}>
       {children}
     </AuthContext.Provider>
   );
