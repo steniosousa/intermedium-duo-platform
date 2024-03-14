@@ -70,7 +70,7 @@ export default function DetailsApp() {
     async function handleSubmit() {
         setIsLoading(true)
         if (isLoading) return
-        if(!entrance || !exit ) {
+        if (!entrance || !exit) {
             await Swal.fire({
                 icon: 'warning',
                 title: "Retire as evidências obrigatórias",
@@ -124,6 +124,10 @@ export default function DetailsApp() {
         })
 
     }
+    const [facingMode, setFacingMode] = React.useState('environment');
+    const handleCameraSwitch = () => {
+        setFacingMode(facingMode === 'environment' ? 'user' : 'environment');
+    };
 
     React.useEffect(() => {
         getEvidences()
@@ -220,10 +224,13 @@ export default function DetailsApp() {
             >
                 <Box sx={style}>
                     <Webcam
+                        videoConstraints={{ facingMode }}
                         audio={false}
                         ref={webcamRef}
                         screenshotFormat="image/jpeg"
                     />
+                    <button onClick={handleCameraSwitch}>Alterar câmera</button>
+
                     <button onClick={() => capture(type)} style={{ border: "none", marginTop: 10, background: 'transparent', display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
                         {isLoading ? (
                             <Avatar>

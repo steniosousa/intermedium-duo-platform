@@ -15,7 +15,10 @@ function HomeApp() {
 
     async function getCleanings() {
         setIsLoading(true)
-        if (!operator) return
+        if (!operator) {
+            setIsLoading(false)
+            return
+        }
         const userId = JSON.parse(operator).id
         try {
             const { data } = await Api.get('cleaning/recover/app', { params: { userId } })
@@ -50,13 +53,13 @@ function HomeApp() {
                 {cleanings.length == 0 ? (
                     <div style={{ width: '100vw', textAlign: 'center', display: 'flex', flexDirection: 'column', }}>
                         {isLoading ? (
-                            <div style={{width:'100%', alignItems:'center'}}>
+                            <div style={{ width: '100%', alignItems: 'center' }}>
                                 <CircularProgress />
                             </div>
                         ) : (
                             <>
                                 <span >Nenhuma solicitação vigente no momento</span>
-                                <Button onClick={getCleanings}>Atualizar</Button>
+                                <Button onClick={() => getCleanings()}>Atualizar</Button>
                             </>
 
                         )}
