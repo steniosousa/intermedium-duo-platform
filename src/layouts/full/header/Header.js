@@ -8,8 +8,6 @@ import { IconBellRinging, IconMenu } from '@tabler/icons';
 
 const Header = (props) => {
 
-  // const lgUp = useMediaQuery((theme) => theme.breakpoints.up('lg'));
-  // const lgDown = useMediaQuery((theme) => theme.breakpoints.down('lg'));
 
 
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
@@ -63,8 +61,8 @@ const Header = (props) => {
         </IconButton>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
-          <Button variant="contained" color="primary"  target="_blank" href="https://adminmart.com/product/modernize-react-mui-dashboard-template/">
-            Upgrade to Pro
+          <Button variant="contained" color="secondary"  target="_blank" style={{color:'white'}} >
+            Seja bem-vindo
           </Button>
           <Profile />
         </Stack>

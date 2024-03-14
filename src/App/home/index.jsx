@@ -6,7 +6,6 @@ import Swal from 'sweetalert2';
 import ListHome from '../components/listHome';
 import { Button, CircularProgress, List } from '@mui/material';
 import { useNavigate } from "react-router-dom";
-
 function HomeApp() {
     const { operator } = useContext(AuthContext)
     const [cleanings, setCleanings] = useState([])
@@ -33,6 +32,7 @@ function HomeApp() {
                 confirmButtonText: 'Confirmar'
             })
         }
+        setIsLoading(false)
     }
 
     useEffect(() => {

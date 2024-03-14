@@ -1,5 +1,5 @@
 import { useMediaQuery, Box, Drawer } from '@mui/material';
-import Logo from '../shared/logo/Logo';
+import Logo from '../../../assets/images/logos/intermedium-login.png'
 import SidebarItems from './SidebarItems';
 import { Upgrade } from './Updrade';
 
@@ -43,7 +43,7 @@ const Sidebar = (props) => {
             {/* Logo */}
             {/* ------------------------------------------- */}
             <Box px={3}>
-              <Logo />
+              <img src={Logo} style={{height:80}}/>
             </Box>
             <Box>
               {/* ------------------------------------------- */}
@@ -52,7 +52,7 @@ const Sidebar = (props) => {
               <SidebarItems />
               <Upgrade />
             </Box>
-            
+
           </Box>
         </Drawer>
       </Box>
@@ -76,7 +76,7 @@ const Sidebar = (props) => {
       {/* Logo */}
       {/* ------------------------------------------- */}
       <Box px={2}>
-        <Logo />
+      <img src={Logo} style={{height:80}}/>
       </Box>
       {/* ------------------------------------------- */}
       {/* Sidebar For Mobile */}

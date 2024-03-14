@@ -10,7 +10,7 @@ import {
     CircularProgress,
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
-
+import Logo from '../../assets/images/logos/intermedium-login.png'
 import { useState } from 'react';
 import Swal from 'sweetalert2';
 import CustomTextField from 'src/components/forms/theme-elements/CustomTextField';
@@ -70,7 +70,7 @@ const LoginApp = ({ subtitle }) => {
                     >
                         <Card elevation={9} sx={{ p: 4, zIndex: 1, width: '100%', maxWidth: '500px' }}>
                             <Box display="flex" alignItems="center" justifyContent="center">
-                                Intermedium
+                                <img src={Logo} height={100} />
                             </Box>
                             <>
 

@@ -2,7 +2,6 @@ import React from 'react';
 import { Grid, Box, Card, Typography, Stack } from '@mui/material';
 import { Link } from 'react-router-dom';
 import PageContainer from 'src/components/container/PageContainer';
-import Logo from 'src/layouts/full/shared/logo/Logo';
 import AuthRegister from './auth/AuthRegister';
 
 const Register2 = () => (
@@ -35,7 +34,7 @@ const Register2 = () => (
         >
           <Card elevation={9} sx={{ p: 4, zIndex: 1, width: '100%', maxWidth: '500px' }}>
             <Box display="flex" alignItems="center" justifyContent="center">
-              <Logo />
+              {/* <Logo /> */}
             </Box>
             <AuthRegister
               subtext={

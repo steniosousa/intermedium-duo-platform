@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Grid, Typography, CardContent, FormControl, Select, MenuItem, Button } from '@mui/material';
+import React, { useEffect, useState } from 'react';
+import { Grid, Typography, CardContent, FormControl, Select, MenuItem, Button, CircularProgress } from '@mui/material';
 import DashboardCard from '../../../components/shared/DashboardCard';
 import moment from 'moment';
 import Swal from 'sweetalert2';
@@ -7,6 +7,7 @@ import Api from 'src/api/service';
 
 const YearlyBreakup = ({ initialObject }) => {
   const [dates, setDates] = useState([])
+  const [isLoading, setIsLoading] = useState(false)
   const hours = [
     { value: 7, hour: "07:00" },
     { value: 8, hour: "08:00" },
@@ -32,6 +33,8 @@ const YearlyBreakup = ({ initialObject }) => {
   }
 
   async function handleCreate() {
+    setIsLoading(true)
+    if (isLoading) return
     const send = {
       placeId: initialObject.places,
       objectsId: initialObject.objects,
@@ -41,7 +44,6 @@ const YearlyBreakup = ({ initialObject }) => {
     }
     try {
       await Api.post('cleaning/create', send)
-
       await Swal.fire({
         icon: 'success',
         title: 'Solicitação criada com sucesso!',
@@ -65,7 +67,12 @@ const YearlyBreakup = ({ initialObject }) => {
       })
 
     }
+    setIsLoading(false)
   }
+
+  useEffect(() => {
+    console.log()
+  }, [])
 
   return (
     <DashboardCard title="Horário da solicitação">
@@ -112,9 +119,18 @@ const YearlyBreakup = ({ initialObject }) => {
 
             })
           )}
-          <Button onClick={handleCreate} variant={dates.length > 0 ? "contained" : "outlined"} color="primary" style={{ height: 30, }}>
-            Solicitar
-          </Button>
+          {JSON.stringify(initialObject) !== '{}'  ? (
+            <Button onClick={handleCreate} variant={dates.length > 0 ? "contained" : "outlined"} color="primary" style={{ height: 30, }}>
+              {isLoading ? (
+                <CircularProgress size={20} />
+              ) : (
+                <span>
+                  Solicitar
+                </span>
+              )}
+            </Button>
+
+          ) : null}
         </Grid>
 
 

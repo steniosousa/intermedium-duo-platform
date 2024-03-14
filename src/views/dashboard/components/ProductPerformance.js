@@ -6,7 +6,8 @@ import {
     TableCell,
     TableHead,
     TableRow,
-    Chip
+    Chip,
+    CircularProgress
 } from '@mui/material';
 import DashboardCard from '../../../components/shared/DashboardCard';
 import Api from 'src/api/service';
@@ -17,7 +18,10 @@ import moment from 'moment';
 
 const ProductPerformance = ({ userId, setCleaning }) => {
     const [cleanings, setCleanings] = useState([])
+    const [isLoading, setLoading] = useState(false)
+
     async function getAllDatas() {
+        setLoading(true)
         if (!userId) return
         try {
             const { data } = await Api.get('/cleaning/recover', {
@@ -35,12 +39,18 @@ const ProductPerformance = ({ userId, setCleaning }) => {
                 confirmButtonText: 'Confirmar'
             })
         }
+        setLoading(false)
     }
     useEffect(() => {
-        getAllDatas()
+        if (userId) {
+
+            getAllDatas()
+        }
     }, [userId])
     return (
-        <DashboardCard title="Product Performance">
+        <DashboardCard title="Hisórico de solicitações" action={isLoading ? (
+            <CircularProgress size={25} />
+        ) : null}>
             <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
                 <Table
                     aria-label="simple table"
@@ -75,6 +85,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
+
                         {cleanings.map((product) => {
                             const dateObject = moment(product.createdAt);
                             const data = dateObject.format("DD-MM-YYYY - h:m");
@@ -131,6 +142,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
                                     </TableCell>
 
                                 </TableRow>
+
                             )
                         })}
                     </TableBody>

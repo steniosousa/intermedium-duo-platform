@@ -70,6 +70,18 @@ export default function DetailsApp() {
     async function handleSubmit() {
         setIsLoading(true)
         if (isLoading) return
+        if(!entrance || !exit ) {
+            await Swal.fire({
+                icon: 'warning',
+                title: "Retire as evidências obrigatórias",
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Confirmar'
+            })
+            return
+        }
         getEvidences()
         const jsonCurrentImages = JSON.parse(currentImages)
         try {
@@ -135,7 +147,7 @@ export default function DetailsApp() {
                             <WorkIcon />
                         </Avatar>
                     </ListItemAvatar>
-                    <ListItemText primary="Objetos" secondary={clear.ObjectOfCleaning.map((object) => object.object.name)} />
+                    <ListItemText primary="Objetos" secondary={clear.ObjectOfCleaning.map((object) => `${object.object.name}, `)} />
                 </ListItem>
                 <div style={{ height: 300, display: 'flex', flexDirection: 'column', justifyContent: 'space-around', marginTop: 20 }}>
                     <div style={{ display: 'flex', flexDirection: "row", justifyContent: 'space-around' }}>

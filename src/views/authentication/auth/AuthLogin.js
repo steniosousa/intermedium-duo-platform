@@ -5,6 +5,7 @@ import {
     FormGroup,
     Button,
     Stack,
+    CircularProgress,
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -16,10 +17,14 @@ import Swal from 'sweetalert2';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
     const [email, setEmail] = useState('')
+    const [isLoading, setIsLoading] = useState(false)
     const [password, setPassword] = useState('')
     const { Login } = useContext(AuthContext)
     const navigate = useNavigate()
+
     async function handleLogin() {
+        setIsLoading(true)
+        if (isLoading) return
         if (!email || !password) {
             await Swal.fire({
                 icon: 'error',
@@ -33,6 +38,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             return
         }
         Login(email, password)
+        setIsLoading(false)
     }
     return (
         <>
@@ -67,7 +73,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                             Acessar o app
                         </Button>
                     </FormGroup>
-                    <Typography
+                    {/* <Typography
                         component={Link}
                         fontWeight="500"
                         sx={{
@@ -76,7 +82,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                         }}
                     >
                         Forgot Password ?
-                    </Typography>
+                    </Typography> */}
                 </Stack>
             </Stack>
             <Box>
@@ -89,10 +95,15 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                     type="submit"
                     onClick={(e) => handleLogin(e)}
                 >
-                    Acessar
+                    {isLoading ? (
+                        <CircularProgress />
+                    ) : (
+                        <span>
+                            Acessar
+                        </span>
+                    )}
                 </Button>
             </Box>
-            {subtitle}
         </>
 
     )

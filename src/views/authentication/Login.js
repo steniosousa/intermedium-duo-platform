@@ -3,7 +3,7 @@ import { Grid, Box, Card, Typography } from '@mui/material';
 
 // components
 import PageContainer from 'src/components/container/PageContainer';
-import Logo from 'src/layouts/full/shared/logo/Logo';
+import Logo from '../../assets/images/logos/intermedium-login.png'
 import AuthLogin from './auth/AuthLogin';
 
 const Login2 = () => {
@@ -38,7 +38,8 @@ const Login2 = () => {
           >
             <Card elevation={9} sx={{ p: 4, zIndex: 1, width: '100%', maxWidth: '500px' }}>
               <Box display="flex" alignItems="center" justifyContent="center">
-                <Logo />
+                <img src={Logo} height={100}/>
+
               </Box>
               <AuthLogin
                 subtext={

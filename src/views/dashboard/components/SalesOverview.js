@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Select, MenuItem, FormControl, InputLabel, FormControlLabel, Checkbox, Button, Grid } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel, FormControlLabel, Checkbox, Button, Grid, OutlinedInput, Chip, Box, useTheme, CircularProgress } from '@mui/material';
 
 import DashboardCard from '../../../components/shared/DashboardCard';
 import { DayPicker } from 'react-day-picker';
@@ -10,6 +10,7 @@ import AuthContext from 'src/contexto/AuthContext';
 import Swal from 'sweetalert2';
 import Api from 'src/api/service';
 const SalesOverview = ({ editObject, setCompaniesFind }) => {
+
     const { user } = useContext(AuthContext)
     const initialDays = [];
     const [days, setDays] = useState(initialDays);
@@ -23,7 +24,8 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
     const [placesSelected, setPlacesSelected] = useState('')
     const [userSelected, setUserSelected] = useState('')
     const [repeat, setRepeat] = useState(false)
-
+    const [personName, setPersonName] = React.useState([]);
+    const [isLoading, setIsLoading] = useState(false)
     let cellHeight = Math.min(
         Math.max(minHeight * 5.5)
     );
@@ -99,9 +101,29 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
         setSeactUser(!searchUser)
     }
 
-    function handleNextPass() {
-        if (!objectSelect || !placesSelected || !userSelected || days.length === 0) return
-        editObject({ objects: objectSelect, places: placesSelected, user: userSelected, repeat: repeat, date: days })
+    async function handleNextPass() {
+        setIsLoading(true)
+        const newObjects = []
+        for (let i = 0; i < personName.length; i++) {
+            const existe = objects.find((item) => item.name == personName[i])
+            newObjects.push(existe.id)
+        }
+        if (!newObjects || !placesSelected || !userSelected || days.length === 0) {
+            await Swal.fire({
+                icon: 'warning',
+                title: 'Preencha todos os campos',
+                showDenyButton: true,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Confirmar'
+            })
+            setIsLoading(false)
+            return
+        }
+
+        editObject({ objects: newObjects, places: placesSelected, user: userSelected, repeat: repeat, date: days })
+        setIsLoading(false)
     }
 
 
@@ -113,6 +135,25 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
     useEffect(() => {
         findObjects()
     }, [user !== null])
+
+    const ITEM_HEIGHT = 48;
+    const ITEM_PADDING_TOP = 8;
+    const MenuProps = {
+        PaperProps: {
+            style: {
+                maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+                width: 250,
+            },
+        },
+    };
+    const handleChange = (event) => {
+        const {
+            target: { value },
+        } = event;
+        setPersonName(
+            typeof value === 'string' ? value.split(',') : value,
+        );
+    };
     return (
 
         <DashboardCard title="Criar solicitação" >
@@ -147,20 +188,41 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
                         })}
                     </Select>
                 </FormControl>
-                <FormControl sx={{ m: 1, minWidth: 120 }} >
-                    <InputLabel >Objetos</InputLabel>
-                    <Select
-                        value={objectSelect}
-                        onChange={(object) => setObjectSelect((oldState) => [...oldState, object.target.value])}
 
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                    <InputLabel id="demo-multiple-chip-label">Objetos</InputLabel>
+                    <Select
+                        labelId="demo-multiple-chip-label"
+                        id="demo-multiple-chip"
+                        multiple
+                        value={personName}
+                        onChange={handleChange}
+                        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                        renderValue={(selected) => (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selected.map((value) => (
+                                    <Chip key={value} label={value} />
+                                ))}
+                            </Box>
+                        )}
+                        MenuProps={MenuProps}
                     >
-                        {objects.map((object) => {
-                            return (
-                                <MenuItem key={object.id} value={object.id}>{object.name}</MenuItem>
-                            )
-                        })}
+                        {objects.map((name) => (
+                            <MenuItem
+                                key={name.id}
+                                value={name.name}
+                            >
+                                {name.name}
+                            </MenuItem>
+                        ))}
                     </Select>
+                    {/* {objects.map((object) => {
+                            return (
+                                <MenuItem key={object.id} value={object}>{object.name}</MenuItem>
+                            )
+                        })} */}
                 </FormControl>
+
 
                 {users.length > 0 ? (
                     <FormControl sx={{ m: 1, minWidth: 120 }} >
@@ -180,7 +242,14 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
                 ) : null}
                 <FormControlLabel control={<Checkbox onChange={() => setRepeat(!repeat)} />} label="REPETIR" />
                 <Button onClick={handleNextPass} variant={objectSelect && placesSelected && userSelected && days.length > 0 ? "contained" : "outlined"} color="primary" style={{ height: 30, }}>
-                    Prox...
+                    {isLoading ? (
+                        <CircularProgress size={20} />
+                    ) : (
+                        <span>
+                            Prox...
+
+                        </span>
+                    )}
                 </Button>
 
 
