@@ -40,7 +40,7 @@ function HomeApp() {
 
     useEffect(() => {
         if (!operator) return
-        console.log(operator)
+      
         getCleanings()
     }, [operator])
 

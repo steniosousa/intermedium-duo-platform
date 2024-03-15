@@ -51,6 +51,7 @@ const RecentTransactions = ({ choseUser, companies }) => {
   }
   useEffect(() => {
     if (JSON.parse(user).role == "ADMIN") {
+      console.log(users.length)
       getCompanies()
       return
     }
@@ -78,11 +79,16 @@ const RecentTransactions = ({ choseUser, companies }) => {
     </FormControl>
     }>
       <>
-        {users.map((item) => {
-          return (
-            <ListOperator user={item} key={item.id} choseUser={choseUser} />
-          )
-        })}
+
+        {users.length == 0 ? (
+          <span>Selecione uma empresa</span>
+        ) : (
+          users.map((item) => {
+            return (
+              <ListOperator Listuser={item} key={item.id} choseUser={choseUser} />
+            )
+          })
+        )}
       </>
     </DashboardCard>
   );

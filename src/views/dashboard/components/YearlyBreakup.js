@@ -70,9 +70,7 @@ const YearlyBreakup = ({ initialObject }) => {
     setIsLoading(false)
   }
 
-  useEffect(() => {
-    console.log()
-  }, [])
+
 
   return (
     <DashboardCard title="Horário da solicitação">
