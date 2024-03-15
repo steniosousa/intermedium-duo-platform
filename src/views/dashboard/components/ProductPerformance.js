@@ -123,6 +123,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
         try {
             await Api.post('avaliation/create', send)
             setOpen(!open)
+            getAllDatas(1)
             setEpisSelected('')
             setAvaliation('')
             setScheduleId('')
