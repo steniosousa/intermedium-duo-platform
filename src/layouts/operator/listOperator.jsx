@@ -33,7 +33,7 @@ export default function ListOperator({ Listuser, choseUser }) {
                 }
             })
 
-
+            console.log(data)
             dataForPdf = data
         } catch (error) {
             await Swal.fire({
@@ -83,7 +83,7 @@ export default function ListOperator({ Listuser, choseUser }) {
             const dateObject = moment(new Date());
             const currentDate = dateObject.format("DD-MM-YYYY");
             return [
-                `${currentDate}`, item.Cleaning[0].Place.name, item.status, equipaments ? equipaments : "Sem agravante", item.observation
+                `${currentDate}`, item.Cleaning[0] ? item.Cleaning[0].Place.name : "Erro", item.status, equipaments ? equipaments : "Sem agravante", item.observation ? item.observation : "Sem observação"
             ]
         })
 
