@@ -50,7 +50,7 @@ const Sidebar = (props) => {
               {/* Sidebar Items */}
               {/* ------------------------------------------- */}
               <SidebarItems />
-              <Upgrade />
+              {/* <Upgrade /> */}
             </Box>
 
           </Box>
