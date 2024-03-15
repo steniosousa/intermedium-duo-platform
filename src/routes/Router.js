@@ -4,6 +4,7 @@ import Loadable from '../layouts/full/shared/loadable/Loadable';
 import HomeApp from 'src/App/home';
 import LoginApp from 'src/App/login';
 import DetailsApp from 'src/App/details/details';
+import Localizador from 'src/Locale/localizador';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -26,7 +27,7 @@ const Router = [
     children: [
       { path: '/', element: <Navigate to="/dashboard" /> },
       { path: '/dashboard', exact: true, element: <Dashboard /> },
-      { path: '/sample-page', exact: true, element: <SamplePage /> },
+      { path: '/Localiza', exact: true, element: <SamplePage /> },
       { path: '/icons', exact: true, element: <Icons /> },
       { path: '/ui/typography', exact: true, element: <TypographyPage /> },
       { path: '/ui/shadow', exact: true, element: <Shadow /> },
@@ -51,6 +52,13 @@ const Router = [
       { path: '/app/home', element: <HomeApp /> },
       { path: '/app/details', element: <DetailsApp /> },
 
+    ]
+  },
+  {
+    path: "/localizador",
+    children: [
+      { path: '404', element: <Error /> },
+      { path: '/localizador/home', element: <Localizador /> },
     ]
   }
 ];

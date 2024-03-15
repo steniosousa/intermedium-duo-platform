@@ -18,9 +18,9 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Sample Page',
+    title: 'Localiza - BETA',
     icon: IconAperture,
-    href: '/sample-page',
+    href: '/localiza',
   },
   {
     navlabel: true,

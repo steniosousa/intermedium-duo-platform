@@ -73,16 +73,17 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                             Acessar o app
                         </Button>
                     </FormGroup>
-                    {/* <Typography
-                        component={Link}
-                        fontWeight="500"
-                        sx={{
-                            textDecoration: 'none',
-                            color: 'primary.main',
-                        }}
-                    >
-                        Forgot Password ?
-                    </Typography> */}
+                    {/* <FormGroup>
+                        <Button
+                            color="primary"
+                            variant="outlined"
+                            size="small"
+                            fullWidth
+                            onClick={() => navigate('/localizador/home')}
+                        >
+                            Localizador
+                        </Button>
+                    </FormGroup> */}
                 </Stack>
             </Stack>
             <Box>
