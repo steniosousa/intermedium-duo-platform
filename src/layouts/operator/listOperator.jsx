@@ -1,18 +1,19 @@
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineOppositeContent, TimelineSeparator, timelineOppositeContentClasses } from "@mui/lab";
 import { Button } from "@mui/material";
 import jsPDF from "jspdf";
-import { useContext } from "react";
 import Api from "src/api/service";
-import AuthContext from "src/contexto/AuthContext";
 import Swal from "sweetalert2";
 import 'jspdf-autotable';
 import moment from "moment";
+import { useState } from "react";
 
 export default function ListOperator({ Listuser, choseUser }) {
-    const { user } = useContext(AuthContext)
-    const newUser = JSON.parse(user)
-    const pdf = new jsPDF();
 
+    const pdf = new jsPDF();
+    const [isHovered, setIsHovered] = useState(false);
+
+    const handleMouseEnter = () => setIsHovered(true);
+    const handleMouseLeave = () => setIsHovered(false);
     async function generatePdf(userId, name) {
         let dataForPdf;
         const confirm = await Swal.fire({
@@ -99,7 +100,16 @@ export default function ListOperator({ Listuser, choseUser }) {
         pdf.save(`${name} - ${currentDate}.pdf`);
     }
     return (
-        <Timeline style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'center' }}>
+        <Timeline
+            onMouseEnter={handleMouseEnter}
+            onMouseLeave={handleMouseLeave}
+            style={{
+                display: 'flex',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: isHovered ? '#f0ffff' : 'transparent'
+            }}>
             <TimelineItem style={{ cursor: 'pointer', alignItems: 'center', justifyContent: 'center' }} onClick={() => choseUser(Listuser.id)}>
                 <TimelineOppositeContent>{Listuser.loginHash}</TimelineOppositeContent>
                 <TimelineSeparator>

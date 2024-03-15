@@ -47,7 +47,6 @@ const ProductPerformance = ({ userId, setCleaning }) => {
     const [EpisSelected, setEpisSelected] = useState([])
     const [description, setDescription] = useState('')
     const [scheduleId, setScheduleId] = useState('')
-    const managerId = JSON.parse(user).id
     const companyId = JSON.parse(user).companyId[0].companyId
     function currentPage(totalPage) {
         if (totalPage % 5 != 0) {
@@ -193,7 +192,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
         );
     };
     return (
-        <DashboardCard title="Hisórico de solicitações" action={isLoading ? (
+        <DashboardCard title="Histórico de solicitações" action={isLoading ? (
             <CircularProgress size={25} />
         ) : null}>
             <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
