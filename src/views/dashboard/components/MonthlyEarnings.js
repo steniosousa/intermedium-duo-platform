@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useState } from 'react';
-import { InputLabel, Select, FormControl, MenuItem, TextField, Button, Grid, OutlinedInput, Chip, Box } from '@mui/material';
+import { InputLabel, Select, FormControl, MenuItem, TextField, Button, Grid, OutlinedInput, Chip, Box, CircularProgress } from '@mui/material';
 import DashboardCard from '../../../components/shared/DashboardCard';
 import Api from 'src/api/service';
 import Swal from 'sweetalert2';
@@ -13,7 +13,7 @@ const MonthlyEarnings = ({ companies }) => {
   const [role, setRole] = useState('')
   const { user } = useContext(AuthContext)
   const [qualifiedCompanies, setQualifiedCompanies] = useState([])
-
+  const [isLoading, setLoading] = useState(false)
   const [email, setEmail] = useState('')
   const [createManager, setCreateManager] = useState(false)
 
@@ -29,6 +29,8 @@ const MonthlyEarnings = ({ companies }) => {
   };
 
   async function handleCreate() {
+    if (isLoading) return
+    setLoading(true)
     if (!name || !companySelected) {
       await Swal.fire({
         icon: 'warning',
@@ -39,7 +41,9 @@ const MonthlyEarnings = ({ companies }) => {
         denyButtonText: 'Cancelar',
         confirmButtonText: 'ok'
       })
+      setLoading(false)
       return
+
     }
     const send = {
       companyId: companySelected,
@@ -70,6 +74,7 @@ const MonthlyEarnings = ({ companies }) => {
       })
 
     }
+    setLoading(false)
   }
 
 
@@ -84,6 +89,21 @@ const MonthlyEarnings = ({ companies }) => {
   };
 
   async function handleCreateManager() {
+    if (isLoading) return
+    setLoading(true)
+    if (!name || !email || !role) {
+      await Swal.fire({
+        icon: 'info',
+        title: 'Preencha todos os campos',
+        showDenyButton: true,
+        showCancelButton: false,
+        showConfirmButton: true,
+        denyButtonText: 'Cancelar',
+        confirmButtonText: 'Confirmar'
+      })
+      setLoading(false)
+      return
+    }
     try {
       const send = {
         name,
@@ -107,7 +127,6 @@ const MonthlyEarnings = ({ companies }) => {
         denyButtonText: 'Cancelar',
         confirmButtonText: 'Confirmar'
       })
-      window.location.reload()
     } catch (error) {
       await Swal.fire({
         icon: 'error',
@@ -119,6 +138,7 @@ const MonthlyEarnings = ({ companies }) => {
         confirmButtonText: 'ok'
       })
     }
+    setLoading(false)
   }
 
   async function getCompanies() {
@@ -240,7 +260,14 @@ const MonthlyEarnings = ({ companies }) => {
             <TextField label="Email:" ariant="outline" onChange={(e) => setEmail(e.target.value)} />
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               <Button onClick={handleCreateManager} variant={companySelected ? "contained" : "outlined"} color="primary" style={{ height: 30 }}>
-                Criar
+                {isLoading ? (
+                  <CircularProgress size={20} />
+                ) : (
+                  <span>
+                    Criar
+
+                  </span>
+                )}
               </Button>
             </FormControl>
           </FormControl>
@@ -252,7 +279,14 @@ const MonthlyEarnings = ({ companies }) => {
             </FormControl>
             <FormControl sx={{ m: 1, minWidth: 120 }}>
               <Button onClick={handleCreate} variant={companySelected ? "contained" : "outlined"} color="primary" style={{ height: 30 }}>
-                Criar
+                {isLoading ? (
+                  <CircularProgress size={20} />
+                ) : (
+                  <span>
+                    Criar
+
+                  </span>
+                )}
               </Button>
             </FormControl>
           </>

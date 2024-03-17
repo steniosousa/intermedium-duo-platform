@@ -14,6 +14,11 @@ function App() {
   useEffect(() => {
     const plataform = localStorage.getItem('manager')
     const app = localStorage.getItem("userApp")
+
+    const currentUrl = window.location.pathname;
+    if(currentUrl.includes("/resetPass/")){
+      return
+    }
     if (plataform && app) {
       navigate('/auth/login')
     } else if (plataform) {
@@ -24,7 +29,6 @@ function App() {
       navigate('/app/home')
     } else {
       navigate('/auth/login')
-
     }
   }, [])
   return (

@@ -18,6 +18,7 @@ export const AuthProvider = ({ children }) => {
           password
         }
       });
+      console.log(data)
       localStorage.setItem('manager', JSON.stringify(data))
       const manager = localStorage.getItem('manager')
       setUser(manager)
@@ -46,6 +47,19 @@ export const AuthProvider = ({ children }) => {
   async function LoginApp(key) {
     try {
       const { data } = await Api.get('user/find', { params: { key } })
+      if (data.deactivatedAt) {
+        await Swal.fire({
+          icon: 'info',
+          title: "Operário desativado",
+          html: "<p>Peça ao seu administrador para reativá-lo(a)</p>",
+          showDenyButton: false,
+          showCancelButton: false,
+          showConfirmButton: true,
+          denyButtonText: 'Cancelar',
+          confirmButtonText: 'Confirmar'
+        })
+        return
+      }
       localStorage.setItem('userApp', JSON.stringify(data));
       navigate('/app/home')
     } catch {

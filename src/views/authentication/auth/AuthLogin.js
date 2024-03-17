@@ -1,26 +1,46 @@
 import React from 'react';
 import {
-    Box,
-    Typography,
     FormGroup,
-    Button,
     Stack,
     CircularProgress,
+    Avatar,
+    Box,
+    Menu,
+    Button,
+    IconButton,
+    MenuItem,
+    ListItemIcon,
+    ListItemText,
+    Modal,
+    Typography,
+    InputAdornment,
+    InputLabel,
+    FormControl,
+    OutlinedInput,
+    TextField
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
-
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import CustomTextField from '../../../components/forms/theme-elements/CustomTextField';
 import { useState } from 'react';
 import { useContext } from 'react';
 import AuthContext from 'src/contexto/AuthContext';
 import Swal from 'sweetalert2';
+import Api from 'src/api/service';
 
 const AuthLogin = ({ title, subtitle, subtext }) => {
+    const handleClickShowPassword = () => setShowPassword((show) => !show);
+    const [showPassword, setShowPassword] = React.useState(false);
     const [email, setEmail] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [password, setPassword] = useState('')
     const { Login } = useContext(AuthContext)
     const navigate = useNavigate()
+
+
+    const handleMouseDownPassword = (event) => {
+        event.preventDefault();
+    };
 
     async function handleLogin() {
         setIsLoading(true)
@@ -35,9 +55,64 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                 denyButtonText: 'Cancelar',
                 confirmButtonText: 'Ok'
             })
+
+            setIsLoading(false)
             return
         }
         Login(email, password)
+        setIsLoading(false)
+    }
+
+    async function handleForgorPass() {
+        if (isLoading) return
+
+        if (!email) {
+            await Swal.fire({
+                icon: 'info',
+                title: "Informe seu email para recuperação",
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Ok'
+            })
+            return
+        }
+        const confirm = await Swal.fire({
+            icon: 'info',
+            title: 'Deseja recuperar senha?',
+            showDenyButton: false,
+            showCancelButton: false,
+            showConfirmButton: true,
+            denyButtonText: 'Cancelar',
+            confirmButtonText: 'Confirmar'
+        })
+        if (!confirm.isConfirmed) return
+        setIsLoading(true)
+        try {
+            await Api.post('/manager/recoverPass', {
+                email
+            })
+            await Swal.fire({
+                icon: 'success',
+                html: "<h2>Verifique sua caixa de Email</h2>",
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Ok'
+            })
+        } catch {
+            await Swal.fire({
+                icon: 'error',
+                title: "Erro ao recuperar senha",
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Ok'
+            })
+        }
         setIsLoading(false)
     }
     return (
@@ -52,15 +127,37 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
 
             <Stack>
                 <Box>
-                    <Typography variant="subtitle1"
-                        fontWeight={600} component="label" htmlFor='username' mb="5px">Email</Typography>
-                    <CustomTextField id="username" variant="outlined" fullWidth onChange={(e) => setEmail(e.target.value)} />
+                    <TextField fullWidth id="outlined-basic" label="Email" variant="outlined" onChange={(e) => setEmail(e.target.value)} />
+
                 </Box>
                 <Box mt="25px">
-                    <Typography variant="subtitle1"
-                        fontWeight={600} component="label" htmlFor='password' mb="5px" >Senha</Typography>
-                    <CustomTextField id="password" type="password" variant="outlined" fullWidth onChange={(e) => setPassword(e.target.value)} />
+                    <FormControl fullWidth variant="outlined">
+                        <InputLabel htmlFor="outlined-adornment-password" >Senha</InputLabel>
+                        <OutlinedInput
+                            onChange={(e) => setPassword(e.target.value)}
+                            id="outlined-adornment-password"
+                            type={showPassword ? 'text' : 'password'}
+                            endAdornment={
+                                <InputAdornment position="end">
+                                    <IconButton
+                                        aria-label="toggle password visibility"
+                                        onClick={handleClickShowPassword}
+                                        onMouseDown={handleMouseDownPassword}
+                                        edge="end"
+                                    >
+                                        {!showPassword ? <VisibilityOff /> : <Visibility />}
+                                    </IconButton>
+                                </InputAdornment>
+                            }
+                            label="Password"
+                        />
+                    </FormControl>
                 </Box>
+                <div style={{ width: '100%', color: 'grey', display: 'flex', justifyContent: 'end', cursor: 'pointer' }}>
+                    <span onClick={handleForgorPass}>
+                        Esqueci minha senha
+                    </span>
+                </div>
                 <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
                     <FormGroup>
                         <Button
@@ -97,7 +194,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                     onClick={(e) => handleLogin(e)}
                 >
                     {isLoading ? (
-                        <CircularProgress />
+                        <CircularProgress style={{ color: 'white' }} />
                     ) : (
                         <span>
                             Acessar

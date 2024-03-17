@@ -1,14 +1,13 @@
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineOppositeContent, TimelineSeparator, timelineOppositeContentClasses } from "@mui/lab";
-import { Button } from "@mui/material";
+import { Button, Switch } from "@mui/material";
 import jsPDF from "jspdf";
 import Api from "src/api/service";
 import Swal from "sweetalert2";
 import 'jspdf-autotable';
 import moment from "moment";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function ListOperator({ Listuser, choseUser }) {
-
     const pdf = new jsPDF();
     const [isHovered, setIsHovered] = useState(false);
 
@@ -33,7 +32,6 @@ export default function ListOperator({ Listuser, choseUser }) {
                 }
             })
 
-            console.log(data)
             dataForPdf = data
         } catch (error) {
             await Swal.fire({
@@ -99,6 +97,41 @@ export default function ListOperator({ Listuser, choseUser }) {
         const currentDate = dateObject.format("DD-MM-YYYY");
         pdf.save(`${name} - ${currentDate}.pdf`);
     }
+
+
+    async function disableUser(userId, onOff) {
+        const deactivatedAt = onOff ? null : new Date()
+        try {
+            const confirm = await Swal.fire({
+                icon: 'warning',
+                title: 'Desativar operário?',
+                showDenyButton: true,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Confirmar'
+            })
+            if (confirm.isDenied) return
+            await Api.post('user/update', {
+                id: userId,
+                deactivatedAt
+            })
+
+        }
+        catch {
+            await Swal.fire({
+                icon: 'error',
+                title: 'Erro ao desativar operário',
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'ok'
+            })
+        }
+
+    }
+
     return (
         <Timeline
             onMouseEnter={handleMouseEnter}
@@ -119,6 +152,7 @@ export default function ListOperator({ Listuser, choseUser }) {
                 <TimelineContent>{Listuser.name}</TimelineContent>
             </TimelineItem>
             <Button onClick={() => generatePdf(Listuser.id, Listuser.name)} style={{ zIndex: 999 }} variant="contained">Relatório</Button>
+            <Switch defaultChecked={Listuser.deactivatedAt == null ? true : false} value={Listuser.deactivatedAt} inputProps={{ 'aria-label': 'Switch A' }} onChange={(e) => disableUser(Listuser.id, e.target.value)} />
         </Timeline>
     )
 }

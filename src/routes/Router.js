@@ -5,6 +5,7 @@ import HomeApp from 'src/App/home';
 import LoginApp from 'src/App/login';
 import DetailsApp from 'src/App/details/details';
 import Localizador from 'src/Locale/localizador';
+import ResetPassword from 'src/layouts/reset/resetPass';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -29,7 +30,7 @@ const Router = [
       { path: '/dashboard', exact: true, element: <Dashboard /> },
       { path: '/Localiza', exact: true, element: <SamplePage /> },
       // { path: '/icons', exact: true, element: <Icons /> },
-      // { path: '/ui/typography', exact: true, element: <TypographyPage /> },
+      { path: '/ui/Perfil', exact: true, element: <TypographyPage /> },
       // { path: '/ui/shadow', exact: true, element: <Shadow /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
     ],
@@ -60,6 +61,13 @@ const Router = [
       { path: '404', element: <Error /> },
       { path: '/localizador/home', element: <Localizador /> },
     ]
+  },
+  {
+    path: `/resetPass/:id`, // Add ":id" to capture the ID parameter
+    children: [
+      { path: '404', element: <Error /> },
+      { path: '', element: <ResetPassword /> }, // Render the ResetPassword component
+    ],
   }
 ];
 
