@@ -14,6 +14,7 @@ import CustomTextField from 'src/components/forms/theme-elements/CustomTextField
 import PageContainer from 'src/components/container/PageContainer';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import Api from 'src/api/service';
 export default function Localizador() {
     const [position, setPosition] = useState(null);
     const [error, setError] = useState(null);
@@ -36,11 +37,25 @@ export default function Localizador() {
             return
         }
         setIsLoading(true)
-        const watchId = navigator.geolocation.watchPosition((position) => {
+        const watchId = navigator.geolocation.watchPosition(async (position) => {
+            try {
+                const { data } = await Api.post('/truck/monitoring', {
+                    plate,
+                    coords: {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    }
+                })
+                console.log(data)
+            } catch (error) {
+                console.log(error)
+            }
             setPosition(position);
         }, (error) => {
             setError(error);
         });
+
+
     }
 
     return (
