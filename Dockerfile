@@ -4,7 +4,7 @@ WORKDIR /src/index.js
 
 COPY package.json ./
 
-RUN npm i
+RUN npm install
 
 COPY . .
 
