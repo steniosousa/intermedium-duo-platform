@@ -3,15 +3,9 @@ import {
     FormGroup,
     Stack,
     CircularProgress,
-    Avatar,
     Box,
-    Menu,
     Button,
     IconButton,
-    MenuItem,
-    ListItemIcon,
-    ListItemText,
-    Modal,
     Typography,
     InputAdornment,
     InputLabel,
@@ -21,7 +15,6 @@ import {
 } from '@mui/material';
 import { Link, useNavigate } from 'react-router-dom';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import CustomTextField from '../../../components/forms/theme-elements/CustomTextField';
 import { useState } from 'react';
 import { useContext } from 'react';
 import AuthContext from 'src/contexto/AuthContext';
