@@ -35,6 +35,7 @@ const Router = [
       { path: '*', element: <Navigate to="/auth/404" /> },
     ],
   },
+
   {
     path: '/auth',
     element: <BlankLayout />,
@@ -57,6 +58,7 @@ const Router = [
   },
   {
     path: "/localizador",
+    
     children: [
       { path: '404', element: <Error /> },
       { path: '/localizador/home', element: <Localizador /> },

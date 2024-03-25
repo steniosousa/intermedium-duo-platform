@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Box,
     Typography,
@@ -17,7 +17,6 @@ import Swal from 'sweetalert2';
 import Api from 'src/api/service';
 export default function Localizador() {
     const [position, setPosition] = useState(null);
-    const [error, setError] = useState(null);
     const [isLoading, setIsLoading] = useState(false)
     const [plate, setPlate] = useState('')
     const navigate = useNavigate()
@@ -37,22 +36,30 @@ export default function Localizador() {
             return
         }
         setIsLoading(true)
-        const watchId = navigator.geolocation.watchPosition(async (position) => {
+        navigator.geolocation.watchPosition(async (position) => {
+            setPosition(position)
             try {
-                const { data } = await Api.post('/truck/monitoring', {
+                await Api.post('/truck/monitoring', {
                     plate,
                     coords: {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     }
                 })
-                console.log(data)
+
             } catch (error) {
-                console.log(error)
+                await Swal.fire({
+                    icon: 'error',
+                    title: error.response.data.message,
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    showConfirmButton: true,
+                    denyButtonText: 'Cancelar',
+                    confirmButtonText: 'Ok'
+                })
             }
-            setPosition(position);
         }, (error) => {
-            setError(error);
+            setIsLoading(false)
         });
 
 
@@ -88,7 +95,7 @@ export default function Localizador() {
                     >
                         <Card elevation={9} sx={{ p: 4, zIndex: 1, width: '100%', maxWidth: '500px' }}>
                             <Box display="flex" alignItems="center" justifyContent="center">
-                                <img src={Logo} height={100} />
+                                <img src={Logo} height={100} alt="Logo" />
                             </Box>
                             <>
 
