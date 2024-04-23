@@ -1,7 +1,6 @@
-import { Box, Button, FormControl, InputLabel, LinearProgress, MenuItem, Modal, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputLabel,  MenuItem, Modal, Select, TextField, Typography } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import Api from 'src/api/service';
-import Header from 'src/layouts/full/header/Header';
 import Swal from 'sweetalert2';
 import MapContainer from './Map/MapContainer';
 
@@ -14,6 +13,7 @@ const SamplePage = () => {
   const [openModal, setOpenModal] = useState(false)
 
   async function getCoods(plateSelect) {
+    console.log(plateSelect)
     try {
       const { data } = await Api.get('/truck/coords', {
         params: {
@@ -101,10 +101,10 @@ const SamplePage = () => {
 
 
   async function seeMap() {
-    if (location.length == 0) {
+    if (location == "Sem coordenadas") {
       await Swal.fire({
         icon: 'info',
-        title: "Selecione um caminhão",
+        title: "Caminhão sem registros",
         showDenyButton: false,
         showCancelButton: false,
         showConfirmButton: true,

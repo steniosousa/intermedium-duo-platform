@@ -12,14 +12,11 @@ export class MapContainer extends Component {
           lat: -3.71839,
           lng: -38.5434
         }}>
-        {this.props.props.map((item) => {
-          return (
-            <Marker
-              title={item.time}
-              name={item.time}
-              position={{ lat: item.coords.lat, lng: item.coords.lng }} />
-          )
-        })}
+          {console.log(this.props.props)}
+          <Marker
+            title={this.props.props.time}
+            name={this.props.props.time}
+            position={{ lat: this.props.props.lat, lng: this.props.props.lng }} />
       </Map>
 
     );

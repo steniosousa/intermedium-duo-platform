@@ -103,7 +103,7 @@ export default function Localizador() {
                                 <Stack>
                                     <Box>
                                         <Typography variant="subtitle1"
-                                            fontWeight={600} component="label" htmlFor='username' mb="5px">Placa de seu caminhão</Typography>
+                                            fontWeight={600} component="label" htmlFor='username' mb="5px">Placa do seu caminhão</Typography>
                                         <CustomTextField id="username" variant="outlined" fullWidth onChange={(e) => setPlate(e.target.value)} />
                                     </Box>
 
