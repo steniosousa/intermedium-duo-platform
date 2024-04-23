@@ -22,7 +22,8 @@ export default function Localizador() {
     const navigate = useNavigate()
 
 
-    async function startMonitoring() {
+    async function Monitoring() {
+        let id;
         if (!plate) {
             await Swal.fire({
                 icon: 'warning',
@@ -32,38 +33,44 @@ export default function Localizador() {
                 showConfirmButton: true,
                 denyButtonText: 'Cancelar',
                 confirmButtonText: 'Ok'
-            })
-            return
+            });
+            return;
         }
-        setIsLoading(true)
-        navigator.geolocation.watchPosition(async (position) => {
-            setPosition(position)
-            try {
-                await Api.post('/truck/monitoring', {
+
+        setIsLoading(true);
+        if (position) {
+            navigator.geolocation.clearWatch(id);
+            setIsLoading(false);
+            setPosition(null);
+        } else {
+            id = navigator.geolocation.watchPosition((position) => {
+                setPosition(position);
+                Api.post('/truck/monitoring', {
                     plate,
                     coords: {
                         lat: position.coords.latitude,
                         lng: position.coords.longitude
                     }
-                })
-
-            } catch (error) {
-                await Swal.fire({
-                    icon: 'error',
-                    title: error.response.data.message,
-                    showDenyButton: false,
-                    showCancelButton: false,
-                    showConfirmButton: true,
-                    denyButtonText: 'Cancelar',
-                    confirmButtonText: 'Ok'
-                })
-            }
-        }, (error) => {
-            setIsLoading(false)
-        });
-
-
+                }).catch((error) => {
+                    setIsLoading(false);
+                    setPosition(null);
+                    Swal.fire({
+                        icon: 'error',
+                        title: error.response.data.message,
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        denyButtonText: 'Cancelar',
+                        confirmButtonText: 'Ok'
+                    });
+                    navigator.geolocation.clearWatch(id);
+                });
+            }, (error) => {
+                setIsLoading(false);
+            });
+        }
     }
+
 
     return (
         <PageContainer title="Login" description="this is Login page">
@@ -121,19 +128,25 @@ export default function Localizador() {
                                         </FormGroup>
                                     </Stack>
                                 </Stack>
+
                                 <Box>
                                     {isLoading ? (
-                                        <Button
-                                            color="secondary"
-                                            variant="contained"
-                                            size="large"
-                                            fullWidth
-                                        >
-                                            <Box sx={{ width: '100%' }}>
-                                                <LinearProgress />
-                                            </Box>
+                                        <>
+                                            <Button
+                                                color="primary"
+                                                variant="contained"
+                                                size="large"
+                                                fullWidth
+                                                onClick={Monitoring}
+                                            >
+                                                <Box sx={{ width: '100%' }}>
+                                                    Parar
+                                                </Box>
 
-                                        </Button>
+                                            </Button>
+                                            <LinearProgress />
+                                        </>
+
                                     ) : (
 
                                         <Button
@@ -141,7 +154,7 @@ export default function Localizador() {
                                             variant="contained"
                                             size="large"
                                             fullWidth
-                                            onClick={startMonitoring}
+                                            onClick={Monitoring}
                                         >
                                             Começar
                                         </Button>
