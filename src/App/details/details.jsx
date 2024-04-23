@@ -104,7 +104,7 @@ export default function DetailsApp() {
         setIsLoading(false)
     }
     async function handleSubmit() {
-        if (status == "PENDENTE") {
+        if (status === "PENDENTE") {
             editStatusCleaning("ASSUMIDO")
             return
         }
@@ -131,19 +131,19 @@ export default function DetailsApp() {
         const jsonCurrentImages = JSON.parse(currentImages)
         if (!jsonCurrentImages) return
         jsonCurrentImages.map((item) => {
-            if (item.type == "ENTRANCE") {
+            if (item.type === "ENTRANCE") {
                 setEntrance(item.evidenceUrl)
             }
-            if (item.type == "EXIT") {
+            if (item.type === "EXIT") {
                 setExit(item.evidenceUrl)
             }
-            if (item.type == "OBSERVATION") {
+            if (item.type === "OBSERVATION") {
                 setObservation(item.evidenceUrl)
             }
-            if (item.type == "OBSERVATION1") {
+            if (item.type === "OBSERVATION1") {
                 setObservation1(item.evidenceUrl)
             }
-            if (item.type == "OBSERVATION2") {
+            if (item.type === "OBSERVATION2") {
                 setObservation2(item.evidenceUrl)
             }
         })
@@ -238,7 +238,7 @@ export default function DetailsApp() {
             <Button variant={isLoading ? "outlined" : "contained"} color="primary" style={{ width: '80%', marginLeft: '10%' }} onClick={() => handleSubmit()}>
                 {isLoading ? (<CircularProgress />) : (
                     <span>
-                        {status == 'ASSUMIDO' ? "CONCLUIR" : "ASSUMIR"}
+                        {status === 'ASSUMIDO' ? "CONCLUIR" : "ASSUMIR"}
                     </span>
                 )}
             </Button>

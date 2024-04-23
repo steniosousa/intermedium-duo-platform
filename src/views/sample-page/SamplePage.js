@@ -1,10 +1,9 @@
-import { Box, Button, FormControl, InputLabel,  MenuItem, Modal, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, FormControl, InputLabel,  MenuItem, Modal, Select, TextField } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import Api from 'src/api/service';
 import Swal from 'sweetalert2';
 import MapContainer from './Map/MapContainer';
 
-import RoomIcon from '@mui/icons-material/Room';
 const SamplePage = () => {
   const [driver, setDriver] = useState('')
   const [plate, setPlate] = useState('')
@@ -101,7 +100,7 @@ const SamplePage = () => {
 
 
   async function seeMap() {
-    if (location == "Sem coordenadas") {
+    if (location === "Sem coordenadas") {
       await Swal.fire({
         icon: 'info',
         title: "Caminhão sem registros",

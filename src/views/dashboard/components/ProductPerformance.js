@@ -49,7 +49,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
     const [scheduleId, setScheduleId] = useState('')
     const companyId = JSON.parse(user).companyId[0].companyId
     function currentPage(totalPage) {
-        if (totalPage % 5 != 0) {
+        if (totalPage % 5 !== 0) {
             setPagination(parseInt((totalPage / 5).toFixed(0)) + 1)
         } else {
             setPagination(totalPage)
@@ -150,7 +150,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
         }
     }
     async function handleModal(e) {
-        if (e.status == "PENDENTE") {
+        if (e.status === "PENDENTE") {
             await Swal.fire({
                 icon: 'warning',
                 html: "<h2>Você não pode avaliar solicitações pendentes</h2>",

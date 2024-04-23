@@ -16,14 +16,13 @@ import {
   OutlinedInput
 } from '@mui/material';
 
-import { IconListCheck, IconMail, IconUser } from '@tabler/icons';
+import { IconListCheck, IconUser } from '@tabler/icons';
 
 import ProfileImg from 'src/assets/images/profile/user-1.jpg';
 import { useContext } from 'react';
 import AuthContext from 'src/contexto/AuthContext';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import Swal from 'sweetalert2';
-import Api from 'src/api/service';
 
 const Profile = () => {
   const style = {
@@ -41,7 +40,7 @@ const Profile = () => {
 
   const [showPassword, setShowPassword] = React.useState(false);
   const [anchorEl2, setAnchorEl2] = useState(null);
-  const { Logout, user } = useContext(AuthContext)
+  const { Logout } = useContext(AuthContext)
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const [openModal, setOpenModal] = useState(false)
   const [newPassword, setNewPassword] = useState('')
@@ -60,59 +59,57 @@ const Profile = () => {
 
 
   async function handleEdit() {
-    if (0 == 0) {
-      await Swal.fire({
-        icon: 'Info',
-        title: "Função em contrução",
-        showDenyButton: false,
-        showCancelButton: false,
-        showConfirmButton: true,
-        denyButtonText: 'Cancelar',
-        confirmButtonText: 'Ok'
-      })
-      return
-    }
-    const userId = JSON.parse(user).id
+    await Swal.fire({
+      icon: 'Info',
+      title: "Função em contrução",
+      showDenyButton: false,
+      showCancelButton: false,
+      showConfirmButton: true,
+      denyButtonText: 'Cancelar',
+      confirmButtonText: 'Ok'
+    })
+    return
+    // const userId = JSON.parse(user).id
 
-    if (!newPassword) {
-      await Swal.fire({
-        icon: 'info',
-        title: "Preencha todos os campos",
-        showDenyButton: false,
-        showCancelButton: false,
-        showConfirmButton: true,
-        denyButtonText: 'Cancelar',
-        confirmButtonText: 'Ok'
-      })
-      return
-    }
-    try {
-      await Api.post('manager/edit', {
-        password: newPassword,
-        id: userId
-      })
-      setOpenModal(false)
-      await Swal.fire({
-        icon: 'success',
-        title: "Usuário editado com sucesso",
-        showDenyButton: false,
-        showCancelButton: false,
-        showConfirmButton: true,
-        denyButtonText: 'Cancelar',
-        confirmButtonText: 'Ok'
-      })
-    } catch {
-      setOpenModal(false)
-      await Swal.fire({
-        icon: 'error',
-        title: "Erro ao editar usuário",
-        showDenyButton: false,
-        showCancelButton: false,
-        showConfirmButton: true,
-        denyButtonText: 'Cancelar',
-        confirmButtonText: 'Ok'
-      })
-    }
+    // if (!newPassword) {
+    //   await Swal.fire({
+    //     icon: 'info',
+    //     title: "Preencha todos os campos",
+    //     showDenyButton: false,
+    //     showCancelButton: false,
+    //     showConfirmButton: true,
+    //     denyButtonText: 'Cancelar',
+    //     confirmButtonText: 'Ok'
+    //   })
+    //   return
+    // }
+    // try {
+    //   await Api.post('manager/edit', {
+    //     password: newPassword,
+    //     id: userId
+    //   })
+    //   setOpenModal(false)
+    //   await Swal.fire({
+    //     icon: 'success',
+    //     title: "Usuário editado com sucesso",
+    //     showDenyButton: false,
+    //     showCancelButton: false,
+    //     showConfirmButton: true,
+    //     denyButtonText: 'Cancelar',
+    //     confirmButtonText: 'Ok'
+    //   })
+    // } catch {
+    //   setOpenModal(false)
+    //   await Swal.fire({
+    //     icon: 'error',
+    //     title: "Erro ao editar usuário",
+    //     showDenyButton: false,
+    //     showCancelButton: false,
+    //     showConfirmButton: true,
+    //     denyButtonText: 'Cancelar',
+    //     confirmButtonText: 'Ok'
+    //   })
+    // }
   }
   return (
     <Box>

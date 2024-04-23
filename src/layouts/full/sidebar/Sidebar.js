@@ -43,7 +43,7 @@ const Sidebar = (props) => {
             {/* Logo */}
             {/* ------------------------------------------- */}
             <Box px={3}>
-              <img src={Logo} style={{height:80}}/>
+              <img src={Logo} style={{height:80}} alt="Logo"/>
             </Box>
             <Box>
               {/* ------------------------------------------- */}
@@ -76,7 +76,7 @@ const Sidebar = (props) => {
       {/* Logo */}
       {/* ------------------------------------------- */}
       <Box px={2}>
-      <img src={Logo} style={{height:80}}/>
+      <img src={Logo} style={{height:80}} alt="Logo"/>
       </Box>
       {/* ------------------------------------------- */}
       {/* Sidebar For Mobile */}

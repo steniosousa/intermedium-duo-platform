@@ -1,21 +1,13 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import {
     Box,
-    Typography,
     FormGroup,
     Button,
     Stack,
     Grid,
     Card,
     LinearProgress,
-    Avatar,
-    Menu,
     IconButton,
-    MenuItem,
-    ListItemIcon,
-    ListItemText,
-    Modal,
-    TextField,
     InputAdornment,
     InputLabel,
     FormControl,
@@ -24,7 +16,6 @@ import {
 
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 
-import CustomTextField from 'src/components/forms/theme-elements/CustomTextField';
 import PageContainer from 'src/components/container/PageContainer';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';

@@ -18,8 +18,8 @@ export default function ListHome({ datas, onPress }) {
                 <span>Falhou</span>
             ) :
                 (
-                    <Button onClick={() => onPress(datas)} variant={0 == 0 ? "contained" : "outlined"} color={datas.status == 'ASSUMIDO' ? "primary" : "secondary"} style={{ height: 30, color:'white' }}>
-                        {datas.status == 'ASSUMIDO' ? "CONCLUIR" : "ASSUMIR"}
+                    <Button onClick={() => onPress(datas)} variant={"contained" } color={datas.status === 'ASSUMIDO' ? "primary" : "secondary"} style={{ height: 30, color:'white' }}>
+                        {datas.status === 'ASSUMIDO' ? "CONCLUIR" : "ASSUMIR"}
                     </Button>
 
                 )}

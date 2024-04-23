@@ -50,7 +50,7 @@ const RecentTransactions = ({ choseUser, companies }) => {
     }
   }
   useEffect(() => {
-    if (JSON.parse(user).role == "ADMIN") {
+    if (JSON.parse(user).role === "ADMIN") {
       console.log(users.length)
       getCompanies()
       return
@@ -80,7 +80,7 @@ const RecentTransactions = ({ choseUser, companies }) => {
     }>
       <>
 
-        {users.length == 0 ? (
+        {users.length === 0 ? (
           <span>Selecione uma empresa</span>
         ) : (
           users.map((item) => {

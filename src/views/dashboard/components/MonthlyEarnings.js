@@ -113,7 +113,7 @@ const MonthlyEarnings = ({ companies }) => {
         permissions: ["OBJECTS", "PLACES", "COMPANIES", "EPIS"]
       }
       for (let i = 0; i < personName.length; i++) {
-        const existe = qualifiedCompanies.find((item) => item.name == personName[i])
+        const existe = qualifiedCompanies.find((item) => item.name === personName[i])
         send.companyId.push(existe.id)
       }
 
@@ -158,7 +158,7 @@ const MonthlyEarnings = ({ companies }) => {
     }
   }
   useEffect(() => {
-    if (route == "manager") {
+    if (route === "manager") {
 
       setCreateManager(true)
     }
@@ -169,7 +169,7 @@ const MonthlyEarnings = ({ companies }) => {
   }, [route])
 
   useEffect(() => {
-    if (JSON.parse(user).role == "ADMIN") {
+    if (JSON.parse(user).role === "ADMIN") {
       getCompanies()
       return
     }
@@ -209,7 +209,7 @@ const MonthlyEarnings = ({ companies }) => {
             <MenuItem value={"epis"}>EPI</MenuItem>
             <MenuItem value={"companies"}>Empresa</MenuItem>
             <MenuItem value={"user"}>Funcionário</MenuItem>
-            {JSON.parse(user).role == "ADMIN" ? (
+            {JSON.parse(user).role === "ADMIN" ? (
               <MenuItem value={"manager"}>Gerente</MenuItem>
 
             ) : null}

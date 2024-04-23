@@ -24,7 +24,7 @@ export default function Header() {
 
 
     const handleCloseUserMenu = (e) => {
-        if (e == "Sair") {
+        if (e === "Sair") {
             LogoutApp()
         }
         setAnchorElUser(null);

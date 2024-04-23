@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Select, MenuItem, FormControl, InputLabel, FormControlLabel, Checkbox, Button, Grid, OutlinedInput, Chip, Box, useTheme, CircularProgress } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel, FormControlLabel, Checkbox, Button, Grid, OutlinedInput, Chip, Box,  CircularProgress } from '@mui/material';
 
 import DashboardCard from '../../../components/shared/DashboardCard';
 import { DayPicker } from 'react-day-picker';
@@ -26,6 +26,8 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
     const [repeat, setRepeat] = useState(false)
     const [personName, setPersonName] = React.useState([]);
     const [isLoading, setIsLoading] = useState(false)
+    const [searchUser, setSeactUser] = useState(false)
+
     let cellHeight = Math.min(
         Math.max(minHeight * 5.5)
     );
@@ -104,7 +106,6 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
             })
         }
     }
-    const [searchUser, setSeactUser] = useState(false)
     async function handleCompany(value) {
         setcompanyIdSelect(value)
         setSeactUser(!searchUser)
@@ -114,7 +115,7 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
         setIsLoading(true)
         const newObjects = []
         for (let i = 0; i < personName.length; i++) {
-            const existe = objects.find((item) => item.name == personName[i])
+            const existe = objects.find((item) => item.name === personName[i])
             newObjects.push(existe.id)
         }
         if (!newObjects || !placesSelected || !userSelected || days.length === 0) {

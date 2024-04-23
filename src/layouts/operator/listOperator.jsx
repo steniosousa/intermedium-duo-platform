@@ -1,11 +1,11 @@
-import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineOppositeContent, TimelineSeparator, timelineOppositeContentClasses } from "@mui/lab";
+import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineOppositeContent, TimelineSeparator } from "@mui/lab";
 import { Button, Switch } from "@mui/material";
 import jsPDF from "jspdf";
 import Api from "src/api/service";
 import Swal from "sweetalert2";
 import 'jspdf-autotable';
 import moment from "moment";
-import { useEffect, useState } from "react";
+import {  useState } from "react";
 
 export default function ListOperator({ Listuser, choseUser }) {
     const pdf = new jsPDF();
@@ -44,7 +44,7 @@ export default function ListOperator({ Listuser, choseUser }) {
                 confirmButtonText: 'Confirmar'
             })
         }
-        if (dataForPdf.length == 0) {
+        if (dataForPdf.length === 0) {
             await Swal.fire({
                 icon: 'info',
                 title: 'Operador sem avaliações',

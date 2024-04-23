@@ -52,7 +52,7 @@ function HomeApp() {
         <div>
             <Header />
             <List sx={{ width: '100%', bgcolor: 'background.paper' }} style={{ alignItems: 'center' }}>
-                {cleanings.length == 0 ? (
+                {cleanings.length === 0 ? (
                     <div style={{ width: '100vw', textAlign: 'center', display: 'flex', flexDirection: 'column', }}>
                         {isLoading ? (
                             <div style={{ width: '100%', alignItems: 'center' }}>
