@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 const Api = axios.create({
-  baseURL:process.env.BASE_URL
+  baseURL:"intermedium-connect-api-production.up.railway.app"
   // baseURL: 'https://intermedium-connect-api-production.up.railway.app'
 
 });
