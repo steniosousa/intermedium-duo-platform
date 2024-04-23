@@ -23,7 +23,7 @@ function App() {
       navigate('/auth/login')
     } else if (plataform) {
       setUser(plataform)
-      navigate('/localiza')
+      navigate('/dashboard')
     } else if (app) {
       setOperator(app)
       navigate('/app/home')
