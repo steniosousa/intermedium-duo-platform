@@ -8,7 +8,7 @@ import BlankCard from '../../../components/shared/BlankCard';
 
 
 const Blog = ({ clear }) => {
-
+    console.log(clear)
     return (
         <Grid container spacing={3}>
             {clear && clear.evidences.map((product, index) => {
@@ -16,7 +16,7 @@ const Blog = ({ clear }) => {
                     <Grid item sm={12} md={4} lg={3} key={index}>
                         <BlankCard>
                             <Typography component={Link} to="/">
-                                <img src={`${product.evidenceUrl}`} alt="img" width="100%" />
+                                <img src={`data:image/png;base64,${product.evidenceUrl}`} alt="img" width="100%" />
                             </Typography>
                             <Tooltip title="Add To Cart">
                                 <Fab
