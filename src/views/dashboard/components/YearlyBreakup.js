@@ -73,7 +73,7 @@ const YearlyBreakup = ({ initialObject }) => {
 
 
   return (
-    <DashboardCard title="Horário da solicitação">
+    <DashboardCard title="Horário da solicitação" background="#f2f2f2">
       <Grid container spacing={3}>
         {/* column */}
         <Grid item >

@@ -31,11 +31,7 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
     let cellHeight = Math.min(
         Math.max(minHeight * 5.5)
     );
-    const footer = days && days.length > 0 ? (
-        <p>You selected {days.length} day(s).</p>
-    ) : (
-        <p>Please pick one or more days.</p>
-    );
+
 
 
 
@@ -239,144 +235,142 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
     }
 
     return (
+            <DashboardCard title="Criar solicitação" background="#f2f2f2" >
+                <Grid container spacing={1} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 
-        <DashboardCard title="Criar solicitação">
-            <Grid container spacing={1} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                    <FormControl sx={{ m: 1, minWidth: 120 }} >
+                        <InputLabel >Empresa</InputLabel>
+                        <Select
+                            value={companySelect}
+                            label="Age"
+                            onChange={(company) => handleCompany(company.target.value)}
 
-                <FormControl sx={{ m: 1, minWidth: 120 }} >
-                    <InputLabel >Empresa</InputLabel>
-                    <Select
-                        value={companySelect}
-                        label="Age"
-                        onChange={(company) => handleCompany(company.target.value)}
+                        >
+                            {companies.length === 0 ? (
+                                <MenuItem value={null}>Cadastre uma empresa</MenuItem>
+                            ) : (
+                                companies.map((company) => {
+                                    return (
+                                        <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
+                                    )
+                                })
+                            )}
+                        </Select>
+                    </FormControl>
+                    <FormControl sx={{ m: 1, minWidth: 120 }} >
+                        <InputLabel >Ambientes</InputLabel>
+                        <Select
+                            value={placesSelected}
+                            onChange={(place) => changeObject(place)}
 
-                    >
-                        {companies.length === 0 ? (
-                            <MenuItem value={null}>Cadastre uma empresa</MenuItem>
-                        ) : (
-                            companies.map((company) => {
-                                return (
-                                    <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
-                                )
-                            })
-                        )}
-                    </Select>
-                </FormControl>
-                <FormControl sx={{ m: 1, minWidth: 120 }} >
-                    <InputLabel >Ambientes</InputLabel>
-                    <Select
-                        value={placesSelected}
-                        onChange={(place) => changeObject(place)}
+                        >
+                            {places.length === 0 ? (
+                                <MenuItem value={null}>Selecione uma empresa ou Cadastre um ambiente</MenuItem>
+                            ) : (
+                                places.map((place) => {
+                                    return (
+                                        <MenuItem key={place.id} value={place.id}>{place.name}</MenuItem>
+                                    )
+                                })
+                            )}
+                        </Select>
+                    </FormControl>
 
-                    >
-                        {places.length === 0 ? (
-                            <MenuItem value={null}>Selecione uma empresa ou Cadastre um ambiente</MenuItem>
-                        ) : (
-                            places.map((place) => {
-                                return (
-                                    <MenuItem key={place.id} value={place.id}>{place.name}</MenuItem>
-                                )
-                            })
-                        )}
-                    </Select>
-                </FormControl>
-
-                <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <InputLabel id="demo-multiple-chip-label">Objetos</InputLabel>
-                    <Select
-                        labelId="demo-multiple-chip-label"
-                        id="demo-multiple-chip"
-                        multiple
-                        value={personName}
-                        onChange={handleChange}
-                        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                        renderValue={(selected) => (
-                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                {selected.map((value) => (
-                                    <Chip key={value} label={value} />
-                                ))}
-                            </Box>
-                        )}
-                        MenuProps={MenuProps}
-                    >
-                        {objects.length === 0 ? (
-                            <MenuItem value={null}>Selecione uma empresa ou Cadastre um objeto</MenuItem>
-                        ) : (
-                            objects.map((name) => (
-                                <MenuItem
-                                    key={name.id}
-                                    value={name.name}
-                                >
-                                    {name.name}
-                                </MenuItem>
-                            ))
-                        )}
-                    </Select>
-                    {/* {objects.map((object) => {
+                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <InputLabel id="demo-multiple-chip-label">Objetos</InputLabel>
+                        <Select
+                            labelId="demo-multiple-chip-label"
+                            id="demo-multiple-chip"
+                            multiple
+                            value={personName}
+                            onChange={handleChange}
+                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                            renderValue={(selected) => (
+                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                    {selected.map((value) => (
+                                        <Chip key={value} label={value} />
+                                    ))}
+                                </Box>
+                            )}
+                            MenuProps={MenuProps}
+                        >
+                            {objects.length === 0 ? (
+                                <MenuItem value={null}>Selecione uma empresa ou Cadastre um objeto</MenuItem>
+                            ) : (
+                                objects.map((name) => (
+                                    <MenuItem
+                                        key={name.id}
+                                        value={name.name}
+                                    >
+                                        {name.name}
+                                    </MenuItem>
+                                ))
+                            )}
+                        </Select>
+                        {/* {objects.map((object) => {
                             return (
                                 <MenuItem key={object.id} value={object}>{object.name}</MenuItem>
                             )
                         })} */}
-                </FormControl>
-                {users.length > 0 ? (
-                    <FormControl sx={{ m: 1, minWidth: 120 }} >
-                        <InputLabel >Operário</InputLabel>
-                        <Select
-                            value={userSelected}
-                            onChange={(user) => setUserSelected(user.target.value)}
-
-                        >
-                            {users.map((user) => {
-                                return (
-                                    <MenuItem key={user.id} value={user.id}>{user.name}</MenuItem>
-                                )
-                            })}
-                        </Select>
                     </FormControl>
-                ) : null}
-                <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <FormControlLabel control={<Checkbox onChange={() => setRepeat(!repeat)} />} label="REPETIR" />
+                    {users.length > 0 ? (
+                        <FormControl sx={{ m: 1, minWidth: 120 }} >
+                            <InputLabel >Operário</InputLabel>
+                            <Select
+                                value={userSelected}
+                                onChange={(user) => setUserSelected(user.target.value)}
 
-                </FormControl>
-                <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <Button onClick={handleNextPass} variant={objectSelect && placesSelected && userSelected && days.length > 0 ? "contained" : "outlined"} color="primary" style={{ height: 30, }}>
-                        {isLoading ? (
-                            <CircularProgress size={20} />
-                        ) : (
-                            <span>
-                                Prox...
-                            </span>
-                        )}
-                    </Button>
-                </FormControl>
+                            >
+                                {users.map((user) => {
+                                    return (
+                                        <MenuItem key={user.id} value={user.id}>{user.name}</MenuItem>
+                                    )
+                                })}
+                            </Select>
+                        </FormControl>
+                    ) : null}
+                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <FormControlLabel control={<Checkbox onChange={() => setRepeat(!repeat)} />} label="REPETIR" />
 
-            </Grid>
+                    </FormControl>
+                    <FormControl sx={{ m: 1, minWidth: 120 }}>
+                        <Button onClick={handleNextPass} variant={objectSelect && placesSelected && userSelected && days.length > 0 ? "contained" : "outlined"} color="primary" style={{ height: 30, }}>
+                            {isLoading ? (
+                                <CircularProgress size={20} />
+                            ) : (
+                                <span>
+                                    Prox...
+                                </span>
+                            )}
+                        </Button>
+                    </FormControl>
 
-            <DayPicker
-                locale={pt}
-                mode="multiple"
-                selected={days}
-                onSelect={setDays}
-                footer={footer}
-                styles={{
-                    'table': {
-                        minWidth: "70vw",
+                </Grid>
 
-                    },
-                    "day": {
-                        height: '90px',
-                        minWidth: "70%",
-                    },
-                    'cell': {
-                        alignItems: 'center',
-                        borderRadius: '4px',
-                        fontSize: cellHeight
-                    },
+                <DayPicker
+                    locale={pt}
+                    mode="multiple"
+                    selected={days}
+                    onSelect={setDays}
+                    styles={{
+                        'table': {
+                            minWidth: "70vw",
+
+                        },
+                        "day": {
+                            height: '90px',
+                            minWidth: "70%",
+                        },
+                        'cell': {
+                            alignItems: 'center',
+                            borderRadius: '4px',
+                            fontSize: cellHeight
+                        },
 
 
-                }}
-            />
-        </DashboardCard>
+                    }}
+                />
+            </DashboardCard>
     );
 };
 
