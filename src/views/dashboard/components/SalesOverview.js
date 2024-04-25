@@ -1,5 +1,5 @@
 import React, { useContext, useEffect } from 'react';
-import { Select, MenuItem, FormControl, InputLabel, FormControlLabel, Checkbox, Button, Grid, OutlinedInput, Chip, Box,  CircularProgress } from '@mui/material';
+import { Select, MenuItem, FormControl, InputLabel, FormControlLabel, Checkbox, Button, Grid, OutlinedInput, Chip, Box, CircularProgress } from '@mui/material';
 
 import DashboardCard from '../../../components/shared/DashboardCard';
 import { DayPicker } from 'react-day-picker';
@@ -118,21 +118,89 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
             const existe = objects.find((item) => item.name === personName[i])
             newObjects.push(existe.id)
         }
-        if (!newObjects || !placesSelected || !userSelected || days.length === 0) {
+        if (newObjects.length === 0 || !placesSelected || !userSelected || days.length === 0 || !companySelect) {
+            if (!companySelect) {
+                await Swal.fire({
+                    icon: 'info',
+                    title: 'Preencha o campo de Empresa',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    showConfirmButton: true,
+                    denyButtonText: 'Cancelar',
+                    confirmButtonText: 'Confirmar'
+                })
+            }
+            else if (newObjects.length === 0) {
+                console.log(newObjects)
+                await Swal.fire({
+                    icon: 'info',
+                    title: 'Preencha o campo de objeto',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    showConfirmButton: true,
+                    denyButtonText: 'Cancelar',
+                    confirmButtonText: 'Confirmar'
+                })
+
+            } else if (!placesSelected) {
+                await Swal.fire({
+                    icon: 'info',
+                    title: 'Preencha o campo de ambiente',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    showConfirmButton: true,
+                    denyButtonText: 'Cancelar',
+                    confirmButtonText: 'Confirmar'
+                })
+
+            } else if (!userSelected) {
+                await Swal.fire({
+                    icon: 'info',
+                    title: 'Preencha o campo de operário',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    showConfirmButton: true,
+                    denyButtonText: 'Cancelar',
+                    confirmButtonText: 'Confirmar'
+                })
+            } else if (days.length === 0) {
+                await Swal.fire({
+                    icon: 'info',
+                    title: 'Informe a data da solicitação',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    showConfirmButton: true,
+                    denyButtonText: 'Cancelar',
+                    confirmButtonText: 'Confirmar'
+                })
+
+            } else {
+                await Swal.fire({
+                    icon: 'info',
+                    title: 'Preecha todos os campos',
+                    showDenyButton: false,
+                    showCancelButton: false,
+                    showConfirmButton: true,
+                    denyButtonText: 'Cancelar',
+                    confirmButtonText: 'Confirmar'
+                })
+            }
+            setIsLoading(false)
+            return
+        } else {
             await Swal.fire({
-                icon: 'warning',
-                title: 'Preencha todos os campos',
-                showDenyButton: true,
+                icon: 'info',
+                title: 'Informe o horário na tela ao lado',
+                html: "<p>Busque a tela <strong>Horário da solicitação</strong></p>",
+                showDenyButton: false,
                 showCancelButton: false,
                 showConfirmButton: true,
                 denyButtonText: 'Cancelar',
                 confirmButtonText: 'Confirmar'
             })
-            setIsLoading(false)
-            return
-        }
+            editObject({ objects: newObjects, places: placesSelected, user: userSelected, repeat: repeat, date: days })
 
-        editObject({ objects: newObjects, places: placesSelected, user: userSelected, repeat: repeat, date: days })
+        }
         setIsLoading(false)
     }
 
@@ -164,9 +232,15 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
             typeof value === 'string' ? value.split(',') : value,
         );
     };
+
+    function changeObject(place) {
+        if (place.target.value === null) return
+        setPlacesSelected(place.target.value)
+    }
+
     return (
 
-        <DashboardCard title="Criar solicitação" >
+        <DashboardCard title="Criar solicitação">
             <Grid container spacing={1} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
 
                 <FormControl sx={{ m: 1, minWidth: 120 }} >
@@ -177,25 +251,33 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
                         onChange={(company) => handleCompany(company.target.value)}
 
                     >
-                        {companies.map((company) => {
-                            return (
-                                <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
-                            )
-                        })}
+                        {companies.length === 0 ? (
+                            <MenuItem value={null}>Cadastre uma empresa</MenuItem>
+                        ) : (
+                            companies.map((company) => {
+                                return (
+                                    <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
+                                )
+                            })
+                        )}
                     </Select>
                 </FormControl>
                 <FormControl sx={{ m: 1, minWidth: 120 }} >
                     <InputLabel >Ambientes</InputLabel>
                     <Select
                         value={placesSelected}
-                        onChange={(place) => setPlacesSelected(place.target.value)}
+                        onChange={(place) => changeObject(place)}
 
                     >
-                        {places.map((place) => {
-                            return (
-                                <MenuItem key={place.id} value={place.id}>{place.name}</MenuItem>
-                            )
-                        })}
+                        {places.length === 0 ? (
+                            <MenuItem value={null}>Selecione uma empresa ou Cadastre um ambiente</MenuItem>
+                        ) : (
+                            places.map((place) => {
+                                return (
+                                    <MenuItem key={place.id} value={place.id}>{place.name}</MenuItem>
+                                )
+                            })
+                        )}
                     </Select>
                 </FormControl>
 
@@ -217,14 +299,18 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
                         )}
                         MenuProps={MenuProps}
                     >
-                        {objects.map((name) => (
-                            <MenuItem
-                                key={name.id}
-                                value={name.name}
-                            >
-                                {name.name}
-                            </MenuItem>
-                        ))}
+                        {objects.length === 0 ? (
+                            <MenuItem value={null}>Selecione uma empresa ou Cadastre um objeto</MenuItem>
+                        ) : (
+                            objects.map((name) => (
+                                <MenuItem
+                                    key={name.id}
+                                    value={name.name}
+                                >
+                                    {name.name}
+                                </MenuItem>
+                            ))
+                        )}
                     </Select>
                     {/* {objects.map((object) => {
                             return (
@@ -259,11 +345,11 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
                         ) : (
                             <span>
                                 Prox...
-
                             </span>
                         )}
                     </Button>
                 </FormControl>
+
             </Grid>
 
             <DayPicker

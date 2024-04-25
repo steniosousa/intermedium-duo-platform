@@ -8,7 +8,6 @@ import BlankCard from '../../../components/shared/BlankCard';
 
 
 const Blog = ({ clear }) => {
-    console.log(clear)
     return (
         <Grid container spacing={3}>
             {clear && clear.evidences.map((product, index) => {
