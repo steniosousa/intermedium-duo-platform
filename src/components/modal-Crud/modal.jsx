@@ -180,15 +180,7 @@ export default function ModalCrud({ verb, action, openModal, companyId, companie
             const { data } = await Api.get(`/${route}/recover?companyId=${companyId}`)
             setItemsDeletion(data)
         } catch (error) {
-            await Swal.fire({
-                icon: 'error',
-                title: 'Erro ao criar gerente',
-                showDenyButton: false,
-                showCancelButton: false,
-                showConfirmButton: true,
-                denyButtonText: 'Cancelar',
-                confirmButtonText: 'ok'
-            })
+           console.log(error)
         }
         setLoading(false)
     }
@@ -235,6 +227,28 @@ export default function ModalCrud({ verb, action, openModal, companyId, companie
     }
 
 
+
+    //place edition
+    const [newName, setNewName] = useState('')
+    async function edition() {
+        try {
+            await Api.post(`/${pathDelete}/update/`, {
+                name: newName,
+                id: itemSelected
+            })
+            getAllObjects()
+        } catch (error) {
+            await Swal.fire({
+                icon: 'error',
+                title: 'Erro ao editar item',
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'ok'
+            })
+        }
+    }
 
 
     return (
@@ -423,6 +437,51 @@ export default function ModalCrud({ verb, action, openModal, companyId, companie
                             ) : (
                                 <span>
                                     Deletar
+
+                                </span>
+                            )}</Button>
+                        </FormControl>
+                    </FormControl>
+                ) : verb == "Editar" ? (
+                    <FormControl fullWidth>
+                        <InputLabel id="demo-simple-select-label">Editar</InputLabel>
+                        <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            value={pathDelete}
+                            label="Age"
+                            onChange={(index) => getAllObjects(index.target.value)}
+                            style={{ margin: 5 }}
+                        >
+                            <MenuItem value={"place"}>Ambiente</MenuItem>
+                            <MenuItem value={"objects"}>Objeto</MenuItem>
+                            <MenuItem value={"epis"}>EPI</MenuItem>
+                            <MenuItem value={"companies"}>Empresa</MenuItem>
+                            <MenuItem value={"user"}>Operador</MenuItem>
+                        </Select>
+                        <FormControl >
+                            <InputLabel id="demo-simple-select-label">Editar</InputLabel>
+                            <Select
+                                labelId="demo-simple-select-label"
+                                id="demo-simple-select"
+                                label="Age"
+                                onChange={(e) => setItemSelected(e.target.value)}
+                                style={{ margin: 5 }}
+                            >
+                                <MenuItem disabled value={null}>Selecione a categoria</MenuItem>
+                                {itemsDeletion.map((object) => {
+                                    return (
+                                        <MenuItem value={object.id}>{object.name}</MenuItem>
+                                    )
+                                })}
+                            </Select>
+                            <TextField style={{ margin: 5 }} onChange={(event) => setNewName(event.target.value)} id="outlined-basic" label="Novo nome" variant="outlined" />
+
+                            <Button variant="contained" onClick={edition}>{isLoading ? (
+                                <CircularProgress size={20} />
+                            ) : (
+                                <span>
+                                    Editar
 
                                 </span>
                             )}</Button>
