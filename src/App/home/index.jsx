@@ -15,11 +15,12 @@ function HomeApp() {
 
     async function getCleanings() {
         setIsLoading(true)
-        const userId = JSON.parse(operator).id
         if (!operator) {
             setIsLoading(false)
             return
         }
+        const userId = JSON.parse(operator).id
+
         try {
             const { data } = await Api.get('cleaning/recover/app', { params: { userId, page: 1 } })
             setCleanings(data)
