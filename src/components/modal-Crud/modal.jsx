@@ -211,9 +211,11 @@ export default function ModalCrud({ verb, action, openModal, companyId, companie
         })
 
         if (!confirm.isConfirmed) return
+
         try {
-            await Api.delete(`/${pathDelete}/delete?${pathDelete}Id=${itemSelected}`)
+            await Api.delete(`/${pathDelete}/delete?${pathDelete == "companies" ? "company" : pathDelete}Id=${itemSelected}`)
             action()
+            findCompanies()
             await Swal.fire({
                 icon: 'success',
                 title: 'Deleção bem sucedida',
@@ -250,6 +252,7 @@ export default function ModalCrud({ verb, action, openModal, companyId, companie
             })
             action()
             getAllObjects(pathDelete)
+            findCompanies()
             await Swal.fire({
                 icon: 'success',
                 title: 'Edição concluída',
@@ -439,7 +442,6 @@ export default function ModalCrud({ verb, action, openModal, companyId, companie
                             <MenuItem value={"objects"}>Objeto</MenuItem>
                             <MenuItem value={"epis"}>EPI</MenuItem>
                             <MenuItem value={"companies"}>Empresa</MenuItem>
-                            <MenuItem value={"user"}>Operador</MenuItem>
                         </Select>
                         <FormControl >
                             <InputLabel id="demo-simple-select-label">Deletar</InputLabel>

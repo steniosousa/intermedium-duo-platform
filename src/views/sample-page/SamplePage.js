@@ -1,10 +1,12 @@
-import { Box, Button, FormControl, InputLabel,  MenuItem, Modal, Select, TextField } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { Box, Button, FormControl, InputLabel, MenuItem, Modal, Select, TextField } from '@mui/material';
+import React, { useContext, useEffect, useState } from 'react';
 import Api from 'src/api/service';
 import Swal from 'sweetalert2';
 import MapContainer from './Map/MapContainer';
+import AuthContext from 'src/contexto/AuthContext';
 
 const SamplePage = () => {
+  const { user } = useContext(AuthContext)
   const [driver, setDriver] = useState('')
   const [plate, setPlate] = useState('')
   const [trucks, setTrucks] = useState([])
@@ -120,6 +122,21 @@ const SamplePage = () => {
   }, [])
 
 
+  useEffect(async () => {
+    if (JSON.parse(user).role === "ADMIN") {
+      await Swal.fire({
+        icon: 'info',
+        title: "Sem permissão para acessar tal rota",
+        showDenyButton: false,
+        showCancelButton: false,
+        showConfirmButton: true,
+        denyButtonText: 'Cancelar',
+        confirmButtonText: 'Ok'
+      })
+      window.location.reload()
+    }
+  }, [user])
+
 
   return (
     <div style={{ height: '100vh', width: "100%" }}>
@@ -127,7 +144,7 @@ const SamplePage = () => {
         <InputLabel htmlFor="input-with-icon-adornment" >
           Cadastro de caminhões
         </InputLabel>
-        <FormControl sx={{  width: '35ch' }}>
+        <FormControl sx={{ width: '35ch' }}>
           <Box
             component="form"
             sx={{
@@ -148,7 +165,7 @@ const SamplePage = () => {
 
       <div style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', width: "50%" }}>
         <FormControl
-          sx={{  width: '25ch', m:1 }}
+          sx={{ width: '25ch', m: 1 }}
         >
           <InputLabel id="demo-simple-select-label">Caminhão</InputLabel>
           <Select

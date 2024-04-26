@@ -159,12 +159,6 @@ const Profile = () => {
           <ListItemText onClick={() => setOpenModal(!openModal)}>Editar Perfil</ListItemText>
         </MenuItem>
 
-        <MenuItem>
-          <ListItemIcon>
-            <IconListCheck width={20} />
-          </ListItemIcon>
-          <ListItemText>My Tasks</ListItemText>
-        </MenuItem>
         <Box mt={1} py={1} px={2}>
           <Button variant="outlined" color="primary" fullWidth onClick={Logout}>
             Sair

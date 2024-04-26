@@ -81,7 +81,6 @@ const profile = [
   },
   {
     href: '/apps/notes',
-    title: 'My Tasks',
     subtitle: 'To-do and Daily Tasks',
     icon: icon3,
   },
