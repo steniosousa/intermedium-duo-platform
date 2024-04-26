@@ -9,7 +9,8 @@ import 'react-day-picker/dist/style.css';
 import AuthContext from 'src/contexto/AuthContext';
 import Swal from 'sweetalert2';
 import Api from 'src/api/service';
-const SalesOverview = ({ editObject, setCompaniesFind }) => {
+import ModalSolicitation from 'src/components/modal-Solicitation/modal';
+const SalesOverview = ({  companies }) => {
 
     const { user } = useContext(AuthContext)
     const initialDays = [];
@@ -17,7 +18,6 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
     const minHeight = 6;
     const [objects, setObjects] = useState([])
     const [places, setPlaces] = useState([])
-    const [companies, setCompanies] = useState([])
     const [users, setUsers] = useState([])
     const [companySelect, setcompanyIdSelect] = useState('')
     const [objectSelect, setObjectSelect] = useState([])
@@ -27,7 +27,7 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
     const [personName, setPersonName] = React.useState([]);
     const [isLoading, setIsLoading] = useState(false)
     const [searchUser, setSeactUser] = useState(false)
-
+    const [objCreateSolicitation, setObjCreateSolicition] = useState({})
     let cellHeight = Math.min(
         Math.max(minHeight * 5.5)
     );
@@ -35,34 +35,7 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
 
 
 
-    async function findObjects() {
-        const managerId = JSON.parse(user).id
-        try {
-            const { data } = await Api.get('/companies/recover/companies', {
-                params: {
-                    managerId
-                }
-            })
-
-            const newComapnues = data.map((item) => {
-                return { name: item.company.name, id: item.company.id }
-            })
-
-            setCompanies(newComapnues)
-            setCompaniesFind(newComapnues)
-        } catch (error) {
-            await Swal.fire({
-                icon: 'error',
-                title: 'Erro ao recuperar dados',
-                showDenyButton: true,
-                showCancelButton: false,
-                showConfirmButton: true,
-                denyButtonText: 'Cancelar',
-                confirmButtonText: 'Confirmar'
-            })
-        }
-
-    }
+  
 
     async function getUsersForCompany() {
         if (!companySelect) return
@@ -127,7 +100,6 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
                 })
             }
             else if (newObjects.length === 0) {
-                console.log(newObjects)
                 await Swal.fire({
                     icon: 'info',
                     title: 'Preencha o campo de objeto',
@@ -184,31 +156,24 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
             setIsLoading(false)
             return
         } else {
-            await Swal.fire({
-                icon: 'info',
-                title: 'Informe o horário na tela ao lado',
-                html: "<p>Busque a tela <strong>Horário da solicitação</strong></p>",
-                showDenyButton: false,
-                showCancelButton: false,
-                showConfirmButton: true,
-                denyButtonText: 'Cancelar',
-                confirmButtonText: 'Confirmar'
-            })
-            editObject({ objects: newObjects, places: placesSelected, user: userSelected, repeat: repeat, date: days })
-
+            handleOpenModal(newObjects)
         }
         setIsLoading(false)
     }
 
+    const [openModal, setOpenModal] = useState(false)
+    function handleOpenModal(newObjects) {
+        setObjCreateSolicition({ objects: newObjects, places: placesSelected, user: userSelected, repeat: repeat, date: days })
+        setOpenModal(!openModal)
+
+    }
 
 
     useEffect(() => {
         getUsersForCompany()
     }, [searchUser])
 
-    useEffect(() => {
-        findObjects()
-    }, [user !== null])
+
 
     const ITEM_HEIGHT = 48;
     const ITEM_PADDING_TOP = 8;
@@ -235,142 +200,142 @@ const SalesOverview = ({ editObject, setCompaniesFind }) => {
     }
 
     return (
-            <DashboardCard title="Criar solicitação" background="#f2f2f2" >
-                <Grid container spacing={1} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+        <DashboardCard title="Criar solicitação" background="#f2f2f2" >
+            <Grid container spacing={1} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+                {openModal ? <ModalSolicitation action={handleOpenModal} openModal={openModal} initialObject={objCreateSolicitation} /> : null}
+                <FormControl sx={{ m: 1, minWidth: 120 }} >
+                    <InputLabel >Empresa</InputLabel>
+                    <Select
+                        value={companySelect}
+                        label="Age"
+                        onChange={(company) => handleCompany(company.target.value)}
 
-                    <FormControl sx={{ m: 1, minWidth: 120 }} >
-                        <InputLabel >Empresa</InputLabel>
-                        <Select
-                            value={companySelect}
-                            label="Age"
-                            onChange={(company) => handleCompany(company.target.value)}
+                    >
+                        {companies.length === 0 ? (
+                            <MenuItem value={null}>Cadastre uma empresa</MenuItem>
+                        ) : (
+                            companies.map((company) => {
+                                return (
+                                    <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
+                                )
+                            })
+                        )}
+                    </Select>
+                </FormControl>
+                <FormControl sx={{ m: 1, minWidth: 120 }} >
+                    <InputLabel >Ambientes</InputLabel>
+                    <Select
+                        value={placesSelected}
+                        onChange={(place) => changeObject(place)}
 
-                        >
-                            {companies.length === 0 ? (
-                                <MenuItem value={null}>Cadastre uma empresa</MenuItem>
-                            ) : (
-                                companies.map((company) => {
-                                    return (
-                                        <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
-                                    )
-                                })
-                            )}
-                        </Select>
-                    </FormControl>
-                    <FormControl sx={{ m: 1, minWidth: 120 }} >
-                        <InputLabel >Ambientes</InputLabel>
-                        <Select
-                            value={placesSelected}
-                            onChange={(place) => changeObject(place)}
+                    >
+                        {places.length === 0 ? (
+                            <MenuItem value={null}>Selecione uma empresa ou Cadastre um ambiente</MenuItem>
+                        ) : (
+                            places.map((place) => {
+                                return (
+                                    <MenuItem key={place.id} value={place.id}>{place.name}</MenuItem>
+                                )
+                            })
+                        )}
+                    </Select>
+                </FormControl>
 
-                        >
-                            {places.length === 0 ? (
-                                <MenuItem value={null}>Selecione uma empresa ou Cadastre um ambiente</MenuItem>
-                            ) : (
-                                places.map((place) => {
-                                    return (
-                                        <MenuItem key={place.id} value={place.id}>{place.name}</MenuItem>
-                                    )
-                                })
-                            )}
-                        </Select>
-                    </FormControl>
-
-                    <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        <InputLabel id="demo-multiple-chip-label">Objetos</InputLabel>
-                        <Select
-                            labelId="demo-multiple-chip-label"
-                            id="demo-multiple-chip"
-                            multiple
-                            value={personName}
-                            onChange={handleChange}
-                            input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                            renderValue={(selected) => (
-                                <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                                    {selected.map((value) => (
-                                        <Chip key={value} label={value} />
-                                    ))}
-                                </Box>
-                            )}
-                            MenuProps={MenuProps}
-                        >
-                            {objects.length === 0 ? (
-                                <MenuItem value={null}>Selecione uma empresa ou Cadastre um objeto</MenuItem>
-                            ) : (
-                                objects.map((name) => (
-                                    <MenuItem
-                                        key={name.id}
-                                        value={name.name}
-                                    >
-                                        {name.name}
-                                    </MenuItem>
-                                ))
-                            )}
-                        </Select>
-                        {/* {objects.map((object) => {
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                    <InputLabel id="demo-multiple-chip-label">Objetos</InputLabel>
+                    <Select
+                        labelId="demo-multiple-chip-label"
+                        id="demo-multiple-chip"
+                        multiple
+                        value={personName}
+                        onChange={handleChange}
+                        input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                        renderValue={(selected) => (
+                            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                                {selected.map((value) => (
+                                    <Chip key={value} label={value} />
+                                ))}
+                            </Box>
+                        )}
+                        MenuProps={MenuProps}
+                    >
+                        {objects.length === 0 ? (
+                            <MenuItem value={null}>Selecione uma empresa ou Cadastre um objeto</MenuItem>
+                        ) : (
+                            objects.map((name) => (
+                                <MenuItem
+                                    key={name.id}
+                                    value={name.name}
+                                >
+                                    {name.name}
+                                </MenuItem>
+                            ))
+                        )}
+                    </Select>
+                    {/* {objects.map((object) => {
                             return (
                                 <MenuItem key={object.id} value={object}>{object.name}</MenuItem>
                             )
                         })} */}
+                </FormControl>
+                {users.length > 0 ? (
+                    <FormControl sx={{ m: 1, minWidth: 120 }} >
+                        <InputLabel >Operário</InputLabel>
+                        <Select
+                            value={userSelected}
+                            onChange={(user) => setUserSelected(user.target.value)}
+
+                        >
+                            {users.map((user) => {
+                                return (
+                                    <MenuItem key={user.id} value={user.id}>{user.name}</MenuItem>
+                                )
+                            })}
+                        </Select>
                     </FormControl>
-                    {users.length > 0 ? (
-                        <FormControl sx={{ m: 1, minWidth: 120 }} >
-                            <InputLabel >Operário</InputLabel>
-                            <Select
-                                value={userSelected}
-                                onChange={(user) => setUserSelected(user.target.value)}
+                ) : null}
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                    <FormControlLabel control={<Checkbox onChange={() => setRepeat(!repeat)} />} label="Recorrente" />
 
-                            >
-                                {users.map((user) => {
-                                    return (
-                                        <MenuItem key={user.id} value={user.id}>{user.name}</MenuItem>
-                                    )
-                                })}
-                            </Select>
-                        </FormControl>
-                    ) : null}
-                    <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        <FormControlLabel control={<Checkbox onChange={() => setRepeat(!repeat)} />} label="REPETIR" />
+                </FormControl>
+                <FormControl sx={{ m: 1, minWidth: 120 }}>
+                    <Button onClick={handleNextPass} variant={objectSelect && placesSelected && userSelected && days.length > 0 ? "contained" : "outlined"} color="primary" style={{ height: 30, }}>
+                        {isLoading ? (
+                            <CircularProgress size={20} />
+                        ) : (
+                            <span>
+                                Selecionar horários
+                            </span>
+                        )}
+                    </Button>
+                </FormControl>
 
-                    </FormControl>
-                    <FormControl sx={{ m: 1, minWidth: 120 }}>
-                        <Button onClick={handleNextPass} variant={objectSelect && placesSelected && userSelected && days.length > 0 ? "contained" : "outlined"} color="primary" style={{ height: 30, }}>
-                            {isLoading ? (
-                                <CircularProgress size={20} />
-                            ) : (
-                                <span>
-                                    Prox...
-                                </span>
-                            )}
-                        </Button>
-                    </FormControl>
+            </Grid>
 
-                </Grid>
+            <DayPicker
+                locale={pt}
+                mode="multiple"
+                selected={days}
+                onSelect={setDays}
+                styles={{
+                    'table': {
+                        minWidth: "70vw",
 
-                <DayPicker
-                    locale={pt}
-                    mode="multiple"
-                    selected={days}
-                    onSelect={setDays}
-                    styles={{
-                        'table': {
-                            minWidth: "70vw",
-
-                        },
-                        "day": {
-                            height: '90px',
-                            minWidth: "70%",
-                        },
-                        'cell': {
-                            alignItems: 'center',
-                            borderRadius: '4px',
-                            fontSize: cellHeight
-                        },
+                    },
+                    "day": {
+                        height: '90px',
+                        minWidth: "70%",
+                    },
+                    'cell': {
+                        alignItems: 'center',
+                        borderRadius: '4px',
+                        fontSize: cellHeight
+                    },
 
 
-                    }}
-                />
-            </DashboardCard>
+                }}
+            />
+        </DashboardCard>
     );
 };
 

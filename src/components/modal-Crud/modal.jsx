@@ -1,11 +1,10 @@
-import { Box, Button, Chip, CircularProgress, FormControl, FormHelperText, Grid, Input, InputLabel, MenuItem, Modal, OutlinedInput, Select, TextField, Typography } from "@mui/material"
-import { useEffect } from "react";
+import { Box, Button, CircularProgress, FormControl, InputLabel, MenuItem, Modal, OutlinedInput, Select, TextField, Typography } from "@mui/material"
 import { useContext, useState } from "react";
 import Api from "src/api/service";
 import AuthContext from "src/contexto/AuthContext";
 import Swal from "sweetalert2";
 
-export default function ModalCrud({ verb, action, openModal, companyId, companies }) {
+export default function ModalCrud({ verb, action, openModal, companyId, companies, findCompanies }) {
     const [path, setPath] = useState('');
     const { user } = useContext(AuthContext)
     const [isLoading, setLoading] = useState(false)
@@ -24,6 +23,7 @@ export default function ModalCrud({ verb, action, openModal, companyId, companie
             },
         },
     };
+
     async function handleCreate() {
         if (path == "manager") {
             const companiesSend = companiesId.map((company) => {
@@ -168,7 +168,6 @@ export default function ModalCrud({ verb, action, openModal, companyId, companie
 
 
     // place deletion
-
     const [itemsDeletion, setItemsDeletion] = useState([])
     const [pathDelete, setPathDelete] = useState('')
     const [itemSelected, setItemSelected] = useState('')
@@ -176,11 +175,24 @@ export default function ModalCrud({ verb, action, openModal, companyId, companie
     async function getAllObjects(route) {
         setPathDelete(route)
         setLoading(true)
+        if (route === "companies") {
+            setItemsDeletion(companies)
+            setLoading(false)
+            return
+        }
         try {
             const { data } = await Api.get(`/${route}/recover?companyId=${companyId}`)
             setItemsDeletion(data)
         } catch (error) {
-           console.log(error)
+            await Swal.fire({
+                icon: 'error',
+                title: 'Erro ao recuperar items',
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'ok'
+            })
         }
         setLoading(false)
     }
@@ -236,8 +248,22 @@ export default function ModalCrud({ verb, action, openModal, companyId, companie
                 name: newName,
                 id: itemSelected
             })
-            getAllObjects()
+            action()
+            getAllObjects(pathDelete)
+            await Swal.fire({
+                icon: 'success',
+                title: 'Edição concluída',
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'ok'
+            })
+            if (pathDelete === "companies") {
+                findCompanies()
+            }
         } catch (error) {
+            action()
             await Swal.fire({
                 icon: 'error',
                 title: 'Erro ao editar item',
@@ -280,7 +306,7 @@ export default function ModalCrud({ verb, action, openModal, companyId, companie
                                 <MenuItem value={"epis"}>EPI</MenuItem>
                                 <MenuItem value={"companies"}>Empresa</MenuItem>
                                 <MenuItem value={"user"}>Operador</MenuItem>
-                                {JSON.parse(user).role !== "ADMIN" ? (
+                                {JSON.parse(user).role === "ADMIN" ? (
                                     <MenuItem value={"manager"}>Gerente</MenuItem>
                                 ) : null}
                             </Select>

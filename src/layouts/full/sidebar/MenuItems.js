@@ -22,22 +22,22 @@ const Menuitems = [
     icon: IconAperture,
     href: '/localiza',
   },
-  {
-    navlabel: true,
-    subheader: 'Utilitários',
-  },
-  {
-    id: uniqueId(),
-    title: 'Perfil',
-    icon: IconUserCircle,
-    href: '/ui/Perfil',
-  },
-  {
-    id: uniqueId(),
-    title: 'Shadow',
-    icon: IconCopy,
-    href: '/ui/shadow',
-  },
+  // {
+  //   navlabel: true,
+  //   subheader: 'Utilitários',
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Perfil',
+  //   icon: IconUserCircle,
+  //   href: '/ui/Perfil',
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Shadow',
+  //   icon: IconCopy,
+  //   href: '/ui/shadow',
+  // },
   // {
   //   navlabel: true,
   //   subheader: 'Autenticação',
@@ -54,16 +54,16 @@ const Menuitems = [
   //   icon: IconUserPlus,
   //   href: '/auth/register',
   // },
-  {
-    navlabel: true,
-    subheader: 'Extra',
-  },
-  {
-    id: uniqueId(),
-    title: 'Icons',
-    icon: IconMoodHappy,
-    href: '/icons',
-  },
+  // {
+  //   navlabel: true,
+  //   subheader: 'Extra',
+  // },
+  // {
+  //   id: uniqueId(),
+  //   title: 'Icons',
+  //   icon: IconMoodHappy,
+  //   href: '/icons',
+  // },
 
 ];
 

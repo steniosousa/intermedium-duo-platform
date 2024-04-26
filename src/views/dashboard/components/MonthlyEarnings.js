@@ -1,12 +1,10 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import { InputLabel, Select, FormControl, MenuItem, TextField, Button, Grid, OutlinedInput, Chip, Box, CircularProgress } from '@mui/material';
 import DashboardCard from '../../../components/shared/DashboardCard';
-import Api from 'src/api/service';
 import Swal from 'sweetalert2';
-import AuthContext from 'src/contexto/AuthContext';
 import ModalCrud from 'src/components/modal-Crud/modal';
 
-const MonthlyEarnings = ({ companies }) => {
+const MonthlyEarnings = ({ companies, findCompanies }) => {
   const [openModal, setOpenModal] = useState(false)
   const [verb, setVerb] = useState('')
   const [companySelected, setCompanySelected] = useState('')
@@ -29,10 +27,12 @@ const MonthlyEarnings = ({ companies }) => {
     setVerb(actionModal)
   }
 
-
+  
+  
 
   return (
     <DashboardCard
+    background="#f2f2f2"
       title="Configurações"
       action={
         <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -51,7 +51,7 @@ const MonthlyEarnings = ({ companies }) => {
         </FormControl>
       }
     >
-      {openModal ? <ModalCrud verb={verb} action={handleopenModal} openModal={openModal} companyId={companySelected} companies={companies} /> : null}
+      {openModal ? <ModalCrud findCompanies={findCompanies} verb={verb} action={handleopenModal} openModal={openModal} companyId={companySelected} companies={companies} /> : null}
       <Grid style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
         <Button variant={"contained"} color="primary" style={{ height: 30 }} onClick={() => handleopenModal('Cadastrar')}>
           <span>

@@ -5,20 +5,21 @@ import Api from "src/api/service";
 import Swal from "sweetalert2";
 import 'jspdf-autotable';
 import moment from "moment";
-import {  useState } from "react";
+import { useState } from "react";
 
-export default function ListOperator({ Listuser, choseUser }) {
+export default function ListOperator({ Listuser, choseUser, action }) {
     const pdf = new jsPDF();
     const [isHovered, setIsHovered] = useState(false);
 
     const handleMouseEnter = () => setIsHovered(true);
     const handleMouseLeave = () => setIsHovered(false);
+
     async function generatePdf(userId, name) {
         let dataForPdf;
         const confirm = await Swal.fire({
             icon: 'info',
             title: 'Deseja gerar relatório?',
-            showDenyButton: false,
+            showDenyButton: true,
             showCancelButton: false,
             showConfirmButton: true,
             denyButtonText: 'Cancelar',
@@ -101,22 +102,22 @@ export default function ListOperator({ Listuser, choseUser }) {
 
     async function disableUser(userId, onOff) {
         const deactivatedAt = onOff ? null : new Date()
+        const confirm = await Swal.fire({
+            icon: 'warning',
+            title: 'Alterar status de operário?',
+            showDenyButton: true,
+            showCancelButton: false,
+            showConfirmButton: true,
+            denyButtonText: 'Cancelar',
+            confirmButtonText: 'Confirmar'
+        })
+        if (!confirm.isConfirmed) return
         try {
-            const confirm = await Swal.fire({
-                icon: 'warning',
-                title: 'Desativar operário?',
-                showDenyButton: true,
-                showCancelButton: false,
-                showConfirmButton: true,
-                denyButtonText: 'Cancelar',
-                confirmButtonText: 'Confirmar'
-            })
-            if (confirm.isDenied) return
             await Api.post('user/update', {
                 id: userId,
                 deactivatedAt
             })
-
+            action()
         }
         catch {
             await Swal.fire({
@@ -151,8 +152,18 @@ export default function ListOperator({ Listuser, choseUser }) {
                 </TimelineSeparator>
                 <TimelineContent>{Listuser.name}</TimelineContent>
             </TimelineItem>
-            <Button onClick={() => generatePdf(Listuser.id, Listuser.name)} style={{ zIndex: 999 }} variant="contained">Relatório</Button>
-            <Switch defaultChecked={Listuser.deactivatedAt == null ? true : false} value={Listuser.deactivatedAt} inputProps={{ 'aria-label': 'Switch A' }} onChange={(e) => disableUser(Listuser.id, e.target.value)} />
+            <Button onClick={() => generatePdf(Listuser.id, Listuser.name)} variant="contained">Relatório</Button>
+            {Listuser.deactivatedAt != null ? (
+                <Button variant="contained" color="success" onClick={() => disableUser(Listuser.id, Listuser.deactivatedAt)}>
+                    Ativar
+                </Button>
+
+            ) : (
+                <Button variant="outlined" color="error" onClick={() => disableUser(Listuser.id, Listuser.deactivatedAt)}>
+                    Deletar
+                </Button>
+
+            )}
         </Timeline>
     )
 }

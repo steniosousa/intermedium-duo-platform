@@ -65,10 +65,12 @@ const ProductPerformance = ({ userId, setCleaning }) => {
             const { data } = await Api.get('/cleaning/recover', {
                 params: { userId, page }
             });
+            console.log(data)
             setCleanings(data.cleanings)
             currentPage(data.total)
 
         } catch (error) {
+            console.log(error)
             await Swal.fire({
                 icon: 'error',
                 title: 'Erro ao recuperar dados das solicitações',
@@ -112,6 +114,16 @@ const ProductPerformance = ({ userId, setCleaning }) => {
     }
 
     async function handleAvaliation() {
+        const confirm = await Swal.fire({
+            icon: 'question',
+            title: "Deseja criar avaliação para essa solicitação?",
+            showDenyButton: true,
+            showCancelButton: false,
+            showConfirmButton: true,
+            denyButtonText: 'Cancelar',
+            confirmButtonText: 'Sim'
+        })
+        if (!confirm.isConfirmed) return
         const send = {
             scheduleId: scheduleId,
             status: avaliation,
@@ -123,7 +135,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
         try {
             await Api.post('avaliation/create', send)
             setOpen(!open)
-            getAllDatas(1)
+            
             setEpisSelected('')
             setAvaliation('')
             setScheduleId('')
@@ -148,6 +160,8 @@ const ProductPerformance = ({ userId, setCleaning }) => {
                 confirmButtonText: 'Confirmar'
             })
         }
+        getAllDatas(1)
+
     }
     async function handleModal(e) {
         if (e.status === "PENDENTE") {
@@ -236,7 +250,6 @@ const ProductPerformance = ({ userId, setCleaning }) => {
                     <TableBody>
 
                         {cleanings.map((product) => {
-
                             const dateObject = moment(product.createdAt);
                             const data = dateObject.format("DD-MM-YYYY - h:m");
                             return (
