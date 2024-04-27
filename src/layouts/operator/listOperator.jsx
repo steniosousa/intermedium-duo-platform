@@ -1,11 +1,12 @@
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineOppositeContent, TimelineSeparator } from "@mui/lab";
-import { Button, Switch } from "@mui/material";
 import jsPDF from "jspdf";
 import Api from "src/api/service";
 import Swal from "sweetalert2";
 import 'jspdf-autotable';
 import moment from "moment";
 import { useState } from "react";
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 export default function ListOperator({ Listuser, choseUser, action }) {
     const pdf = new jsPDF();
@@ -17,8 +18,8 @@ export default function ListOperator({ Listuser, choseUser, action }) {
     async function generatePdf(userId, name) {
         let dataForPdf;
         const confirm = await Swal.fire({
-            icon: 'info',
-            title: 'Deseja gerar relatório?',
+            icon: 'question',
+            title: 'Gerar relatório?',
             showDenyButton: true,
             showCancelButton: false,
             showConfirmButton: true,
@@ -103,8 +104,8 @@ export default function ListOperator({ Listuser, choseUser, action }) {
     async function disableUser(userId, onOff) {
         const deactivatedAt = onOff ? null : new Date()
         const confirm = await Swal.fire({
-            icon: 'warning',
-            title: 'Alterar status de operário?',
+            icon: 'question',
+            title: 'Excluir operário?',
             showDenyButton: true,
             showCancelButton: false,
             showConfirmButton: true,
@@ -141,8 +142,9 @@ export default function ListOperator({ Listuser, choseUser, action }) {
                 display: 'flex',
                 flexDirection: 'row',
                 alignItems: 'center',
-                justifyContent: 'center',
-                background: isHovered ? '#f0ffff' : 'transparent'
+                justifyContent: 'space-between',
+                background: isHovered ? '#f0ffff' : 'transparent',
+                width:'100%'
             }}>
             <TimelineItem style={{ cursor: 'pointer', alignItems: 'center', justifyContent: 'center' }} onClick={() => choseUser(Listuser.id)}>
                 <TimelineOppositeContent>{Listuser.loginHash}</TimelineOppositeContent>
@@ -152,18 +154,10 @@ export default function ListOperator({ Listuser, choseUser, action }) {
                 </TimelineSeparator>
                 <TimelineContent>{Listuser.name}</TimelineContent>
             </TimelineItem>
-            <Button onClick={() => generatePdf(Listuser.id, Listuser.name)} variant="contained">Relatório</Button>
-            {Listuser.deactivatedAt != null ? (
-                <Button variant="contained" color="success" onClick={() => disableUser(Listuser.id, Listuser.deactivatedAt)}>
-                    Ativar
-                </Button>
-
-            ) : (
-                <Button variant="outlined" color="error" onClick={() => disableUser(Listuser.id, Listuser.deactivatedAt)}>
-                    Deletar
-                </Button>
-
-            )}
+            <PictureAsPdfIcon onClick={() => generatePdf(Listuser.id, Listuser.name)} style={{cursor:"pointer"}}/>
+            <DeleteIcon onClick={() => disableUser(Listuser.id, Listuser.deactivatedAt)}  style={{color:'red', cursor:'pointer'}}/> 
+            
+           
         </Timeline>
     )
 }

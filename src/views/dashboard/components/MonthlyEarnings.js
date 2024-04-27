@@ -3,7 +3,9 @@ import { InputLabel, Select, FormControl, MenuItem, TextField, Button, Grid, Out
 import DashboardCard from '../../../components/shared/DashboardCard';
 import Swal from 'sweetalert2';
 import ModalCrud from 'src/components/modal-Crud/modal';
-
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
+import SaveAsIcon from '@mui/icons-material/SaveAs';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
 const MonthlyEarnings = ({ companies, findCompanies }) => {
   const [openModal, setOpenModal] = useState(false)
   const [verb, setVerb] = useState('')
@@ -27,12 +29,10 @@ const MonthlyEarnings = ({ companies, findCompanies }) => {
     setVerb(actionModal)
   }
 
-  
-  
 
   return (
     <DashboardCard
-    background="#f2f2f2"
+      background="#f2f2f2"
       title="Configurações"
       action={
         <FormControl sx={{ m: 1, minWidth: 120 }}>
@@ -57,19 +57,22 @@ const MonthlyEarnings = ({ companies, findCompanies }) => {
           <span>
             Cadastro
           </span>
+          <LibraryAddIcon />
         </Button>
         <Button variant={"contained"} color="primary" style={{ height: 30 }} onClick={() => handleopenModal('Deletar')}>
           <span>
             Deleção
           </span>
+          <DeleteForeverIcon />
         </Button>
         <Button variant={"contained"} color="primary" style={{ height: 30 }} onClick={() => handleopenModal('Editar')}>
           <span>
             Edição
           </span>
+          <SaveAsIcon />
+
         </Button>
       </Grid>
-
 
     </DashboardCard >
   );

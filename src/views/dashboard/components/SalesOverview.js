@@ -1,18 +1,16 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { Select, MenuItem, FormControl, InputLabel, FormControlLabel, Checkbox, Button, Grid, OutlinedInput, Chip, Box, CircularProgress } from '@mui/material';
-
+import AlarmOnIcon from '@mui/icons-material/AlarmOn';
 import DashboardCard from '../../../components/shared/DashboardCard';
 import { DayPicker } from 'react-day-picker';
 import { useState } from 'react';
 import { pt } from 'date-fns/locale';
 import 'react-day-picker/dist/style.css';
-import AuthContext from 'src/contexto/AuthContext';
 import Swal from 'sweetalert2';
 import Api from 'src/api/service';
 import ModalSolicitation from 'src/components/modal-Solicitation/modal';
-const SalesOverview = ({  companies }) => {
+const SalesOverview = ({ companies }) => {
 
-    const { user } = useContext(AuthContext)
     const initialDays = [];
     const [days, setDays] = useState(initialDays);
     const minHeight = 6;
@@ -35,7 +33,7 @@ const SalesOverview = ({  companies }) => {
 
 
 
-  
+
 
     async function getUsersForCompany() {
         if (!companySelect) return
@@ -216,7 +214,7 @@ const SalesOverview = ({  companies }) => {
                         ) : (
                             companies.map((company) => {
                                 return (
-                                    <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
+                                    <MenuItem translate="no" key={company.id} value={company.id}>{company.name}</MenuItem>
                                 )
                             })
                         )}
@@ -303,9 +301,12 @@ const SalesOverview = ({  companies }) => {
                         {isLoading ? (
                             <CircularProgress size={20} />
                         ) : (
-                            <span>
-                                Selecionar horários
-                            </span>
+                            <>
+                                <span>
+                                    Selecionar horários
+                                </span>
+                                <AlarmOnIcon />
+                            </>
                         )}
                     </Button>
                 </FormControl>

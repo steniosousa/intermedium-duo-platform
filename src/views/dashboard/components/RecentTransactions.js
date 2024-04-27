@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import DashboardCard from '../../../components/shared/DashboardCard';
-
 import { CircularProgress, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
 import Swal from 'sweetalert2';
 import Api from 'src/api/service';
@@ -49,10 +48,12 @@ const RecentTransactions = ({ choseUser, companies }) => {
       >
         {companies.map((company) => {
           return (
-            <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
+
+            <MenuItem key={company.id} value={company.id} >{company.name}</MenuItem>
           )
         })}
       </Select>
+
     </FormControl>
     }>
       <>

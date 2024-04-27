@@ -11,6 +11,7 @@ import MonthlyEarnings from './components/MonthlyEarnings';
 import Swal from 'sweetalert2';
 import Api from 'src/api/service';
 import AuthContext from 'src/contexto/AuthContext';
+import AreaForms from './components/AreaForms';
 
 
 const Dashboard = () => {
@@ -84,6 +85,7 @@ const Dashboard = () => {
                 <MonthlyEarnings companies={companies} findCompanies={findCompanies} />
               </Grid>
               <Grid item xs={12}>
+                <AreaForms companies={companies} />
               </Grid>
             </Grid>
           </Grid>

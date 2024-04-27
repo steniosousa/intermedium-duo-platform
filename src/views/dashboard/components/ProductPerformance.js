@@ -48,15 +48,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
     const [description, setDescription] = useState('')
     const [scheduleId, setScheduleId] = useState('')
     const companyId = JSON.parse(user).companyId[0].companyId
-    function currentPage(totalPage) {
-        if (totalPage % 5 !== 0) {
-            setPagination(parseInt((totalPage / 5).toFixed(0)) + 1)
-        } else {
-            setPagination(totalPage)
 
-        }
-
-    }
 
     async function getAllDatas(page) {
         setLoading(true)
@@ -65,12 +57,10 @@ const ProductPerformance = ({ userId, setCleaning }) => {
             const { data } = await Api.get('/cleaning/recover', {
                 params: { userId, page }
             });
-            console.log(data)
             setCleanings(data.cleanings)
-            currentPage(data.total)
+            setPagination((data.total / 5).toFixed(0))
 
         } catch (error) {
-            console.log(error)
             await Swal.fire({
                 icon: 'error',
                 title: 'Erro ao recuperar dados das solicitações',
@@ -135,7 +125,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
         try {
             await Api.post('avaliation/create', send)
             setOpen(!open)
-            
+
             setEpisSelected('')
             setAvaliation('')
             setScheduleId('')
@@ -195,6 +185,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
 
     useEffect(() => {
         if (userId) {
+            setPagination(1)
             getAllDatas(1)
         }
     }, [userId])
