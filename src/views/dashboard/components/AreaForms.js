@@ -126,6 +126,18 @@ const AreaForms = ({ companies }) => {
             })
             return
         }
+        if (options.length === 0) {
+            await Swal.fire({
+                icon: 'info',
+                title: 'Selecione uma opão',
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Confirmar'
+            })
+            return
+        }
         try {
             const { data } = await Api.get('/user/pdf/', {
                 params: {
