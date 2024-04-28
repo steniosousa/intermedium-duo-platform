@@ -109,6 +109,7 @@ const AreaForms = ({ companies }) => {
 
         pdf.setFontSize(8);
         pdf.text('© 2023 Any Software - Todos os direiros reservados.', 20, pdf.internal.pageSize.height - 10);
+        setIsLoading(false)
         pdf.save(`relatório - ${dateAutl}.pdf`);
     }
 
