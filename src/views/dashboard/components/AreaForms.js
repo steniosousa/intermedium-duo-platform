@@ -9,9 +9,13 @@ import jsPDF from "jspdf";
 import moment from "moment";
 
 
+
+
 const AreaForms = ({ companies }) => {
     const [companySelected, setCompanySelected] = useState('')
     const [options, setOptions] = useState([])
+    const [dateStart, setStartDate] = useState()
+    const [dateEnd, setDateEnd] = useState()
     const pdf = new jsPDF();
     const date = moment(new Date());
     const dateAutl = date.format("DD-MM-YYYY:h:m");
@@ -109,8 +113,8 @@ const AreaForms = ({ companies }) => {
 
         pdf.setFontSize(8);
         pdf.text('© 2023 Any Software - Todos os direiros reservados.', 20, pdf.internal.pageSize.height - 10);
-        setIsLoading(false)
         pdf.save(`relatório - ${dateAutl}.pdf`);
+        setIsLoading(false)
     }
 
     async function generatePdf() {
@@ -139,13 +143,28 @@ const AreaForms = ({ companies }) => {
             })
             return
         }
+        if(!dateStart || !dateEnd){
+            await Swal.fire({
+                icon: 'info',
+                title: 'Selecione uma faixa de data',
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Confirmar'
+            })
+            return 
+        }
         try {
             const { data } = await Api.get('/user/pdf/', {
                 params: {
-                    companyId: companySelected
+                    companyId: companySelected,
+                    startDate:dateStart,
+                    endDate:dateEnd
 
                 }
             })
+            console.log(data)
             const confirm = await Swal.fire({
                 icon: 'question',
                 title: 'Gerar relatório?',
@@ -160,7 +179,7 @@ const AreaForms = ({ companies }) => {
         } catch (error) {
             await Swal.fire({
                 icon: 'error',
-                title: 'Não foi possível recuperar dados para gerar relatório',
+                title: error.response.data.message,
                 showDenyButton: false,
                 showCancelButton: false,
                 showConfirmButton: true,
@@ -213,6 +232,14 @@ const AreaForms = ({ companies }) => {
 
                 </FormGroup>
             </FormControl>
+            <Grid style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around', marginBottom: 15 }}>
+                <p>DE</p>
+                <input onChange={(e) => setStartDate(e.target.value)} type="date" style={{ borderColor: 'transparent', backgroundColor: 'transparent', borderBottomColor: 'black', borderBottomWidth: 1, marginBottom: 5 }} />
+                <p>Á</p>
+                <input onChange={(e) => setDateEnd(e.target.value)} type="date" style={{ borderColor: 'transparent', backgroundColor: 'transparent', borderBottomColor: 'black', borderBottomWidth: 1, marginBottom: 5 }} />
+
+            </Grid>
+
             <Grid style={{ display: 'flex', flexDirection: 'row', justifyContent: 'space-around' }}>
                 <Button variant={"contained"} color="primary" style={{ height: 30, display: 'flex', justifyContent: 'space-around' }} onClick={() => generatePdf()}>
                     {isLoading ? (

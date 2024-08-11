@@ -163,7 +163,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                             Acessar o app
                         </Button>
                     </FormGroup>
-                    {/* <FormGroup>
+                    <FormGroup>
                         <Button
                             color="primary"
                             variant="outlined"
@@ -173,7 +173,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                         >
                             Localizador
                         </Button>
-                    </FormGroup> */}
+                    </FormGroup>
                 </Stack>
             </Stack>
             <Box>
