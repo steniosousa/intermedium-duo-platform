@@ -6,6 +6,11 @@ import LoginApp from 'src/App/login';
 import DetailsApp from 'src/App/details/details';
 import Localizador from 'src/Locale/localizador';
 import ResetPassword from 'src/layouts/reset/resetPass';
+import Home from 'src/home';
+import { element } from 'prop-types';
+import FaceRecoginitionLogin from 'src/faceRecognition/authentication/Login';
+import Recognition from 'src/faceRecognition/Recognition/recognition';
+import CreateUserFaceRecognition from 'src/faceRecognition/CreateUser/create';
 
 /* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
@@ -22,18 +27,32 @@ const Login = Loadable(lazy(() => import('../views/authentication/Login')));
 const Router = [
   {
     path: '/',
+    element: <BlankLayout />,
+    children: [
+      { path: '/', element: <Home/> },
+    ],
+  },
+  {
+    path:'/faceRecoginition',
+    element:<BlankLayout/>,
+    children:[
+      {path:'/faceRecoginition/create',element:<FaceRecoginitionLogin/>},
+      {path:'/faceRecoginition/Recognition', element:<Recognition/>},
+      {path:'/faceRecoginition/createUser', element:<CreateUserFaceRecognition/>},
+    ]
+  },
+
+  {
+    path: '/',
     element: <FullLayout />,
     children: [
-      { path: '/', element: <Navigate to="/dashboard" /> },
       { path: '/dashboard', exact: true, element: <Dashboard /> },
       { path: '/Localiza', exact: true, element: <SamplePage /> },
-      // { path: '/icons', exact: true, element: <Icons /> },
       { path: '/ui/Perfil', exact: true, element: <TypographyPage /> },
-      // { path: '/ui/shadow', exact: true, element: <Shadow /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
     ],
   },
-
+ 
   {
     path: '/auth',
     element: <BlankLayout />,

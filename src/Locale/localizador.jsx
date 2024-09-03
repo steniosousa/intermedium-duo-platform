@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, {  useRef, useState } from 'react';
 import {
     Box,
     Typography,
@@ -8,7 +8,6 @@ import {
     Grid,
     Card,
     LinearProgress,
-    Container,
 } from '@mui/material';
 import CameraAltRoundedIcon from '@mui/icons-material/CameraAltRounded';
 import FlipCameraIosIcon from '@mui/icons-material/FlipCameraIos';
@@ -17,20 +16,16 @@ import CustomTextField from 'src/components/forms/theme-elements/CustomTextField
 import PageContainer from 'src/components/container/PageContainer';
 import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
-
 import { Camera } from "react-camera-pro";
-import { Translate } from '@mui/icons-material';
+import { startDetections } from 'src/static/js/script';
 export default function Localizador() {
     const [driver, setDriver] = useState('')
-    const [position, setPosition] = useState(null);
     const [isLoading, setIsLoading] = useState(false)
     const [plate, setPlate] = useState('')
     const navigate = useNavigate()
     const camera = useRef(null);
     const [photo, setPhoto] = useState(null);
     const [openCam, setOpenCam] = useState(false)
-
-
 
 
 
@@ -56,7 +51,14 @@ export default function Localizador() {
         if (camera.current) {
             const imageSrc = await camera.current.takePhoto();
             setPhoto(imageSrc);
-            setOpenCam(!openCam)
+            setOpenCam(!openCam);
+
+            const img = new Image();
+            img.src = imageSrc;
+
+            const detections = await startDetections(                                       )
+            console.log(detections)
+          
         }
     };
     return (
@@ -75,7 +77,7 @@ export default function Localizador() {
                             mb: 2,
                         }}
                     >
-                        <Camera ref={camera} />
+                        <Camera ref={camera} screenshotFormat="image/jpeg" />
                     </Box>
                     <Button
                         variant="contained"
@@ -207,11 +209,7 @@ export default function Localizador() {
                                             </Button>
                                         )}
                                     </Box>
-                                    {position && (
-                                        <p>
-                                            Sua latitude é {position.coords.latitude} e sua longitude é {position.coords.longitude}.
-                                        </p>
-                                    )}
+                                    
                                 </>
                             </Card>
                         </Grid>
