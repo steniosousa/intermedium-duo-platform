@@ -1,29 +1,47 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Container, TextField, Button, IconButton, Box, Typography, Avatar } from '@mui/material';
-import { CameraAlt, Delete } from '@mui/icons-material';
+import { Delete } from '@mui/icons-material';
+import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
 import * as faceapi from 'face-api.js';
 import Api from 'src/api/service';
 import Swal from 'sweetalert2';
-
+import CameraIcon from '@mui/icons-material/Camera';
+import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
 export default function RegistrationForm() {
   const [name, setName] = useState('');
   const [plate, setPlate] = useState('');
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
   const [blobImage, setBlobImage] = useState(null)
+  const [whoCam, setWhoCam] = useState('environment')
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
 
-  const startCamera = async () => {
+  async function getCameraStream(cameraId) {
     try {
-        const mediaStream = await navigator.mediaDevices.getUserMedia({ video: true });
-        if (videoRef.current) {
-            videoRef.current.srcObject = mediaStream;
+      const constraints = {
+        video: {
+          facingMode: cameraId ? { exact: cameraId } : whoCam 
         }
-    } catch (error) {
-        console.error('Error accessing camera:', error);
+      };
+  
+      const stream = await navigator.mediaDevices.getUserMedia(constraints);
+      const videoElement = document.querySelector('video');
+      videoElement.srcObject = stream;
+  
+      // Obter a lista de câmeras disponíveis e selecionar a câmera traseira
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
+      if (rearCamera) {
+        await getCameraStream(rearCamera.deviceId);
+      } else {
+        console.error('Câmera traseira não encontrada.');
+      }
+  
+    } catch (err) {
+      console.error('Erro ao acessar a câmera: ', err);
     }
-};
+  }
 
   function handleRemoveImage(){
     setImagePreview('')
@@ -63,7 +81,7 @@ export default function RegistrationForm() {
         loadModels();
     }, []);
   useEffect(() =>{
-    startCamera()
+    getCameraStream()
   },[])
 
 
@@ -107,7 +125,6 @@ export default function RegistrationForm() {
         
 
         try {
-          
             await Api.post('/faceRecognition/create', formData)
             await Swal.fire({
                 icon: 'success',
@@ -118,26 +135,45 @@ export default function RegistrationForm() {
                 denyButtonText: 'Cancelar',
                 confirmButtonText: 'Confirmar'
             })
+            setName('')
+            setPlate('')
+            setImage('')
+            setBlobImage('')
         } catch (error) {
-            console.log(error)
-            // await Swal.fire({
-            //     icon: 'error',
-            //     title: 'error.response.data.error',
-            //     showDenyButton: false,
-            //     showCancelButton: false,
-            //     showConfirmButton: true,
-            //     denyButtonText: 'Cancelar',
-            //     confirmButtonText: 'Confirmar'
-            // })
+            await Swal.fire({
+                icon: 'error',
+                title: error.response.data.message,
+                showDenyButton: false,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Confirmar'
+            })
 
         }
     }
 
+    async function recapture(){
+      const confirm = await Swal.fire({
+        icon: 'question',
+        title: "Deseja retirar a foto novamente?",
+        showDenyButton: true,
+        showCancelButton: false,
+        showConfirmButton: true,
+        denyButtonText: 'Não',
+        confirmButtonText: 'Sim'
+    })
+    if(!confirm.isConfirmed){
+      return
+    }
+      setImage(null)
+      setBlobImage(null)
+      getCameraStream()
+    }
+
   return (
-  <Container maxWidth="sm" sx={{ py: 4 }}>
-      <Typography variant="h5" gutterBottom sx={{ textAlign: 'center', mb: 3 }}>
-        Formulário de Cadastro
-      </Typography>
+    <Box style={{height:'100vh', width:'100%',backgroundColor:'whitesmoke'}}> 
+  <Container maxWidth="sm" sx={{ py: 4 }} >
       <Box
         component="form"
         onSubmit={handleSubmit}
@@ -181,23 +217,41 @@ export default function RegistrationForm() {
             </Box>
           ) : (
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-              <video ref={videoRef} width="100%" height="auto" autoPlay muted />
-              <canvas
-                ref={canvasRef}
-                style={{
-                  position: 'absolute',
-                  top: 0,
-                  left: 0,
-                  width: '100%',
-                  height: '100%',
-                  display: 'none',
-                }}
-              />
-             
-              
-                <Button variant="contained" color="primary" component="span" size="small" onClick={(e) =>capturePhoto(e)}>
-                <CameraAlt/>
+              {image?(
+                <Box  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+
+                <img src={image} alt='foto capturada' width="100%" height="auto"/>
+                <Button variant="contained" color="primary" component="span" size="small" onClick={() =>recapture()}>
+                  <ThreeSixtyIcon />
                 </Button>
+                </Box>
+              ):(
+                <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+
+                <video ref={videoRef} width="100%" height="auto" autoPlay muted />
+                <canvas
+                  ref={canvasRef}
+                  style={{
+                    position: 'absolute',
+                    top: 0,
+                    left: 0,
+                    width: '100%',
+                    height: '100%',
+                    display: 'none',
+                  }}
+                />
+            <Box sx={{display:'flex'}}>
+              
+             <Button variant="contained" color="primary" component="span" size="small" onClick={(e) =>setWhoCam(whoCam === "environment" ? "user" : "environment")}>
+                <CameraswitchIcon/>
+                </Button>
+                <Button variant="contained" color="primary" component="span" size="small" onClick={(e) =>capturePhoto(e)}>
+                <CameraIcon/>
+                </Button>
+                </Box>
+                </Box>
+              )}
+               
             </Box>
           )}
         </Box>
@@ -233,5 +287,7 @@ export default function RegistrationForm() {
         </Button>
       </Box>
     </Container>
+
+    </Box>
   );
 }
