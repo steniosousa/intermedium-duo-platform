@@ -2,7 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import * as faceapi from 'face-api.js';
 import Swal from "sweetalert2";
 import Api from "src/api/service";
-import { Box, Container } from "@mui/material";
+import { Box, Button, IconButton } from "@mui/material";
+import FingerprintIcon from '@mui/icons-material/Fingerprint';
+import { styled } from '@mui/system';
 
 export default function Recognition(){
     const [isModelLoaded, setIsModelLoaded] = useState(false);
@@ -139,6 +141,19 @@ export default function Recognition(){
         }
       })();
     }, [])
+
+
+    const StyledButton = styled(IconButton)(({ theme }) => ({
+      position: 'fixed',
+      bottom: theme.spacing(2),
+      left: '50%',
+      transform: 'translateX(-50%)',
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.common.white,
+      '&:hover': {
+        backgroundColor: theme.palette.primary.dark,
+      },
+    }));
     return(
         <Box
       sx={{
@@ -178,6 +193,10 @@ export default function Recognition(){
           display: 'none', // Mantém o canvas oculto
         }}
       />
+        <StyledButton onClick={() => detect()}>
+      <FingerprintIcon />
+    </StyledButton>
+       
     </Box>
     )
 }

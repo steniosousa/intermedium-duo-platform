@@ -7,7 +7,6 @@ import DetailsApp from 'src/App/details/details';
 import Localizador from 'src/Locale/localizador';
 import ResetPassword from 'src/layouts/reset/resetPass';
 import Home from 'src/home';
-import { element } from 'prop-types';
 import FaceRecoginitionLogin from 'src/faceRecognition/authentication/Login';
 import Recognition from 'src/faceRecognition/Recognition/recognition';
 import CreateUserFaceRecognition from 'src/faceRecognition/CreateUser/create';

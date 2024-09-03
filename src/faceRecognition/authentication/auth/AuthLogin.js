@@ -158,7 +158,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                             variant="outlined"
                             size="small"
                             fullWidth
-                            onClick={() => navigate('/faceRecognition/Recognition')}
+                            onClick={() => navigate('/faceRecoginition/Recognition')}
                         >
                             Leitura Facial
                         </Button>
