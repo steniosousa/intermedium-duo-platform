@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 import { Container, TextField, Button, IconButton, Box, Typography, Avatar, Card, CardContent, Grid } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
@@ -8,6 +8,11 @@ import Swal from 'sweetalert2';
 import CameraIcon from '@mui/icons-material/Camera';
 import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
+import CameraRearIcon from '@mui/icons-material/CameraRear';
+import { useNavigate } from 'react-router';
+import AuthContext from 'src/contexto/AuthContext';
+
 
 export default function RegistrationForm() {
   const [name, setName] = useState('');
@@ -19,6 +24,8 @@ export default function RegistrationForm() {
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const [drivers, setDrivers] = useState([''])
+  const navigate = useNavigate();
+  const { setUser } = useContext(AuthContext)
 
   async function getCameraStream(cameraId) {
     try {
@@ -192,12 +199,52 @@ export default function RegistrationForm() {
 
     setInterval(() =>{getDrivers()},10000)
 
+
+    function Logout() {
+      localStorage.clear();
+      setUser(null);
+      navigate('/auth/login')
+      return null
+    }
+
     useEffect(() =>{
       getDrivers()
     },[])
 
   return (
     <Box style={{ height: '100vh', width: '100%', backgroundColor: '#f0f4f8' }}>
+<Grid
+  container
+  justifyContent="flex-end" // Alinha os itens à direita
+  alignItems="flex-start"    // Alinha os itens na parte superior
+  style={{ width: '100%', backgroundColor: '#f0f4f8', padding: '10px' }} // Adicione um padding se necessário
+>
+  <Grid item>
+    <Button
+      variant="contained"
+      color="primary"
+      component="span"
+      size="small"
+      onClick={() => navigate('/faceRecoginition/Recognition')}
+    >
+      <CameraRearIcon />
+    </Button>
+  </Grid>
+  <Grid item>
+
+    <Button
+      variant="contained"
+      color="primary"
+      component="span"
+      size="small"
+    onClick={Logout}
+    >
+      <LogoutSharpIcon />
+    </Button>
+  </Grid>
+
+  
+</Grid>
     <Container maxWidth="lg" sx={{ py: 4 }}>
       <Grid container spacing={2}>
 
@@ -209,12 +256,12 @@ export default function RegistrationForm() {
           </Typography>
           <Grid container spacing={2}>
             {drivers.length === 0 ? (
-              <Typography variant="body2" color="text.secondary" style={{marginTop:'10'}}>
+              <Typography variant="body2" color="text.secondary" style={{padding:'20px'}}>
                 Nenhum motorista encontrado.
               </Typography>
             ) : (
               drivers.map((driver) => (
-                <Grid item container key={driver.id} spacing={2} alignItems="center">
+                <Grid key={driver.id} item container  spacing={2} alignItems="center">
                   <Grid item>
                     <Avatar alt={driver.name} src={driver.photo} sx={{ width: 56, height: 56 }} />
                   </Grid>
@@ -233,7 +280,6 @@ export default function RegistrationForm() {
         </CardContent>
       </Card>
     </Grid>
-
 
         <Grid item xs={8}>
           <Box

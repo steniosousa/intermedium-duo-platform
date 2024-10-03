@@ -34,7 +34,7 @@ const Router = [
   {
     path:'/faceRecoginition',
     children:[
-      {path:'/faceRecoginition/create',element:<FaceRecoginitionLogin/>},
+      {path:'/faceRecoginition/login',element:<FaceRecoginitionLogin/>},
       {path:'/faceRecoginition/Recognition', element:<Recognition/>},
       {path:'/faceRecoginition/createUser', element:<CreateUserFaceRecognition/>},
     ]

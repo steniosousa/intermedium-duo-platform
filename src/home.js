@@ -79,7 +79,7 @@ export default function Home() {
               <Typography variant="body1" paragraph>
                 Realize a leitura facial para identificar características e melhorar a segurança e personalização.
               </Typography>
-              <Button variant="contained" color="secondary" onClick={() => navigate('/faceRecoginition/create')}>
+              <Button variant="contained" color="secondary" onClick={() => navigate('/faceRecoginition/login')}>
                 Iniciar
               </Button>
             </Paper>

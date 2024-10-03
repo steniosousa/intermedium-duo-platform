@@ -18,7 +18,6 @@ export const AuthProvider = ({ children }) => {
           password
         }
       });
-      console.log(data)
       localStorage.setItem('manager', JSON.stringify(data))
       const manager = localStorage.getItem('manager')
       setUser(manager)
@@ -83,7 +82,7 @@ export const AuthProvider = ({ children }) => {
           password
         }
       });
-      localStorage.setItem('manager', JSON.stringify(data))
+      localStorage.setItem('FaceRecognition', JSON.stringify(data))
       const manager = localStorage.getItem('manager')
       setUser(manager)
       navigate('/faceRecoginition/createUser')
