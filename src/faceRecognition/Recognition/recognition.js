@@ -2,16 +2,14 @@ import { useEffect, useRef, useState } from "react";
 import * as faceapi from 'face-api.js';
 import Swal from "sweetalert2";
 import Api from "src/api/service";
-import { Box,  IconButton } from "@mui/material";
-import { styled } from '@mui/system';
-import RecordVoiceOverSharpIcon from '@mui/icons-material/RecordVoiceOverSharp';
-import VoiceOverOffRoundedIcon from '@mui/icons-material/VoiceOverOffRounded';
+import { Box,  Button } from "@mui/material";
+import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
 
 export default function Recognition(){
     const [isModelLoaded, setIsModelLoaded] = useState(false);
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const [camera, setCamera] = useState('front')
+    const [whoCam, setWhoCam] = useState('environment')
     const [imagesUsers, setImagesUsers] = useState([])
     const [userDetect, setUSerDetect] = useState(null)
   
@@ -88,27 +86,29 @@ export default function Recognition(){
       }
     };
   
-    const detectAndIdentify = async () => {
+    const detectAndIdentify = async (cameraId) => {
       try {
-        const devices = await navigator.mediaDevices.enumerateDevices();
-  
-        const rearCamera = devices.find(device =>
-          device.kind === 'videoinput' && device.label.toLowerCase().includes('back')
-        );
-        const cameraId = rearCamera ? rearCamera.deviceId : undefined;
         const constraints = {
           video: {
-            facingMode: 'environment',
-            deviceId: cameraId ? { exact: cameraId } : undefined
+            facingMode: cameraId ? { exact: cameraId } : whoCam 
           }
         };
+    
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream;
-  
+        const videoElement = document.querySelector('video');
+        videoElement.srcObject = stream;
+    
+        // Obter a lista de câmeras disponíveis e selecionar a câmera traseira
+        const devices = await navigator.mediaDevices.enumerateDevices();
+        const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
+        if (rearCamera) {
+          await detectAndIdentify(rearCamera.deviceId);
+        } else {
+          console.error('Câmera traseira não encontrada.');
         }
-      } catch (error) {
-        console.error('Error accessing webcam:', error);
+    
+      } catch (err) {
+        console.error('Erro ao acessar a câmera: ', err);
       }
     };
   
@@ -204,6 +204,7 @@ export default function Recognition(){
         autoPlay
         playsInline
       />
+       
       <canvas
         ref={canvasRef}
         style={{
@@ -217,7 +218,17 @@ export default function Recognition(){
       />
 
 
-       
+<Box style={{position:'absolute', top:'90%'}}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          component="span"
+                          size="small"
+                          onClick={() => setWhoCam(whoCam === "environment" ? "user" : "environment")}
+                        >
+                          <CameraswitchIcon />
+                        </Button>
+                      </Box>
     </Box>
     )
 }
