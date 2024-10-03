@@ -11,7 +11,8 @@ import {
     InputAdornment,
     InputLabel,
     FormControl,
-    OutlinedInput
+    OutlinedInput,
+    Typography
 } from '@mui/material';
 
 import { Visibility, VisibilityOff } from '@mui/icons-material';
@@ -20,6 +21,8 @@ import PageContainer from 'src/components/container/PageContainer';
 import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import Api from 'src/api/service';
+
+
 export default function ResetPassword() {
     const [isLoading, setIsLoading] = useState(false)
     const navigate = useNavigate()
@@ -46,7 +49,7 @@ export default function ResetPassword() {
             return
         }
         try {
-            Api.post('/manager/edit', {
+            Api.post('/manager/resetPass', {
                 password: password,
                 id,
             })
@@ -74,6 +77,7 @@ export default function ResetPassword() {
     }
     return (
         <PageContainer title="Login" description="this is Login page">
+            
             <Box
                 sx={{
                     position: 'relative',
@@ -89,7 +93,9 @@ export default function ResetPassword() {
                     },
                 }}
             >
+                
                 <Grid container spacing={0} justifyContent="center" sx={{ height: '100vh' }}>
+                
                     <Grid
                         item
                         xs={12}
@@ -100,7 +106,11 @@ export default function ResetPassword() {
                         justifyContent="center"
                         alignItems="center"
                     >
+                        
                         <Card elevation={9} sx={{ p: 4, zIndex: 1, width: '100%', maxWidth: '500px' }}>
+                        <Typography variant="h6" gutterBottom>
+            Resetar senha:
+          </Typography>
                             <Stack>
                                 <Box>
                                     <FormControl fullWidth variant="outlined">
