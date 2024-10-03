@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { Container, TextField, Button, IconButton, Box, Typography, Avatar } from '@mui/material';
+import { Container, TextField, Button, IconButton, Box, Typography, Avatar, Card, CardContent, Grid } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
 import * as faceapi from 'face-api.js';
@@ -7,6 +7,8 @@ import Api from 'src/api/service';
 import Swal from 'sweetalert2';
 import CameraIcon from '@mui/icons-material/Camera';
 import ThreeSixtyIcon from '@mui/icons-material/ThreeSixty';
+import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
+
 export default function RegistrationForm() {
   const [name, setName] = useState('');
   const [plate, setPlate] = useState('');
@@ -16,6 +18,7 @@ export default function RegistrationForm() {
   const [whoCam, setWhoCam] = useState('environment')
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
+  const [drivers, setDrivers] = useState([''])
 
   async function getCameraStream(cameraId) {
     try {
@@ -104,25 +107,6 @@ export default function RegistrationForm() {
         formData.append('name', name);
         formData.append('plate', plate);
         formData.append('photo', image);
-        try {
-            const image = await faceapi.bufferToImage(blobImage);
-
-            const detections = await faceapi.detectAllFaces(image, new faceapi.TinyFaceDetectorOptions())
-                .withFaceLandmarks()
-                .withFaceDescriptors();
-
-            if (detections.length > 0) {
-                const [descriptor] = detections.map(d => d.descriptor);
-                if (descriptor) {
-                  const descriptorString = JSON.stringify(Array.from(descriptor));
-                  formData.append('descritor', descriptorString);
-                }
-            }
-        } catch (error) {
-            console.error('Error processing photo:', error);
-        }
-
-        
 
         try {
             await Api.post('/faceRecognition/create', formData)
@@ -135,10 +119,12 @@ export default function RegistrationForm() {
                 denyButtonText: 'Cancelar',
                 confirmButtonText: 'Confirmar'
             })
+            
             setName('')
             setPlate('')
-            setImage('')
+            setImage(null)
             setBlobImage('')
+            window.location.reload()
         } catch (error) {
             await Swal.fire({
                 icon: 'error',
@@ -171,123 +157,203 @@ export default function RegistrationForm() {
       getCameraStream()
     }
 
+    async function getDrivers(){
+      try{
+        const {data} = await Api.get('/faceRecognition/list')
+        setDrivers(data)
+      }catch(error){
+        console.log(error)
+      }
+    }
+
+    async function deleteDriver(id){
+     const confirm =  await Swal.fire({
+        icon: 'question',
+        title: "Deseja deletar o motorista?",
+        showDenyButton: true,
+        showCancelButton: false,
+        showConfirmButton: true,
+        denyButtonText: 'Cancelar',
+        confirmButtonText: 'Deletar'
+    })
+    if(!confirm.isConfirmed){
+      return
+    }
+
+      try{
+        await Api.post('/faceRecognition/delete',{
+          driverId: id
+        })
+        getDrivers()
+      }catch(error){
+        console.log(error)
+      }
+    }
+
+    setInterval(() =>{getDrivers()},10000)
+
+    useEffect(() =>{
+      getDrivers()
+    },[])
+
   return (
-    <Box style={{height:'100vh', width:'100%',backgroundColor:'whitesmoke'}}> 
-  <Container maxWidth="sm" sx={{ py: 4 }} >
-      <Box
-        component="form"
-        onSubmit={handleSubmit}
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-          alignItems: 'center',
-          backgroundColor: 'white',
-          p: 3,
-          borderRadius: 2,
-          boxShadow: 2,
-        }}
-      >
-        {/* Seção de Foto */}
-        <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
-          <Typography variant="subtitle2" gutterBottom>
-            Foto do Carro
+    <Box style={{ height: '100vh', width: '100%', backgroundColor: '#f0f4f8' }}>
+    <Container maxWidth="lg" sx={{ py: 4 }}>
+      <Grid container spacing={2}>
+
+      <Grid item xs={4}>
+      <Card variant="outlined" sx={{ height: '100%', p: 2 }}>
+        <CardContent>
+          <Typography variant="h6" gutterBottom>
+            Lista de Motoristas
           </Typography>
-          {imagePreview ? (
-            <Box sx={{ position: 'relative' }}>
-              <Avatar
-                src={imagePreview}
-                alt="Foto do Carro"
-                sx={{ width: 100, height: 100, mb: 1, border: '2px solid #1976d2' }}
-              />
-              <IconButton
-                onClick={handleRemoveImage}
-                sx={{
-                  position: 'absolute',
-                  top: 0,
-                  right: 0,
-                  backgroundColor: 'white',
-                  '&:hover': {
-                    backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                  },
-                }}
-              >
-                <Delete />
-              </IconButton>
-            </Box>
-          ) : (
-            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-              {image?(
-                <Box  sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+          <Grid container spacing={2}>
+            {drivers.length === 0 ? (
+              <Typography variant="body2" color="text.secondary" style={{marginTop:'10'}}>
+                Nenhum motorista encontrado.
+              </Typography>
+            ) : (
+              drivers.map((driver) => (
+                <Grid item container key={driver.id} spacing={2} alignItems="center">
+                  <Grid item>
+                    <Avatar alt={driver.name} src={driver.photo} sx={{ width: 56, height: 56 }} />
+                  </Grid>
+                  <Grid item xs>
 
-                <img src={image} alt='foto capturada' width="100%" height="auto"/>
-                <Button variant="contained" color="primary" component="span" size="small" onClick={() =>recapture()}>
-                  <ThreeSixtyIcon />
-                </Button>
+                    <Typography variant="h6">{driver.name} - {driver.plate}</Typography>
+                    <Typography variant="body2" style={{fontWeight:'bold'}} color={driver.present ? 'green' : 'red'}>
+                      {driver.present ? 'Carregando caminhão' : 'Aguardando'}
+                    </Typography>
+                  </Grid>
+                  <DeleteForeverIcon style={{cursor:'pointer', color:'red'}} onClick={() => deleteDriver(driver.id)}/>
+                </Grid>
+              ))
+            )}
+          </Grid>
+        </CardContent>
+      </Card>
+    </Grid>
+
+
+        <Grid item xs={8}>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              backgroundColor: 'white',
+              p: 3,
+              borderRadius: 2,
+              boxShadow: 3,
+            }}
+          >
+            {/* Seção de Foto */}
+            <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
+              <Typography variant="subtitle2" gutterBottom>
+                Foto do Motorista
+              </Typography>
+              {imagePreview ? (
+                <Box sx={{ position: 'relative' }}>
+                  <Avatar
+                    src={imagePreview}
+                    alt="Foto do Motorista"
+                    sx={{ width: 120, height: 120, mb: 1, border: '2px solid #1976d2' }}
+                  />
+                  <IconButton
+                    onClick={handleRemoveImage}
+                    sx={{
+                      position: 'absolute',
+                      top: 0,
+                      right: 0,
+                      backgroundColor: 'white',
+                      '&:hover': {
+                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
+                      },
+                    }}
+                  >
+                    <Delete />
+                  </IconButton>
                 </Box>
-              ):(
+              ) : (
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-
-                <video ref={videoRef} width="100%" height="auto" autoPlay muted />
-                <canvas
-                  ref={canvasRef}
-                  style={{
-                    position: 'absolute',
-                    top: 0,
-                    left: 0,
-                    width: '100%',
-                    height: '100%',
-                    display: 'none',
-                  }}
-                />
-            <Box sx={{display:'flex'}}>
-              
-             <Button variant="contained" color="primary" component="span" size="small" onClick={(e) =>setWhoCam(whoCam === "environment" ? "user" : "environment")}>
-                <CameraswitchIcon/>
-                </Button>
-                <Button variant="contained" color="primary" component="span" size="small" onClick={(e) =>capturePhoto(e)}>
-                <CameraIcon/>
-                </Button>
-                </Box>
+                  {image ? (
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+                      <img src={image} alt="foto capturada" width="100%" height="auto" />
+                      <Button variant="contained" color="primary" component="span" size="small" onClick={recapture}>
+                        <ThreeSixtyIcon />
+                      </Button>
+                    </Box>
+                  ) : (
+                    <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
+                      <video ref={videoRef} width="100%" height="auto" autoPlay muted />
+                      <canvas
+                        ref={canvasRef}
+                        style={{
+                          position: 'absolute',
+                          top: 0,
+                          left: 0,
+                          width: '100%',
+                          height: '100%',
+                          display: 'none',
+                        }}
+                      />
+                      <Box sx={{ display: 'flex', gap: 1 }}>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          component="span"
+                          size="small"
+                          onClick={() => setWhoCam(whoCam === "environment" ? "user" : "environment")}
+                        >
+                          <CameraswitchIcon />
+                        </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          component="span"
+                          size="small"
+                          onClick={(e) =>capturePhoto(e)}
+                        >
+                          <CameraIcon />
+                        </Button>
+                      </Box>
+                    </Box>
+                  )}
                 </Box>
               )}
-               
             </Box>
-          )}
-        </Box>
 
-        <TextField
-          label="Nome Completo"
-          variant="outlined"
-          fullWidth
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          sx={{ mb: 2 }}
-          size="small"
-        />
+            <TextField
+              label="Nome Completo"
+              variant="outlined"
+              fullWidth
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              sx={{ mb: 2 }}
+              size="small"
+            />
 
-        <TextField
-          label="Placa do Carro"
-          variant="outlined"
-          fullWidth
-          value={plate}
-          onChange={(e) => setPlate(e.target.value)}
-          sx={{ mb: 2 }}
-          size="small"
-        />
+            <TextField
+              label="Placa do Carro"
+              variant="outlined"
+              fullWidth
+              value={plate}
+              onChange={(e) => setPlate(e.target.value)}
+              sx={{ mb: 2 }}
+              size="small"
+            />
 
-        <Button
-          type="submit"
-          variant="contained"
-          color="primary"
-          fullWidth
-          size="large"
-        >
-          Enviar
-        </Button>
-      </Box>
+            <Button type="submit" variant="contained" color="primary" fullWidth size="large" onClick={(e) =>handleSubmit(e)}>
+              Enviar
+            </Button>
+          </Box>
+        </Grid>
+
+       
+
+        
+      </Grid>
     </Container>
-
-    </Box>
+  </Box>
   );
 }

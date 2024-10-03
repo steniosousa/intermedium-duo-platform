@@ -2,18 +2,18 @@ import { useEffect, useRef, useState } from "react";
 import * as faceapi from 'face-api.js';
 import Swal from "sweetalert2";
 import Api from "src/api/service";
-import { Box, Button, IconButton } from "@mui/material";
-import FingerprintIcon from '@mui/icons-material/Fingerprint';
+import { Box,  IconButton } from "@mui/material";
 import { styled } from '@mui/system';
+import RecordVoiceOverSharpIcon from '@mui/icons-material/RecordVoiceOverSharp';
+import VoiceOverOffRoundedIcon from '@mui/icons-material/VoiceOverOffRounded';
 
 export default function Recognition(){
     const [isModelLoaded, setIsModelLoaded] = useState(false);
     const videoRef = useRef(null);
     const canvasRef = useRef(null);
-    const [usersData, setusersData] = useState([])
     const [camera, setCamera] = useState('front')
     const [imagesUsers, setImagesUsers] = useState([])
-    const [userDetect, setUSerDetect] = useState('')
+    const [userDetect, setUSerDetect] = useState(null)
   
     const processPhotos = async (data) => {
       const descriptors= [];
@@ -30,12 +30,16 @@ export default function Recognition(){
           return descriptors
         })
       );
-      setusersData(images)
+      detect(images)
     };
   
   
     const identifyUser = async (detections, userDescriptors) => {
-      if (userDescriptors.length === 0) return;
+      if(userDescriptors.length == 0){
+        processPhotos(imagesUsers)
+      }
+
+      if(!userDescriptors ) return
       try {
         let userLocalized;
         for (const item of userDescriptors) {
@@ -49,19 +53,35 @@ export default function Recognition(){
   
         if (!userLocalized) return
         setUSerDetect(userLocalized)
+
         const confirm = await Swal.fire({
           icon: 'question',
-          title: `esse é voce? ${userLocalized}`,
+          title: `${userLocalized}, entrar para carregar?`,
           showDenyButton: true,
           showCancelButton: false,
           showConfirmButton: true,
           denyButtonText: 'Não',
           confirmButtonText: 'Sim'
         })
-  
-        if (!confirm.isConfirmed) {
-          setUSerDetect('')
+
+        if(!confirm.isConfirmed){
+          setUSerDetect(null)
+         }
+         else{
+          const {id} = imagesUsers.find((item) => item.name == userLocalized)
+            try {
+              await Api.post(`/faceRecognition/edit`,{
+                "driverId":id
+              })
+              const { data } = await Api.get('/faceRecognition/recover/')
+              setImagesUsers(data)
+              setUSerDetect(null)
+            } catch (error) {
+              console.log(error)
+          }
         }
+  
+      
   
       } catch (error) {
         console.log(error)
@@ -93,14 +113,15 @@ export default function Recognition(){
     };
   
   
-    async function detect() {
+    async function detect(images) {
+
       if (!videoRef.current) return
   
       const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
         .withFaceLandmarks()
         .withFaceDescriptors();
-  
-      identifyUser(detections, usersData);
+        
+      identifyUser(detections, images);
     }
   
   
@@ -114,11 +135,22 @@ export default function Recognition(){
     };
   
   
+
+
     useEffect(() => {
-      processPhotos(imagesUsers)
-      detect()
+      const interval = setInterval(() => {
+        if (userDetect === null) {
+          if(imagesUsers.length == 0) return
+          processPhotos(imagesUsers)
+        } else {
+          clearInterval(interval);
+        }
+      }, 3000);
   
-    }, [isModelLoaded])
+      return () => clearInterval(interval); 
+    }, [userDetect,isModelLoaded]);
+
+    
     useEffect(() => {
       (async () => {
         try {
@@ -143,17 +175,7 @@ export default function Recognition(){
     }, [])
 
 
-    const StyledButton = styled(IconButton)(({ theme }) => ({
-      position: 'fixed',
-      bottom: theme.spacing(2),
-      left: '50%',
-      transform: 'translateX(-50%)',
-      backgroundColor: theme.palette.primary.main,
-      color: theme.palette.common.white,
-      '&:hover': {
-        backgroundColor: theme.palette.primary.dark,
-      },
-    }));
+
     return(
         <Box
       sx={{
@@ -193,9 +215,8 @@ export default function Recognition(){
           display: 'none', // Mantém o canvas oculto
         }}
       />
-        <StyledButton onClick={() => detect()}>
-      <FingerprintIcon />
-    </StyledButton>
+
+
        
     </Box>
     )

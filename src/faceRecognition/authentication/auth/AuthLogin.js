@@ -21,13 +21,13 @@ import AuthContext from 'src/contexto/AuthContext';
 import Swal from 'sweetalert2';
 import Api from 'src/api/service';
 
-const AuthLogin = ({ title, subtitle, subtext }) => {
+const AuthLogin = ({ title,  subtext }) => {
     const handleClickShowPassword = () => setShowPassword((show) => !show);
     const [showPassword, setShowPassword] = React.useState(false);
     const [email, setEmail] = useState('')
     const [isLoading, setIsLoading] = useState(false)
     const [password, setPassword] = useState('')
-    const { Login } = useContext(AuthContext)
+    const { LoginFaceRecognition } = useContext(AuthContext)
     const navigate = useNavigate()
 
 
@@ -52,7 +52,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
             setIsLoading(false)
             return
         }
-        Login(email, password)
+        LoginFaceRecognition(email, password)
         setIsLoading(false)
     }
 

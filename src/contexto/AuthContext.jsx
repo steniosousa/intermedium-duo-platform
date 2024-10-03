@@ -75,12 +75,40 @@ export const AuthProvider = ({ children }) => {
     }
   }
 
+  async function LoginFaceRecognition(email, password) {
+    try {
+      const { data } = await Api.get('manager/find', {
+        params: {
+          email,
+          password
+        }
+      });
+      localStorage.setItem('manager', JSON.stringify(data))
+      const manager = localStorage.getItem('manager')
+      setUser(manager)
+      navigate('/faceRecoginition/createUser')
+    }
+    catch (error) {
+      await Swal.fire({
+        icon: 'error',
+        title: "Erro ao efetuar login",
+        showDenyButton: false,
+        showCancelButton: false,
+        showConfirmButton: true,
+        denyButtonText: 'Cancelar',
+        confirmButtonText: 'Confirmar'
+      })
+    }
+  }
+
+
+
   function LogoutApp() {
     localStorage.removeItem('userApp');
     navigate('/app/login')
   }
   return (
-    <AuthContext.Provider value={{ signed: Boolean(user), user, setUser, Login, Logout, LoginApp, setOperator, operator, LogoutApp }}>
+    <AuthContext.Provider value={{ signed: Boolean(user), user, setUser, Login, Logout, LoginApp,LoginFaceRecognition, setOperator, operator, LogoutApp }}>
       {children}
     </AuthContext.Provider>
   );
