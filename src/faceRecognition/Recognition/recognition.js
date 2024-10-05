@@ -28,6 +28,7 @@ export default function Recognition(){
           return descriptors
         })
       );
+      console.log(data)
       detect(images)
     };
   
@@ -93,12 +94,10 @@ export default function Recognition(){
             facingMode: cameraId ? { exact: cameraId } : whoCam 
           }
         };
-    
         const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        const videoElement = document.querySelector('video');
-        videoElement.srcObject = stream;
+        const video = videoRef.current;
+        video.srcObject = stream;
     
-        // Obter a lista de câmeras disponíveis e selecionar a câmera traseira
         const devices = await navigator.mediaDevices.enumerateDevices();
         const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
         if (rearCamera) {
@@ -216,7 +215,6 @@ export default function Recognition(){
           display: 'none', // Mantém o canvas oculto
         }}
       />
-
 
 <Box style={{position:'absolute', top:'90%'}}>
                         <Button

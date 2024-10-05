@@ -19,7 +19,6 @@ export default function RegistrationForm() {
   const [plate, setPlate] = useState('');
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
-  const [blobImage, setBlobImage] = useState(null)
   const [whoCam, setWhoCam] = useState('environment')
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -39,14 +38,11 @@ export default function RegistrationForm() {
       const videoElement = document.querySelector('video');
       videoElement.srcObject = stream;
   
-      // Obter a lista de câmeras disponíveis e selecionar a câmera traseira
       const devices = await navigator.mediaDevices.enumerateDevices();
       const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
       if (rearCamera) {
         await getCameraStream(rearCamera.deviceId);
-      } else {
-        console.error('Câmera traseira não encontrada.');
-      }
+      } 
   
     } catch (err) {
       console.error('Erro ao acessar a câmera: ', err);
@@ -67,11 +63,34 @@ export default function RegistrationForm() {
         canvas.height = video.videoHeight;
         if (context) {
             context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            canvas.toBlob((blob) => {
+            canvas.toBlob(async (blob) => {
                 if (blob) {
-                    setBlobImage(blob)
+                    const bufferImage = await faceapi.bufferToImage(blob);
+                    const detections = await faceapi.detectAllFaces(bufferImage, new faceapi.TinyFaceDetectorOptions())
+                        .withFaceLandmarks()
+                        .withFaceDescriptors();
+                    
+                    if(detections.length <= 0 ){
+                      const htmlContent = `
+                      <div style="text-align: center;">
+                        <h4>A foto que você retirou não permitiu a leitura das expressões faciais.</h4>
+                        <p>Tente tirar a foto novamente.</p>
+                      </div>
+                    `;
+                       await Swal.fire({
+                        icon: 'question',
+                        html:htmlContent,
+                        showDenyButton: false,
+                        showCancelButton: false,
+                        showConfirmButton: true,
+                        confirmButtonText: 'Ok!'
+                    })
+                      setImage(null)
+                      getCameraStream()
+                    }
                 }
             }, 'image/jpeg');
+            
             setImage(canvasRef.current.toDataURL('image/png'));
         }
    
@@ -97,8 +116,7 @@ export default function RegistrationForm() {
 
   async function handleSubmit(e) {
         e.preventDefault()
-
-         if (!blobImage || !image || !name || !plate) {
+         if (!image || !name || !plate) {
                 await Swal.fire({
                     icon: 'info',
                     title: "Preencha todos os campos",
@@ -130,8 +148,7 @@ export default function RegistrationForm() {
             setName('')
             setPlate('')
             setImage(null)
-            setBlobImage('')
-            window.location.reload()
+            getDrivers()
         } catch (error) {
             await Swal.fire({
                 icon: 'error',
@@ -146,10 +163,10 @@ export default function RegistrationForm() {
         }
     }
 
-    async function recapture(){
+    async function recapture(title){
       const confirm = await Swal.fire({
         icon: 'question',
-        title: "Deseja retirar a foto novamente?",
+        title: title,
         showDenyButton: true,
         showCancelButton: false,
         showConfirmButton: true,
@@ -160,7 +177,6 @@ export default function RegistrationForm() {
       return
     }
       setImage(null)
-      setBlobImage(null)
       getCameraStream()
     }
 
@@ -197,8 +213,6 @@ export default function RegistrationForm() {
       }
     }
 
-    setInterval(() =>{getDrivers()},10000)
-
 
     function Logout() {
       localStorage.clear();
@@ -215,9 +229,9 @@ export default function RegistrationForm() {
     <Box style={{ height: '100vh', width: '100%', backgroundColor: '#f0f4f8' }}>
 <Grid
   container
-  justifyContent="flex-end" // Alinha os itens à direita
-  alignItems="flex-start"    // Alinha os itens na parte superior
-  style={{ width: '100%', backgroundColor: '#f0f4f8', padding: '10px' }} // Adicione um padding se necessário
+  justifyContent="flex-end" 
+  alignItems="flex-start"    
+  style={{ width: '100%', backgroundColor: '#f0f4f8', padding: '10px' }} 
 >
   <Grid item>
     <Button
@@ -261,7 +275,7 @@ export default function RegistrationForm() {
               </Typography>
             ) : (
               drivers.map((driver) => (
-                <Grid key={driver.id} item container  spacing={2} alignItems="center">
+                <Grid key={Math.random()} item container  spacing={2} alignItems="center">
                   <Grid item>
                     <Avatar alt={driver.name} src={driver.photo} sx={{ width: 56, height: 56 }} />
                   </Grid>
@@ -293,7 +307,6 @@ export default function RegistrationForm() {
               boxShadow: 3,
             }}
           >
-            {/* Seção de Foto */}
             <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', mb: 2 }}>
               <Typography variant="subtitle2" gutterBottom>
                 Foto do Motorista
@@ -325,7 +338,7 @@ export default function RegistrationForm() {
                   {image ? (
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
                       <img src={image} alt="foto capturada" width="100%" height="auto" />
-                      <Button variant="contained" color="primary" component="span" size="small" onClick={recapture}>
+                      <Button variant="contained" color="primary" component="span" size="small" onClick={() => recapture('Deseja retirar a foto novamente?')}>
                         <ThreeSixtyIcon />
                       </Button>
                     </Box>
