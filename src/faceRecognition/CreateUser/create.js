@@ -1,6 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Container, TextField, Button, IconButton, Box, Typography, Avatar, Card, CardContent, Grid, CircularProgress } from '@mui/material';
-import { Delete } from '@mui/icons-material';
+import { Container, TextField, Button, IconButton, Box, Typography, Avatar, Card, CardContent, Grid, CircularProgress, Tooltip } from '@mui/material';
 import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
 import * as faceapi from 'face-api.js';
 import Api from 'src/api/service';
@@ -13,64 +12,45 @@ import CameraRearIcon from '@mui/icons-material/CameraRear';
 import { useNavigate } from 'react-router';
 import AuthContext from 'src/contexto/AuthContext';
 import Webcam from 'react-webcam';
+import LockIcon from '@mui/icons-material/Lock';
+import { Delete } from '@mui/icons-material';
 
 
 export default function RegistrationForm() {
+  const [accessDenied, setAccessDenied] = useState(false)
   const [name, setName] = useState('');
   const [plate, setPlate] = useState('');
   const [image, setImage] = useState(null);
   const [imagePreview, setImagePreview] = useState('');
-  const [whoCam, setWhoCam] = useState('environment')
-  const videoRef = useRef(null);
-  const canvasRef = useRef(null);
+  const webcamRef = useRef(null);
+  const [typeCam, setTypeCam] = useState('environment')
   const [drivers, setDrivers] = useState([''])
   const navigate = useNavigate();
   const { setUser } = useContext(AuthContext)
   const [isLoading,setIsLoading] = useState(false)
 
-  async function getCameraStream(cameraId) {
+  const startCamera = async () => {
     try {
-      const constraints = {
-        video: {
-          facingMode: cameraId ? { exact: cameraId } : whoCam 
-        }
-      };
-  
-      const stream = await navigator.mediaDevices.getUserMedia(constraints);
-      const videoElement = document.querySelector('video');
-      videoElement.srcObject = stream;
-  
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
-      if (rearCamera) {
-        await getCameraStream(rearCamera.deviceId);
-      } 
-  
+      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: typeCam } });
+      webcamRef.current.srcObject = stream;
+      setAccessDenied(false);
     } catch (err) {
-      console.error('Erro ao acessar a câmera: ', err);
+      if (err.name === 'NotAllowedError') {
+        setAccessDenied(true);
+      }
     }
-  }
+  };
 
-  function handleRemoveImage(){
-    setImagePreview('')
-  }
+  useEffect(() => {startCamera()},[])
 
-  const capturePhoto = async (event) => {
-    event.preventDefault()
 
-        const video = videoRef.current;
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
-        canvas.width = video.videoWidth;
-        canvas.height = video.videoHeight;
-        if (context) {
-            context.drawImage(video, 0, 0, canvas.width, canvas.height);
-            canvas.toBlob(async (blob) => {
-                if (blob) {
-                    const bufferImage = await faceapi.bufferToImage(blob);
-                    const detections = await faceapi.detectAllFaces(bufferImage, new faceapi.TinyFaceDetectorOptions())
-                        .withFaceLandmarks()
-                        .withFaceDescriptors();
+  const capturePhoto = async () => {
+    const imageSrc = await webcamRef.current.getScreenshot();
+    setImagePreview(imageSrc)
+    const img = await faceapi.fetchImage(imageSrc); 
+                    const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
+                    .withFaceLandmarks()
+                    .withFaceDescriptors();
                     
                     if(detections.length <= 0 ){
                       const htmlContent = `
@@ -88,13 +68,10 @@ export default function RegistrationForm() {
                         confirmButtonText: 'Ok!'
                     })
                       setImage(null)
-                      getCameraStream()
                     }
-                }
-            }, 'image/jpeg');
-            
-            setImage(canvasRef.current.toDataURL('image/png'));
-        }
+                  
+            setImage(imageSrc);
+        
    
 };
  useEffect(() => {
@@ -111,14 +88,15 @@ export default function RegistrationForm() {
 
         loadModels();
     }, []);
-  useEffect(() =>{
-    getCameraStream()
-  },[])
 
 
   async function handleSubmit(e) {
         e.preventDefault()
-        if (isLoading) return
+        if (isLoading) {
+          setImage(null)
+          setImagePreview('')
+          return
+        }
         setIsLoading(true)
          if (!image || !name || !plate) {
                 await Swal.fire({
@@ -139,6 +117,7 @@ export default function RegistrationForm() {
 
         try {
             await Api.post('/faceRecognition/create', formData)
+
             await Swal.fire({
                 icon: 'success',
                 title: "Motorista cadastrado com sucesso",
@@ -148,10 +127,10 @@ export default function RegistrationForm() {
                 denyButtonText: 'Cancelar',
                 confirmButtonText: 'Confirmar'
             })
-            
             setName('')
             setPlate('')
             setImage(null)
+            setImagePreview('')
             getDrivers()
         } catch (error) {
             await Swal.fire({
@@ -182,7 +161,7 @@ export default function RegistrationForm() {
       return
     }
       setImage(null)
-      getCameraStream()
+
     }
 
     async function getDrivers(){
@@ -238,6 +217,17 @@ export default function RegistrationForm() {
   alignItems="flex-start"    
   style={{ width: '100%', backgroundColor: '#f0f4f8', padding: '10px' }} 
 >
+{accessDenied && (
+        <Box style={{ position: 'absolute', bottom: '10%', left: '50%', transform: 'translateX(-50%)', color: 'orange' }}>
+          Você negou o acesso à câmera. Para usar este recurso,
+          <Tooltip title="Clique no ícone de cadeado para permitir acesso." arrow>
+            <IconButton>
+              <LockIcon />
+            </IconButton>
+          </Tooltip>
+          ajuste as configurações do seu navegador.
+        </Box>
+      )}
   <Grid item>
     <Button
       variant="contained"
@@ -316,29 +306,7 @@ export default function RegistrationForm() {
               <Typography variant="subtitle2" gutterBottom>
                 Foto do Motorista
               </Typography>
-              {imagePreview ? (
-                <Box sx={{ position: 'relative' }}>
-                  <Avatar
-                    src={imagePreview}
-                    alt="Foto do Motorista"
-                    sx={{ width: 120, height: 120, mb: 1, border: '2px solid #1976d2' }}
-                  />
-                  <IconButton
-                    onClick={handleRemoveImage}
-                    sx={{
-                      position: 'absolute',
-                      top: 0,
-                      right: 0,
-                      backgroundColor: 'white',
-                      '&:hover': {
-                        backgroundColor: 'rgba(255, 255, 255, 0.7)',
-                      },
-                    }}
-                  >
-                    <Delete />
-                  </IconButton>
-                </Box>
-              ) : (
+     
                 <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
                   {image ? (
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
@@ -349,25 +317,26 @@ export default function RegistrationForm() {
                     </Box>
                   ) : (
                     <Box sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 1 }}>
-                      <video ref={videoRef} width="100%" height="auto" autoPlay muted />
-                      <canvas
-                        ref={canvasRef}
-                        style={{
-                          position: 'absolute',
-                          top: 0,
-                          left: 0,
-                          width: '100%',
-                          height: '100%',
-                          display: 'none',
-                        }}
-                      />
+                      <Webcam
+        audio={false}
+        ref={webcamRef}
+        screenshotFormat="image/jpeg"
+        style={{
+          width: '100%',
+          height: 'auto'
+        }}
+        videoConstraints={{
+          facingMode: typeCam,
+        }}
+      />
+                      
                       <Box sx={{ display: 'flex', gap: 1 }}>
                         <Button
                           variant="contained"
                           color="primary"
                           component="span"
                           size="small"
-                          onClick={() => setWhoCam(whoCam === "environment" ? "user" : "environment")}
+                          onClick={() => setTypeCam(typeCam === "environment" ? "user" : "environment")}
                         >
                           <CameraswitchIcon />
                         </Button>
@@ -376,7 +345,7 @@ export default function RegistrationForm() {
                           color="primary"
                           component="span"
                           size="small"
-                          onClick={(e) =>capturePhoto(e)}
+                          onClick={() =>capturePhoto()}
                         >
                           <CameraIcon />
                         </Button>
@@ -384,7 +353,6 @@ export default function RegistrationForm() {
                     </Box>
                   )}
                 </Box>
-              )}
             </Box>
 
             <TextField
