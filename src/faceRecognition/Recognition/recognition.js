@@ -2,154 +2,102 @@ import { useEffect, useRef, useState } from "react";
 import * as faceapi from 'face-api.js';
 import Swal from "sweetalert2";
 import Api from "src/api/service";
-import { Box,  Button } from "@mui/material";
+import { Box,  Button, IconButton, Tooltip } from "@mui/material";
 import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
+import Webcam from 'react-webcam';
+import LockIcon from '@mui/icons-material/Lock';
 
 export default function Recognition(){
+  const [typeCam, setTypeCam] = useState('user')
+  const [accessDenied, setAccessDenied] = useState(false)
     const [isModelLoaded, setIsModelLoaded] = useState(false);
-    const videoRef = useRef(null);
-    const canvasRef = useRef(null);
-    const [whoCam, setWhoCam] = useState('environment')
     const [imagesUsers, setImagesUsers] = useState([])
-    const [userDetect, setUSerDetect] = useState(null)
-  
-    const processPhotos = async (data) => {
-      const descriptors= [];
-      const images = await Promise.all(
-        data.map(async (item, i) => {
-          const base64Image = await base64ToImage(item.photo);
-          const detections = await faceapi.detectAllFaces(base64Image, new faceapi.TinyFaceDetectorOptions())
-            .withFaceLandmarks()
-            .withFaceDescriptors();
-          const userDescriptors = detections.map(d => d.descriptor);
-          if (userDescriptors.length > 0) {
-            descriptors.push(new faceapi.LabeledFaceDescriptors(item.name, userDescriptors));
-          }
-          return descriptors
-        })
-      );
-      console.log(data)
-      detect(images)
-    };
-  
-  
-    const identifyUser = async (detections, userDescriptors) => {
-      if(userDescriptors.length == 0){
-        processPhotos(imagesUsers)
-      }
+    const [userDetected, setUserDetected] = useState({})
+    const webcamRef = useRef(null);
 
-      if(!userDescriptors ) return
+    const startCamera = async () => {
       try {
-        let userLocalized;
-        for (const item of userDescriptors) {
-          const faceMatcher = new faceapi.FaceMatcher(item, 0.6);
-          const results = detections.map(d => faceMatcher.findBestMatch(d.descriptor));
-          results.forEach(async (result, i) => {
-            if (result.label == "unknown" || !result.label) return
-            userLocalized = result.label
-          });
-        }
-  
-        if (!userLocalized) return
-        setUSerDetect(userLocalized)
-
-        const confirm = await Swal.fire({
-          icon: 'question',
-          title: `${userLocalized}, entrar para carregar?`,
-          showDenyButton: true,
-          showCancelButton: false,
-          showConfirmButton: true,
-          denyButtonText: 'Não',
-          confirmButtonText: 'Sim'
-        })
-
-        if(!confirm.isConfirmed){
-          setUSerDetect(null)
-         }
-         else{
-          const {id} = imagesUsers.find((item) => item.name == userLocalized)
-            try {
-              await Api.post(`/faceRecognition/edit`,{
-                "driverId":id
-              })
-              const { data } = await Api.get('/faceRecognition/recover/')
-              setImagesUsers(data)
-              setUSerDetect(null)
-            } catch (error) {
-              console.log(error)
-          }
-        }
-  
-      
-  
-      } catch (error) {
-        console.log(error)
-      }
-    };
-  
-    const detectAndIdentify = async (cameraId) => {
-      try {
-        const constraints = {
-          video: {
-            facingMode: cameraId ? { exact: cameraId } : whoCam 
-          }
-        };
-        const stream = await navigator.mediaDevices.getUserMedia(constraints);
-        const video = videoRef.current;
-        video.srcObject = stream;
-    
-        const devices = await navigator.mediaDevices.enumerateDevices();
-        const rearCamera = devices.find(device => device.kind === 'videoinput' && device.label.toLowerCase().includes('back'));
-        if (rearCamera) {
-          await detectAndIdentify(rearCamera.deviceId);
-        } else {
-          console.error('Câmera traseira não encontrada.');
-        }
-    
+        const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: typeCam } });
+        webcamRef.current.srcObject = stream;
+        setAccessDenied(false);
       } catch (err) {
-        console.error('Erro ao acessar a câmera: ', err);
+        if (err.name === 'NotAllowedError') {
+          setAccessDenied(true);
+        }
       }
     };
-  
-  
-    async function detect(images) {
 
-      if (!videoRef.current) return
-  
-      const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions())
+    async function capture() {
+      const imageSrc = webcamRef.current.video;
+      const detections = await faceapi.detectAllFaces(imageSrc, new faceapi.TinyFaceDetectorOptions())
         .withFaceLandmarks()
         .withFaceDescriptors();
-        
-      identifyUser(detections, images);
+    
+     
+      if (detections.length > 0  ) {
+        const userDescriptors = await Promise.all(imagesUsers.map(async (user) => {
+          const img = await faceapi.fetchImage(user.photo); 
+          const detections = await faceapi.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
+            .withFaceLandmarks()
+            .withFaceDescriptors();
+          return detections.length > 0 ? detections[0].descriptor : null;
+        }));
+    
+        const capturedDescriptor = detections[0].descriptor;
+    
+        await Promise.all(userDescriptors.map(async (userDescriptor, index) => {
+          if (userDescriptor) {
+            const distance = faceapi.euclideanDistance(capturedDescriptor, userDescriptor);
+            if (distance < 0.6) {
+              setUserDetected(imagesUsers[index])
+            }
+          }
+        }));
+      }
+      capture();
     }
-  
-  
-    const base64ToImage = (base64String) => {
-      return new Promise((resolve, reject) => {
-        const img = new Image();
-        img.onload = () => resolve(img);
-        img.onerror = (error) => reject(error);
-        img.src = base64String;
-      });
-    };
-  
-  
 
 
-    useEffect(() => {
-      const interval = setInterval(() => {
-        if (userDetect === null) {
-          if(imagesUsers.length == 0) return
-          processPhotos(imagesUsers)
-        } else {
-          clearInterval(interval);
+    useEffect(() =>{
+      (async() =>{
+        if (userDetected && Object.keys(userDetected).length === 0) return;
+
+        try {
+          const confirm = await Swal.fire({
+            icon: 'question',
+            title: `${userDetected.name}, iniciar carregamento?`,
+            showDenyButton: true,
+            showCancelButton: false,
+            showConfirmButton: true,
+            denyButtonText: 'Não',
+            confirmButtonText: 'Sim'
+          });
+  
+          if (!confirm.isConfirmed) {
+            setUserDetected({})
+            return; 
+          }
+          await Api.post(`/faceRecognition/edit`, {
+            "driverId": userDetected.id
+          });
+          const { data } = await Api.get('/faceRecognition/recover/');
+          setImagesUsers(data);
+        } catch (error) {
+          console.log(error);
         }
-      }, 3000);
-  
-      return () => clearInterval(interval); 
-    }, [userDetect,isModelLoaded]);
+      })()
+    },[userDetected])
 
     
+    useEffect(() => {
+      startCamera();
+    }, [isModelLoaded]);
+
+    useEffect(() =>{
+      capture();
+    },[imagesUsers])
+
+
     useEffect(() => {
       (async () => {
         try {
@@ -158,9 +106,16 @@ export default function Recognition(){
           await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
           await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
           setIsModelLoaded(true);
-          detectAndIdentify()
         } catch (error) {
-          console.error('Error loading models:', error);
+          await Swal.fire({
+            icon: 'error',
+            title: 'Erro ao iniciar reconhecimento facial',
+            showDenyButton: false,
+            showCancelButton: false,
+            showConfirmButton: true,
+            denyButtonText: 'Não',
+            confirmButtonText: 'Ok!'
+          });
         }
       })();
       (async () => {
@@ -168,7 +123,15 @@ export default function Recognition(){
           const { data } = await Api.get('/faceRecognition/recover/')
           setImagesUsers(data)
         } catch (error) {
-          console.log(error)
+          await Swal.fire({
+            icon: 'error',
+            title: 'Erro ao recuperar caminhoneiros',
+            showDenyButton: false,
+            showCancelButton: false,
+            showConfirmButton: true,
+            denyButtonText: 'Não',
+            confirmButtonText: 'Ok!'
+          });
         }
       })();
     }, [])
@@ -176,57 +139,59 @@ export default function Recognition(){
 
 
     return(
-        <Box
+      <Box
       sx={{
         height: '100vh',
         width: '100%',
-        padding: 0, // Remove o padding do Container para maximizar o espaço
-        margin: 0,  // Remove a margem do Container
+        padding: 0,
+        margin: 0,
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        position: 'relative', // Posiciona o Container para ter um contexto relativo
-        overflow: 'hidden'    // Garante que nada saia do Container
+        position: 'relative',
+        overflow: 'hidden'
       }}
     >
-      <video
-        ref={videoRef}
+      <Webcam
+        audio={false}
+        ref={webcamRef}
+        screenshotFormat="image/jpeg"
         style={{
-          position: 'absolute', // Faz o vídeo ocupar o Container inteiro
+          position: 'absolute',
           top: 0,
           left: 0,
           width: '100%',
           height: '100%',
-          objectFit: 'cover',   // Faz o vídeo cobrir todo o Container
+          objectFit: 'cover',
         }}
-        muted
-        autoPlay
-        playsInline
-      />
-       
-      <canvas
-        ref={canvasRef}
-        style={{
-          position: 'absolute', // Faz o canvas ocupar o Container inteiro
-          top: 0,
-          left: 0,
-          width: '100%',
-          height: '100%',
-          display: 'none', // Mantém o canvas oculto
+        videoConstraints={{
+          facingMode: typeCam,
         }}
       />
 
-<Box style={{position:'absolute', top:'90%'}}>
-                        <Button
-                          variant="contained"
-                          color="primary"
-                          component="span"
-                          size="small"
-                          onClick={() => setWhoCam(whoCam === "environment" ? "user" : "environment")}
-                        >
-                          <CameraswitchIcon />
-                        </Button>
-                      </Box>
+      <Box style={{ position: 'absolute', top: '90%' }}>
+        <Button
+          variant="contained"
+          color="primary"
+          component="span"
+          size="small"
+          onClick={() => setTypeCam(typeCam === "environment" ? "user" : "environment")}
+        >
+          <CameraswitchIcon />
+        </Button>
+      </Box>
+
+      {accessDenied && (
+        <Box style={{ position: 'absolute', bottom: '10%', left: '50%', transform: 'translateX(-50%)', color: 'orange' }}>
+          Você negou o acesso à câmera. Para usar este recurso,
+          <Tooltip title="Clique no ícone de cadeado para permitir acesso." arrow>
+            <IconButton>
+              <LockIcon />
+            </IconButton>
+          </Tooltip>
+          ajuste as configurações do seu navegador.
+        </Box>
+      )}
     </Box>
     )
 }
