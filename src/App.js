@@ -18,21 +18,21 @@ function App() {
 
     const currentUrl = window.location.pathname;
 
-    // if (plataform && app) {
-    //   navigate('/auth/login')
-    // }else if(FaceRecognition){
-    //   setUser(FaceRecognition)
-    //   navigate('/faceRecoginition/createUser')
-    // } 
-    // else if (plataform) {
-    //   setUser(plataform)
-    //   navigate('/dashboard')
-    // } else if (app) {
-    //   setOperator(app)
-    //   navigate('/app/home')
-    // } else {
-    //   navigate('/')
-    // }
+    if (plataform && app) {
+      navigate('/auth/login')
+    }else if(FaceRecognition){
+      setUser(FaceRecognition)
+      navigate('/faceRecoginition/createUser')
+    } 
+    else if (plataform) {
+      setUser(plataform)
+      navigate('/dashboard')
+    } else if (app) {
+      setOperator(app)
+      navigate('/app/home')
+    } else {
+      navigate('/')
+    }
   }, [])
   return (
     <ThemeProvider theme={theme}>

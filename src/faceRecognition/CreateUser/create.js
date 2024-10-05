@@ -1,5 +1,5 @@
 import React, { useContext, useEffect, useRef, useState } from 'react';
-import { Container, TextField, Button, IconButton, Box, Typography, Avatar, Card, CardContent, Grid } from '@mui/material';
+import { Container, TextField, Button, IconButton, Box, Typography, Avatar, Card, CardContent, Grid, CircularProgress } from '@mui/material';
 import { Delete } from '@mui/icons-material';
 import CameraswitchIcon from '@mui/icons-material/Cameraswitch';
 import * as faceapi from 'face-api.js';
@@ -12,6 +12,7 @@ import LogoutSharpIcon from '@mui/icons-material/LogoutSharp';
 import CameraRearIcon from '@mui/icons-material/CameraRear';
 import { useNavigate } from 'react-router';
 import AuthContext from 'src/contexto/AuthContext';
+import Webcam from 'react-webcam';
 
 
 export default function RegistrationForm() {
@@ -25,6 +26,7 @@ export default function RegistrationForm() {
   const [drivers, setDrivers] = useState([''])
   const navigate = useNavigate();
   const { setUser } = useContext(AuthContext)
+  const [isLoading,setIsLoading] = useState(false)
 
   async function getCameraStream(cameraId) {
     try {
@@ -116,6 +118,8 @@ export default function RegistrationForm() {
 
   async function handleSubmit(e) {
         e.preventDefault()
+        if (isLoading) return
+        setIsLoading(true)
          if (!image || !name || !plate) {
                 await Swal.fire({
                     icon: 'info',
@@ -161,6 +165,7 @@ export default function RegistrationForm() {
             })
 
         }
+        setIsLoading(false)
     }
 
     async function recapture(title){
@@ -403,7 +408,11 @@ export default function RegistrationForm() {
             />
 
             <Button type="submit" variant="contained" color="primary" fullWidth size="large" onClick={(e) =>handleSubmit(e)}>
-              Enviar
+            {isLoading ? (<CircularProgress />) : (
+                    <span>
+                        Enviar
+                    </span>
+                )}
             </Button>
           </Box>
         </Grid>
