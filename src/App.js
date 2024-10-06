@@ -11,28 +11,28 @@ function App() {
   const theme = baselightTheme;
   const { setUser, setOperator } = useContext(AuthContext)
   const navigate = useNavigate();
+
+  
   useEffect(() => {
-    const plataform = localStorage.getItem('manager')
+    const platform = localStorage.getItem('manager')
     const app = localStorage.getItem("userApp")
     const FaceRecognition = localStorage.getItem('FaceRecognition')
 
-    const currentUrl = window.location.pathname;
+  if(FaceRecognition){
+    setUser(FaceRecognition)
+    navigate('/faceRecoginition/createUser')
 
-    if (plataform && app) {
-      navigate('/auth/login')
-    }else if(FaceRecognition){
-      setUser(FaceRecognition)
-      navigate('/faceRecoginition/createUser')
-    } 
-    else if (plataform) {
-      setUser(plataform)
-      navigate('/dashboard')
-    } else if (app) {
-      setOperator(app)
-      navigate('/app/home')
-    } else {
-      navigate('/')
-    }
+  }else if (platform) {
+    setUser(platform)
+    navigate('/dashboard')
+  }else if(app){
+    setOperator(app)
+    navigate('/app/home')
+  }else{
+navigate('/')
+  }
+
+   
   }, [])
   return (
     <ThemeProvider theme={theme}>

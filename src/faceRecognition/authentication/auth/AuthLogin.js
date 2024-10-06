@@ -151,20 +151,7 @@ const AuthLogin = ({ title,  subtext }) => {
                         Esqueci minha senha
                     </span>
                 </div>
-                <Stack justifyContent="space-between" direction="row" alignItems="center" my={2}>
-                    <FormGroup>
-                        <Button
-                            color="primary"
-                            variant="outlined"
-                            size="small"
-                            fullWidth
-                            onClick={() => navigate('/faceRecoginition/Recognition')}
-                        >
-                            Leitura Facial
-                        </Button>
-                    </FormGroup>
-                   
-                </Stack>
+               
             </Stack>
             <Box>
                 <Button
