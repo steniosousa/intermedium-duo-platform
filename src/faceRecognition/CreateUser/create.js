@@ -145,6 +145,7 @@ export default function RegistrationForm() {
 			setImagePreview("");
 			getDrivers();
 		} catch (error) {
+			console.log(error.response)
 			await Swal.fire({
 				icon: "error",
 				title: error.response.data.message,

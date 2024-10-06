@@ -31,6 +31,7 @@ export default function Recognition() {
 
 
 	async function capture() {
+    const { data } = await Api.get("/faceRecognition/recover/");
 		const imageSrc = webcamRef.current.video;
 		const detections = await faceapi
 			.detectAllFaces(imageSrc, new faceapi.TinyFaceDetectorOptions())
@@ -39,7 +40,7 @@ export default function Recognition() {
 
 		if (detections.length > 0) {
 			const userDescriptors = await Promise.all(
-				imagesUsers.map(async (user) => {
+				data.map(async (user) => {
 					const img = await faceapi.fetchImage(user.photo);
 					const detections = await faceapi
 						.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
@@ -62,7 +63,7 @@ export default function Recognition() {
 				if (distance < 0.6) return true;
 			});
 
-      const user = imagesUsers[index];
+      const user = data[index];
 			if (!user) {
 				return;
 			}
@@ -84,8 +85,6 @@ export default function Recognition() {
 				await Api.post(`/faceRecognition/edit`, {
 					driverId: user.id,
 				});
-				const { data } = await Api.get("/faceRecognition/recover/");
-				setImagesUsers(data);
 			} catch (error) {
         capture()
 			}
