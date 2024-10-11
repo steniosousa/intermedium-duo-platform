@@ -6,6 +6,7 @@ import { baselightTheme } from "./theme/DefaultColors";
 import { useContext, useEffect } from 'react';
 import AuthContext from './contexto/AuthContext';
 import { useNavigate } from "react-router-dom";
+
 function App() {
   const routing = useRoutes(Router);
   const theme = baselightTheme;
@@ -20,7 +21,7 @@ function App() {
     if(FaceRecognition){
       setUser(FaceRecognition)
       const path = window.location.pathname
-      if(path == "/faceRecoginition/Recognition"){
+      if(path === "/faceRecoginition/Recognition"){
         navigate('/faceRecoginition/Recognition')
         return
       }
