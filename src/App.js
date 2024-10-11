@@ -12,25 +12,28 @@ function App() {
   const { setUser, setOperator } = useContext(AuthContext)
   const navigate = useNavigate();
 
-  
   useEffect(() => {
     const platform = localStorage.getItem('manager')
     const app = localStorage.getItem("userApp")
     const FaceRecognition = localStorage.getItem('FaceRecognition')
 
-  if(FaceRecognition){
-    setUser(FaceRecognition)
-    navigate('/faceRecoginition/createUser')
-
-  }else if (platform) {
-    setUser(platform)
-    navigate('/dashboard')
-  }else if(app){
-    setOperator(app)
-    navigate('/app/home')
-  }else{
-navigate('/')
-  }
+    if(FaceRecognition){
+      setUser(FaceRecognition)
+      const path = window.location.pathname
+      if(path == "/faceRecoginition/Recognition"){
+        navigate('/faceRecoginition/Recognition')
+        return
+      }
+      navigate('/faceRecoginition/createUser')
+    }else if (platform) {
+      setUser(platform)
+      navigate('/dashboard')
+    }else if(app){
+      setOperator(app)
+      navigate('/app/home')
+    }else{
+      navigate('/')
+    }
 
    
   }, [])

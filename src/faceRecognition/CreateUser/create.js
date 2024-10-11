@@ -32,7 +32,6 @@ export default function RegistrationForm() {
 	const [name, setName] = useState("");
 	const [plate, setPlate] = useState("");
 	const [image, setImage] = useState(null);
-	const [imagePreview, setImagePreview] = useState("");
 	const webcamRef = useRef(null);
 	const [typeCam, setTypeCam] = useState("environment");
 	const [drivers, setDrivers] = useState([""]);
@@ -59,14 +58,16 @@ export default function RegistrationForm() {
 	}, []);
 
 	const capturePhoto = async () => {
+		setIsLoading(true)
 		const imageSrc = await webcamRef.current.getScreenshot();
-		setImagePreview(imageSrc);
 		const img = await faceapi.fetchImage(imageSrc);
+		setImage(imageSrc)
+
 		const detections = await faceapi
 			.detectAllFaces(img, new faceapi.TinyFaceDetectorOptions())
 			.withFaceLandmarks()
 			.withFaceDescriptors();
-
+		
 		if (detections.length <= 0) {
 			const htmlContent = `
                       <div style="text-align: center;">
@@ -82,31 +83,19 @@ export default function RegistrationForm() {
 				showConfirmButton: true,
 				confirmButtonText: "Ok!",
 			});
+			setIsLoading(false)
+
 			setImage(null);
 			return;
 		}
+		setIsLoading(false)
 		setImage(imageSrc);
 	};
-	useEffect(() => {
-		const loadModels = async () => {
-			try {
-				const MODEL_URL = "/models";
-				await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
-				await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
-				await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
-			} catch (error) {
-				console.error("Error loading models:", error);
-			}
-		};
-
-		loadModels();
-	}, []);
+	
 
 	async function handleSubmit(e) {
 		e.preventDefault();
 		if (isLoading) {
-			setImage(null);
-			setImagePreview("");
 			return;
 		}
 		setIsLoading(true);
@@ -120,6 +109,8 @@ export default function RegistrationForm() {
 				denyButtonText: "Cancelar",
 				confirmButtonText: "Confirmar",
 			});
+			setIsLoading(false);
+
 			return;
 		}
 		const formData = new FormData();
@@ -129,7 +120,6 @@ export default function RegistrationForm() {
 
 		try {
 			await Api.post("/faceRecognition/create", formData);
-
 			await Swal.fire({
 				icon: "success",
 				title: "Motorista cadastrado com sucesso",
@@ -142,13 +132,11 @@ export default function RegistrationForm() {
 			setName("");
 			setPlate("");
 			setImage(null);
-			setImagePreview("");
 			getDrivers();
 		} catch (error) {
-			console.log(error.response)
 			await Swal.fire({
 				icon: "error",
-				title: error.response.data.message,
+				title: "Erro ao cadastrar motorista",
 				showDenyButton: false,
 				showCancelButton: false,
 				showConfirmButton: true,
@@ -209,14 +197,27 @@ export default function RegistrationForm() {
 	}
 
 	function Logout() {
-		localStorage.clear();
+		localStorage.removeItem("FaceRecognition");
 		setUser(null);
-		navigate("/auth/login");
+		navigate("/faceRecoginition/login",{ replace: true });
 		return null;
 	}
 
 	useEffect(() => {
 		getDrivers();
+	}, []);
+
+	useEffect(() => {
+		(async () => {
+			try {
+				const MODEL_URL = "/models";
+				await faceapi.nets.tinyFaceDetector.loadFromUri(MODEL_URL);
+				await faceapi.nets.faceLandmark68Net.loadFromUri(MODEL_URL);
+				await faceapi.nets.faceRecognitionNet.loadFromUri(MODEL_URL);
+			} catch (error) {
+				console.error("Error loading models:", error);
+			}
+		})()
 	}, []);
 
 	return (
@@ -411,6 +412,7 @@ export default function RegistrationForm() {
 													facingMode: typeCam,
 												}}
 											/>
+											{isLoading?(<CircularProgress style={{color:'blue'}}/>):(
 
 											<Box sx={{ display: "flex", gap: 1 }}>
 												<Button
@@ -438,8 +440,11 @@ export default function RegistrationForm() {
 													<CameraIcon />
 												</Button>
 											</Box>
+											) }
+
 										</Box>
 									)}
+
 								</Box>
 							</Box>
 

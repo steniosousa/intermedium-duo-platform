@@ -2,16 +2,16 @@ import { useEffect, useRef, useState } from "react";
 import * as faceapi from "face-api.js";
 import Swal from "sweetalert2";
 import Api from "src/api/service";
-import { Box, Button, IconButton, Tooltip } from "@mui/material";
-import FingerprintSharpIcon from '@mui/icons-material/FingerprintSharp';
+import { Box, Button, CircularProgress, IconButton, Tooltip } from "@mui/material";
+import CameraOutlinedIcon from '@mui/icons-material/CameraOutlined';
 import Webcam from "react-webcam";
 import LockIcon from "@mui/icons-material/Lock";
 
 export default function Recognition() {
 	const [accessDenied, setAccessDenied] = useState(false);
 	const [isModelLoaded, setIsModelLoaded] = useState(false);
-	const [imagesUsers, setImagesUsers] = useState([]);
 	const webcamRef = useRef(null);
+	const [isLoading, setIsLoading] = useState(false)
 
 	const startCamera = async () => {
 		try {
@@ -31,7 +31,8 @@ export default function Recognition() {
 
 
 	async function capture() {
-    const { data } = await Api.get("/faceRecognition/recover/");
+		setIsLoading(true)
+    	const { data } = await Api.get("/faceRecognition/recover/");
 		const imageSrc = webcamRef.current.video;
 		const detections = await faceapi
 			.detectAllFaces(imageSrc, new faceapi.TinyFaceDetectorOptions())
@@ -54,7 +55,10 @@ export default function Recognition() {
 			const capturedDescriptor = detection.descriptor;
 
 			const index = userDescriptors.findIndex((userDescriptor, index) => {
-        if(!userDescriptor) return false;
+        if(!userDescriptor) {
+			setIsLoading(false)
+			return false
+		};
 
 				const distance = faceapi.euclideanDistance(
 					capturedDescriptor,
@@ -65,6 +69,7 @@ export default function Recognition() {
 
       const user = data[index];
 			if (!user) {
+				setIsLoading(false)
 				return;
 			}
 
@@ -80,13 +85,16 @@ export default function Recognition() {
 				});
 
 				if (!confirm.isConfirmed) {
+					setIsLoading(false)
 					return;
 				}
 				await Api.post(`/faceRecognition/edit`, {
 					driverId: user.id,
 				});
+				setIsLoading(false)
 			} catch (error) {
-        capture()
+				setIsLoading(false)
+        		capture()
 			}
 		}
 	}
@@ -115,22 +123,7 @@ export default function Recognition() {
 				});
 			}
 		})();
-		(async () => {
-			try {
-				const { data } = await Api.get("/faceRecognition/recover/");
-				setImagesUsers(data);
-			} catch (error) {
-				await Swal.fire({
-					icon: "error",
-					title: "Erro ao recuperar caminhoneiros",
-					showDenyButton: false,
-					showCancelButton: false,
-					showConfirmButton: true,
-					denyButtonText: "Não",
-					confirmButtonText: "Ok!",
-				});
-			}
-		})();
+		
 	}, []);
 
 	return (
@@ -165,12 +158,18 @@ export default function Recognition() {
 			/>
 
 			<Box
-      style={{position:'absolute', bottom: '5%'}}
+      				style={{position:'absolute', bottom: '5%' , display:'flex', flexDirection:'column', alignItems:"center"}}
 			>
 				
-				<Button component="span" size="large" onClick={capture} >
-					<FingerprintSharpIcon style={{fontSize:"150px"}} color={"success"}/>
+				<Button component="span" size="large" onClick={capture} style={{background:"white", borderRadius:'50%'}}>
+					{isLoading ?(
+						<CircularProgress style={{color:'blue'}}/>
+					):(
+						<CameraOutlinedIcon	 style={{fontSize:"100px"}} color={"blue"}/>
+
+					)}
 				</Button>
+					<h1 style={{color:'white'}}>Click</h1>
 				</Box>
 
 
