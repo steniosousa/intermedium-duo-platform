@@ -32,11 +32,6 @@ function App() {
     }else if(app){
       setOperator(app)
       navigate('/app/home')
-    }else if(path == "resetPass"){
-      return
-    }
-    else{
-      navigate('/')
     }
 
    
