@@ -17,10 +17,10 @@ function App() {
     const platform = localStorage.getItem('manager')
     const app = localStorage.getItem("userApp")
     const FaceRecognition = localStorage.getItem('FaceRecognition')
+    const path = window.location.pathname
 
     if(FaceRecognition){
       setUser(FaceRecognition)
-      const path = window.location.pathname
       if(path === "/faceRecoginition/Recognition"){
         navigate('/faceRecoginition/Recognition')
         return
@@ -32,7 +32,10 @@ function App() {
     }else if(app){
       setOperator(app)
       navigate('/app/home')
-    }else{
+    }else if(path == "resetPass"){
+      return
+    }
+    else{
       navigate('/')
     }
 
