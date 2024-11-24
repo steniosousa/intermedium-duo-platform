@@ -102,7 +102,7 @@ export default function ListOperator({ Listuser, choseUser, action }) {
 
 
     async function disableUser(userId, onOff) {
-        const deactivatedAt = onOff ? null : new Date()
+        const deletedAt = onOff ? null : new Date()
         const confirm = await Swal.fire({
             icon: 'question',
             title: 'Excluir operário?',
@@ -116,7 +116,7 @@ export default function ListOperator({ Listuser, choseUser, action }) {
         try {
             await Api.post('user/update', {
                 id: userId,
-                deactivatedAt
+                deletedAt
             })
             action()
         }

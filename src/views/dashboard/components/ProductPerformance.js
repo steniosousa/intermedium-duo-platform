@@ -241,8 +241,6 @@ const ProductPerformance = ({ userId, setCleaning }) => {
                     <TableBody>
 
                         {cleanings.map((product) => {
-                            const dateObject = moment(product.createdAt);
-                            const data = dateObject.format("DD-MM-YYYY - h:m");
                             return (
                                 <TableRow key={product.id} onClick={() => setCleaning(product)} style={{ cursor: "pointer" }}>
                                     <TableCell>
@@ -252,7 +250,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
                                                 fontWeight: "500",
                                             }}
                                         >
-                                            {data}
+                                            {product.createdAt}
                                         </Typography>
                                     </TableCell>
                                     <TableCell>

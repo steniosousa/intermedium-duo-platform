@@ -5,6 +5,11 @@ import Swal from "sweetalert2";
 import Api from "src/api/service";
 
 export default function ModalSolicitation({ action, openModal, initialObject }) {
+    const [time, setTime] = useState('');
+    const handleChange = (event, hour) => {
+        setTime(event.target.value);
+        changeHour(event.target.value, hour)
+      };
     const style = {
         position: 'absolute',
         top: '50%',
@@ -22,28 +27,27 @@ export default function ModalSolicitation({ action, openModal, initialObject }) 
 
     const [dates, setDates] = useState([])
     const [isLoading, setIsLoading] = useState(false)
-    const hours = [
-        { value: 7, hour: "07:00" },
-        { value: 8, hour: "08:00" },
-        { value: 9, hour: "09:00" },
-        { value: 10, hour: "10:00" },
-        { value: 11, hour: "11:00" },
-        { value: 12, hour: "12:00" },
-        { value: 13, hour: "13:00" },
-        { value: 14, hour: "14:00" },
-        { value: 15, hour: "15:00" },
-        { value: 16, hour: "16:00" },
-        { value: 17, hour: "17:00" },
-    ]
 
 
     function changeHour(hour, date) {
         initialObject.date.map((item) => {
             if (item === date) {
-                const newDate = new Date(item).setHours(hour)
-                setDates((oldState) => [...oldState, new Date(newDate)])
-            }
+
+                const time = hour.split(':')
+                const newDate = new Date(item); 
+                newDate.setHours(time[0]); 
+                newDate.setMinutes(time[1]);         
+
+                setDates((oldState) => {
+                    const isDuplicate = oldState.some((date) => date.getTime() === new Date(newDate).getTime());
+                    if (!isDuplicate) {
+                      return [...oldState, new Date(newDate)];
+                    }
+                    return oldState;
+                  });            }
         })
+        console.log(dates)
+
     }
 
     async function handleCreate() {
@@ -123,21 +127,16 @@ export default function ModalSolicitation({ action, openModal, initialObject }) 
                                         <Typography variant="body1" color="textSecondary" style={{marginLeft:10, marginRight:10, fontWeight:'bold'}}>
                                            às
                                         </Typography>
-                                        <FormControl variant="standard" sx={{ m: 1, minWidth: 80 }} >
-                                            <Select
-                                                labelId="demo-simple-select-label"
-                                                id="demo-simple-select"
-                                                label="Age"
-                                                style={{ border: 'none' }}
-                                                onChange={(e) => changeHour(e.target.value, date)}
-                                            >
-                                                {hours.map((hour) => {
-                                                    return (
-                                                        <MenuItem value={hour.value} key={hour.value}>{hour.hour}</MenuItem>
-                                                    )
-                                                })}
-                                            </Select>
-                                        </FormControl>
+                                        <TextField
+        label="Escolha a Hora"
+        type="time"
+        value={time}
+        onChange={(event)=>handleChange(event, date)}
+        InputLabelProps={{
+          shrink: true,
+        }}
+        fullWidth
+      />
                                     </Grid>
                                 )
 
