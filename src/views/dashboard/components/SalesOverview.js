@@ -10,6 +10,7 @@ import Swal from 'sweetalert2';
 import Api from 'src/api/service';
 import ModalSolicitation from 'src/components/modal-Solicitation/modal';
 const SalesOverview = ({ companies }) => {
+    const today = new Date();
 
     const initialDays = [];
     const [days, setDays] = useState(initialDays);
@@ -315,8 +316,10 @@ const SalesOverview = ({ companies }) => {
 
             <DayPicker
                 locale={pt}
+
                 mode="multiple"
                 selected={days}
+disabled={{before:today}}
                 onSelect={setDays}
                 styles={{
                     'table': {

@@ -7,8 +7,9 @@ import Api from "src/api/service";
 export default function ModalSolicitation({ action, openModal, initialObject }) {
     const [time, setTime] = useState('');
     const handleChange = (event, hour) => {
-        setTime(event.target.value);
         changeHour(event.target.value, hour)
+
+        setTime(event.target.value);
       };
     const style = {
         position: 'absolute',
@@ -36,17 +37,27 @@ export default function ModalSolicitation({ action, openModal, initialObject }) 
                 const time = hour.split(':')
                 const newDate = new Date(item); 
                 newDate.setHours(time[0]); 
-                newDate.setMinutes(time[1]);         
+                newDate.setMinutes(time[1]);  
+                console.log(newDate)       
 
                 setDates((oldState) => {
-                    const isDuplicate = oldState.some((date) => date.getTime() === new Date(newDate).getTime());
-                    if (!isDuplicate) {
-                      return [...oldState, new Date(newDate)];
+                    const newDateObj = new Date(newDate); // Cria o objeto de data a partir do novo horário
+                    const existingIndex = oldState.findIndex((date) => date.getDate() === newDateObj.getDate()); // Verifica se a data já existe
+                  
+                    if (existingIndex === -1) {
+                      // Se não existir, apenas adiciona a nova data
+                      return [...oldState, newDateObj];
+                    } else {
+                      // Se existir, substitui a data existente pela nova
+                      const updatedState = [...oldState];
+                      updatedState[existingIndex] = newDateObj;
+                      return updatedState;
                     }
-                    return oldState;
-                  });            }
+                  });        
+                
+                
+                }
         })
-        console.log(dates)
 
     }
 
