@@ -141,7 +141,6 @@ export default function ModalSolicitation({ action, openModal, initialObject }) 
                                         <TextField
         label="Escolha a Hora"
         type="time"
-        value={time}
         onChange={(event)=>handleChange(event, date)}
         InputLabelProps={{
           shrink: true,
