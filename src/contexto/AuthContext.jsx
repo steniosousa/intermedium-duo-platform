@@ -39,7 +39,7 @@ export const AuthProvider = ({ children }) => {
   function Logout() {
     localStorage.clear();
     setUser(null);
-    navigate('/auth/login')
+    navigate('/auth/login',{ replace: true })
     return null
   }
 
@@ -104,7 +104,7 @@ export const AuthProvider = ({ children }) => {
 
   function LogoutApp() {
     localStorage.removeItem('userApp');
-    navigate('/app/login')
+    navigate('/app/login', { replace: true });
   }
   return (
     <AuthContext.Provider value={{ signed: Boolean(user), user, setUser, Login, Logout, LoginApp,LoginFaceRecognition, setOperator, operator, LogoutApp }}>

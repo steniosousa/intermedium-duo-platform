@@ -6,33 +6,35 @@ import { baselightTheme } from "./theme/DefaultColors";
 import { useContext, useEffect } from 'react';
 import AuthContext from './contexto/AuthContext';
 import { useNavigate } from "react-router-dom";
+
 function App() {
   const routing = useRoutes(Router);
   const theme = baselightTheme;
   const { setUser, setOperator } = useContext(AuthContext)
   const navigate = useNavigate();
+
   useEffect(() => {
-    const plataform = localStorage.getItem('manager')
+    const platform = localStorage.getItem('manager')
     const app = localStorage.getItem("userApp")
     const FaceRecognition = localStorage.getItem('FaceRecognition')
+    const path = window.location.pathname
 
-    const currentUrl = window.location.pathname;
-
-    if (plataform && app) {
-      navigate('/auth/login')
-    }else if(FaceRecognition){
+    if(FaceRecognition){
       setUser(FaceRecognition)
+      if(path === "/faceRecoginition/Recognition"){
+        navigate('/faceRecoginition/Recognition')
+        return
+      }
       navigate('/faceRecoginition/createUser')
-    } 
-    else if (plataform) {
-      setUser(plataform)
+    }else if (platform) {
+      setUser(platform)
       navigate('/dashboard')
-    } else if (app) {
+    }else if(app){
       setOperator(app)
       navigate('/app/home')
-    } else {
-      navigate('/')
     }
+
+   
   }, [])
   return (
     <ThemeProvider theme={theme}>

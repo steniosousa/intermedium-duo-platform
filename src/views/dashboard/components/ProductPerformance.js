@@ -21,7 +21,6 @@ import {
 import DashboardCard from '../../../components/shared/DashboardCard';
 import Api from 'src/api/service';
 import Swal from 'sweetalert2';
-import moment from 'moment';
 import ModeEditOutlineIcon from '@mui/icons-material/ModeEditOutline';
 import AuthContext from 'src/contexto/AuthContext';
 const style = {
@@ -47,6 +46,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
     const [EpisSelected, setEpisSelected] = useState([])
     const [description, setDescription] = useState('')
     const [scheduleId, setScheduleId] = useState('')
+    const [status, setStatus]=useState('')
     const companyId = JSON.parse(user).companyId[0].companyId
 
 
@@ -57,7 +57,14 @@ const ProductPerformance = ({ userId, setCleaning }) => {
             const { data } = await Api.get('/cleaning/recover', {
                 params: { userId, page }
             });
-            setCleanings(data.cleanings)
+            console.log(data.cleanings)
+            if(status !== ""){
+                const filter = data.cleanings.filter((item) => item.status === status); 
+                setCleanings(filter);
+            }else{
+                setCleanings(data.cleanings)
+
+            }
             setPagination((data.total / 5).toFixed(0))
 
         } catch (error) {
@@ -200,7 +207,25 @@ const ProductPerformance = ({ userId, setCleaning }) => {
     return (
         <DashboardCard title="Histórico de solicitações" action={isLoading ? (
             <CircularProgress size={25} />
-        ) : null}>
+        ) : (
+            <FormControl sx={{ m: 1, minWidth: 120 }} >
+            {/* <InputLabel >Status</InputLabel>
+            <Select
+              value={status}
+              label="Age"
+              onChange={(company) => setStatus(company.target.value)}
+      
+            >
+                                <MenuItem  value={"PENDENTE"} >PENDENTE</MenuItem>
+                                <MenuItem  value={"ASSUMIDO"} >ASSUMIDO</MenuItem>
+                                <MenuItem  value={"CONCLUÍDO"} >CONCLUÍDO</MenuItem>
+
+
+
+            </Select>
+       */}
+          </FormControl>
+        )}>
             <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
                 <Table
                     aria-label="simple table"
@@ -239,10 +264,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
                         </TableRow>
                     </TableHead>
                     <TableBody>
-
                         {cleanings.map((product) => {
-                            const dateObject = moment(product.createdAt);
-                            const data = dateObject.format("DD-MM-YYYY - h:m");
                             return (
                                 <TableRow key={product.id} onClick={() => setCleaning(product)} style={{ cursor: "pointer" }}>
                                     <TableCell>
@@ -252,7 +274,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
                                                 fontWeight: "500",
                                             }}
                                         >
-                                            {data}
+                                            {product.createdAt}
                                         </Typography>
                                     </TableCell>
                                     <TableCell>
