@@ -61,7 +61,7 @@ const MonthlyEarnings = ({ companies, findCompanies }) => {
         </Button>
         <Button variant={"contained"} color="primary" style={{ height: 30 }} onClick={() => handleopenModal('Deletar')}>
           <span>
-            Deleção
+            Deletar
           </span>
           <DeleteForeverIcon />
         </Button>
