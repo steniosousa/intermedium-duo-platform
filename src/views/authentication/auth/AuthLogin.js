@@ -56,6 +56,14 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
         setIsLoading(false)
     }
 
+    function handleKeyDown (event) {
+        if (event.key === 'Enter') {
+          handleLogin();
+        }
+      };
+    
+
+
     async function handleForgorPass() {
         if (isLoading) return
 
@@ -130,6 +138,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                             onChange={(e) => setPassword(e.target.value)}
                             id="outlined-adornment-password"
                             type={showPassword ? 'text' : 'password'}
+                            onKeyDown={handleKeyDown}
                             endAdornment={
                                 <InputAdornment position="end">
                                     <IconButton
@@ -184,7 +193,7 @@ const AuthLogin = ({ title, subtitle, subtext }) => {
                     fullWidth
                     component={Link}
                     type="submit"
-                    onClick={(e) => handleLogin(e)}
+                    onClick={() => handleLogin()}
                 >
                     {isLoading ? (
                         <CircularProgress style={{ color: 'white' }} />

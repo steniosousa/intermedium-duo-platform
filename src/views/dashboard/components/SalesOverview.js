@@ -43,7 +43,10 @@ const SalesOverview = ({ companies }) => {
 	const cellHeight = Math.min(Math.max(minHeight * 5.5));
 
 	async function getUsersForCompany() {
-		if (!companySelect) return;
+		if (!companySelect) {
+			
+			return
+		};
 
 		try {
 			const [users, objects, places] = await Promise.all([
@@ -66,8 +69,7 @@ const SalesOverview = ({ companies }) => {
 			});
 			setObjects(objectForSelect);
 			setPlaces(places.data);
-
-			setUsers(users.data);
+			handleRegisterUser(users.data);
 		} catch (error) {
 			await Swal.fire({
 				icon: "error",
@@ -80,6 +82,28 @@ const SalesOverview = ({ companies }) => {
 			});
 		}
 	}
+
+	async function handleRegisterUser(users){
+		if(users.length === 0){
+			await Swal.fire({
+				icon: "info",
+				titleText:"Nenhum operário cadastrado",
+				showDenyButton: false,
+				showCancelButton: false,
+				showConfirmButton: true,
+				denyButtonText: "Cancelar",
+				confirmButtonText: "Confirmar",
+			});
+			
+		setUsers([]);
+			return
+		}
+	
+
+		setUsers(users);
+	}
+
+
 	async function handleCompany(value) {
 		setcompanyIdSelect(value);
 		setSeactUser(!searchUser);

@@ -56,6 +56,13 @@ const AuthLogin = ({ title,  subtext }) => {
         setIsLoading(false)
     }
 
+    
+    function handleKeyDown (event) {
+        if (event.key === 'Enter') {
+          handleLogin();
+        }
+      };
+
     async function handleForgorPass() {
         if (isLoading) return
 
@@ -130,6 +137,7 @@ const AuthLogin = ({ title,  subtext }) => {
                             onChange={(e) => setPassword(e.target.value)}
                             id="outlined-adornment-password"
                             type={showPassword ? 'text' : 'password'}
+                            onKeyDown={handleKeyDown}
                             endAdornment={
                                 <InputAdornment position="end">
                                     <IconButton
