@@ -1,19 +1,52 @@
+import React, { useContext, useEffect, useState } from 'react';
+import { CircularProgress, FormControl, InputLabel, MenuItem, Select } from '@mui/material';
+import Swal from 'sweetalert2';
+import Api from 'src/api/service';
+import DashboardCard from 'src/components/shared/DashboardCard';
+import AuthContext from 'src/contexto/AuthContext';
 import { Timeline, TimelineConnector, TimelineContent, TimelineDot, TimelineItem, TimelineOppositeContent, TimelineSeparator } from "@mui/lab";
 import jsPDF from "jspdf";
-import Api from "src/api/service";
-import Swal from "sweetalert2";
 import 'jspdf-autotable';
 import moment from "moment";
-import { useState } from "react";
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import DeleteIcon from '@mui/icons-material/Delete';
+import ProductPerformance from '../dashboard/components/ProductPerformance';
+import Blog from '../dashboard/components/Blog';
 
-export default function ListOperator({ Listuser, choseUser, action }) {
+export default function Operários() {
+    const [companySelected, setCompanySelected] = useState('')
+    const [userSelected, setUserSelected] = useState('')
+    const [users, setUsers] = useState([])
+    const { companies } = useContext(AuthContext)
+    const [isLoading, setIsLoading] = useState(false)
     const pdf = new jsPDF();
     const [isHovered, setIsHovered] = useState(false);
+    const [cleanigId, setCleaningId] = useState('')
 
     const handleMouseEnter = () => setIsHovered(true);
     const handleMouseLeave = () => setIsHovered(false);
+
+
+
+    async function getUsersForCompany() {
+        if (!companySelected) return
+        setIsLoading(true)
+        try {
+            const { data } = await Api.get('/user/recover', { params: { companyId: companySelected } })
+            setUsers(data)
+        } catch (error) {
+            await Swal.fire({
+                icon: 'error',
+                title: 'Erro ao recuperar usuários',
+                showDenyButton: true,
+                showCancelButton: false,
+                showConfirmButton: true,
+                denyButtonText: 'Cancelar',
+                confirmButtonText: 'Confirmar'
+            })
+        }
+        setIsLoading(false)
+    }
+
 
     async function generatePdf(userId, name) {
         let dataForPdf;
@@ -101,61 +134,66 @@ export default function ListOperator({ Listuser, choseUser, action }) {
     }
 
 
-    async function disableUser(userId, onOff) {
-        const deletedAt = onOff ? null : new Date()
-        const confirm = await Swal.fire({
-            icon: 'question',
-            title: 'Excluir operário?',
-            showDenyButton: true,
-            showCancelButton: false,
-            showConfirmButton: true,
-            denyButtonText: 'Cancelar',
-            confirmButtonText: 'Confirmar'
-        })
-        if (!confirm.isConfirmed) return
-        try {
-            await Api.post('user/update', {
-                id: userId,
-                deletedAt
-            })
-            action()
-        }
-        catch {
-            await Swal.fire({
-                icon: 'error',
-                title: 'Erro ao desativar operário',
-                showDenyButton: false,
-                showCancelButton: false,
-                showConfirmButton: true,
-                denyButtonText: 'Cancelar',
-                confirmButtonText: 'ok'
-            })
-        }
-
-    }
-
+    useEffect(() => {
+        getUsersForCompany()
+    }, [companySelected])
     return (
-        <Timeline
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            style={{
-                display: 'flex',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'space-between',
-                background: isHovered ? '#f0ffff' : 'transparent',
-                width: '100%'
-            }}>
-            <TimelineItem style={{ cursor: 'pointer', alignItems: 'center', justifyContent: 'center' }} onClick={() => choseUser(Listuser.id)}>
-                <TimelineOppositeContent>{Listuser.loginHash}</TimelineOppositeContent>
-                <TimelineSeparator>
-                    <TimelineDot color={Listuser.deletedAt ? "error" : "success"} variant="outlined" />
-                    <TimelineConnector />
-                </TimelineSeparator>
-                <TimelineContent>{Listuser.name}</TimelineContent>
-            </TimelineItem>
-            <PictureAsPdfIcon onClick={() => generatePdf(Listuser.id, Listuser.name)} style={{ cursor: "pointer" }} />
-            <DeleteIcon onClick={() => disableUser(Listuser.id, Listuser.deactivatedAt)} style={{ color: 'red', cursor: 'pointer' }} />
-        </Timeline>
+        <DashboardCard background="#f2f2f2" title="Operários" action={<FormControl sx={{ m: 1, minWidth: 120 }} >
+            <InputLabel >Empresa</InputLabel>
+            <Select
+                value={companySelected}
+                label="Age"
+                onChange={(company) => setCompanySelected(company.target.value)}
+
+            >
+                {companies.map((company) => {
+                    return (
+
+                        <MenuItem key={company.id} value={company.id} >{company.name}</MenuItem>
+                    )
+                })}
+            </Select>
+
+        </FormControl>
+        }>
+            <>
+                {isLoading ? <CircularProgress size={25} /> : null}
+                {users.length === 0 ? (
+                    <span>Selecione uma empresa</span>
+                ) : (
+                    users.map((item) => {
+                        return (
+                            <Timeline
+                                onMouseEnter={handleMouseEnter}
+                                onMouseLeave={handleMouseLeave}
+                                style={{
+                                    display: 'flex',
+                                    flexDirection: 'row',
+                                    alignItems: 'center',
+                                    justifyContent: 'space-between',
+                                    background: isHovered ? '#f0ffff' : 'transparent',
+                                    width: '100%'
+                                }}>
+                                <TimelineItem style={{ cursor: 'pointer', alignItems: 'center', justifyContent: 'center' }}
+                                    onClick={() => setUserSelected(item.id)}
+                                >
+                                    <TimelineOppositeContent>{item.loginHash}</TimelineOppositeContent>
+                                    <TimelineSeparator>
+                                        <TimelineDot color={item.deletedAt ? "error" : "success"} variant="outlined" />
+                                        <TimelineConnector />
+                                    </TimelineSeparator>
+                                    <TimelineContent>{item.name}</TimelineContent>
+                                </TimelineItem>
+                                <PictureAsPdfIcon onClick={() => generatePdf(item.id, item.name)} style={{ cursor: "pointer" }} />
+
+                            </Timeline>
+                        )
+                    })
+                )}
+            </>
+            {userSelected && <ProductPerformance userId={userSelected} setCleaning={setCleaningId} />}
+
+            {cleanigId && <Blog clear={cleanigId} />}
+        </DashboardCard>
     )
 }

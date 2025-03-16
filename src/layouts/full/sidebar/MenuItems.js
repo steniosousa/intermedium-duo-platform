@@ -18,9 +18,9 @@ const Menuitems = [
   },
   {
     id: uniqueId(),
-    title: 'Localiza - BETA',
-    icon: IconAperture,
-    href: '/localiza',
+    title: 'Operários',
+    icon: IconUserCircle,
+    href: '/operarios',
   },
   {
     id: uniqueId(),

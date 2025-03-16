@@ -11,14 +11,15 @@ import FaceRecoginitionLogin from 'src/faceRecognition/authentication/Login';
 import Recognition from 'src/faceRecognition/Recognition/recognition';
 import CreateUserFaceRecognition from 'src/faceRecognition/CreateUser/create';
 import { element } from 'prop-types';
-import Configuracao from 'src/views/test/Configuracao';
+import Configuracao from 'src/views/Configurações/Configuracao';
+import Operários from 'src/views/Users/operários';
 
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
 
 const Dashboard = Loadable(lazy(() => import('../views/dashboard/Dashboard')))
 const SamplePage = Loadable(lazy(() => import('../views/sample-page/SamplePage')))
-const Configuration = Loadable(lazy(() => import('src/views/test/Configuracao')))
+const Configuration = Loadable(lazy(() => import('src/views/Configurações/Configuracao')))
 const TypographyPage = Loadable(lazy(() => import('../views/utilities/TypographyPage')))
 const Error = Loadable(lazy(() => import('../views/authentication/Error')));
 const Register = Loadable(lazy(() => import('../views/authentication/Register')));
@@ -49,6 +50,7 @@ const Router = [
       { path: '/Localiza', exact: true, element: <SamplePage /> },
       { path: '/ui/Perfil', exact: true, element: <TypographyPage /> },
       { path: "/configuracao", expect: true, element: <Configuration /> },
+      { path: "/operarios", expect: true, element: <Operários /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
     ],
   },

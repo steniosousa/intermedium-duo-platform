@@ -46,7 +46,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
     const [EpisSelected, setEpisSelected] = useState([])
     const [description, setDescription] = useState('')
     const [scheduleId, setScheduleId] = useState('')
-    const [status, setStatus]=useState('')
+    const [status, setStatus] = useState('')
     const companyId = JSON.parse(user).companyId[0].companyId
 
 
@@ -58,10 +58,10 @@ const ProductPerformance = ({ userId, setCleaning }) => {
                 params: { userId, page }
             });
             console.log(data.cleanings)
-            if(status !== ""){
-                const filter = data.cleanings.filter((item) => item.status === status); 
+            if (status !== "") {
+                const filter = data.cleanings.filter((item) => item.status === status);
                 setCleanings(filter);
-            }else{
+            } else {
                 setCleanings(data.cleanings)
 
             }
@@ -111,6 +111,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
     }
 
     async function handleAvaliation() {
+        setOpen(false)
         const confirm = await Swal.fire({
             icon: 'question',
             title: "Deseja criar avaliação para essa solicitação?",
@@ -209,7 +210,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
             <CircularProgress size={25} />
         ) : (
             <FormControl sx={{ m: 1, minWidth: 120 }} >
-            {/* <InputLabel >Status</InputLabel>
+                {/* <InputLabel >Status</InputLabel>
             <Select
               value={status}
               label="Age"
@@ -224,7 +225,7 @@ const ProductPerformance = ({ userId, setCleaning }) => {
 
             </Select>
        */}
-          </FormControl>
+            </FormControl>
         )}>
             <Box sx={{ overflow: 'auto', width: { xs: '280px', sm: 'auto' } }}>
                 <Table
