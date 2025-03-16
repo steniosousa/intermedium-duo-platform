@@ -270,34 +270,33 @@ export default function Configuracao() {
       <DashboardCard
         background="#f2f2f2"
         title="Configurações"
-        action={
-          <>
-            <FormControl sx={{ minWidth: 200 }}>
-              <InputLabel>Empresa</InputLabel>
-              <Select value={companySelected} onChange={(e) => setCompanySelected(e.target.value)} label="Empresa">
-                {companies?.map((company) => (
-                  <MenuItem key={company.id} value={company.id}>
-                    {company.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </FormControl>
-            <FormControl sx={{ minWidth: 200 }}>
-              <InputLabel>Módulo</InputLabel>
-              <Select label="Empresa" onChange={handleChange}>
-                <MenuItem value={"place"}>Ambiente</MenuItem>
-                <MenuItem value={"objects"}>Objeto</MenuItem>
-                <MenuItem value={"epis"}>EPI</MenuItem>
-                <MenuItem value={"companies"}>Empresa</MenuItem>
-                <MenuItem value={"user"}>Operador</MenuItem>
-                {user && JSON.parse(user).role === "ADMIN" ? (
-                  <MenuItem value={"manager"}>Gerente</MenuItem>
-                ) : null}
-              </Select>
-            </FormControl>
-          </>
-        }
+
       >
+        <Box sx={{ display: 'flex', flexDirection: 'row', backgroundColor: '#f2f2f2', margin: 1 }}>
+          <FormControl sx={{ minWidth: 100 }} >
+            <InputLabel>Empresa</InputLabel>
+            <Select value={companySelected} onChange={(e) => setCompanySelected(e.target.value)} label="Empresa">
+              {companies?.map((company) => (
+                <MenuItem key={company.id} value={company.id}>
+                  {company.name}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+          <FormControl sx={{ minWidth: 100 }}>
+            <InputLabel>Módulo</InputLabel>
+            <Select label="Empresa" onChange={handleChange}>
+              <MenuItem value={"place"}>Ambiente</MenuItem>
+              <MenuItem value={"objects"}>Objeto</MenuItem>
+              <MenuItem value={"epis"}>EPI</MenuItem>
+              <MenuItem value={"companies"}>Empresa</MenuItem>
+              <MenuItem value={"user"}>Operador</MenuItem>
+              {user && JSON.parse(user).role === "ADMIN" ? (
+                <MenuItem value={"manager"}>Gerente</MenuItem>
+              ) : null}
+            </Select>
+          </FormControl>
+        </Box>
         <FormControl fullWidth>
           <FormControl className='flex flex-row'>
 
