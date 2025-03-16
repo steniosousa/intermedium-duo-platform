@@ -40,11 +40,13 @@ const SalesOverview = ({ companies }) => {
 	const [isLoading, setIsLoading] = useState(false);
 	const [searchUser, setSeactUser] = useState(false);
 	const [objCreateSolicitation, setObjCreateSolicition] = useState({});
+	const [openModal, setOpenModal] = useState(false);
+
 	const cellHeight = Math.min(Math.max(minHeight * 5.5));
 
 	async function getUsersForCompany() {
 		if (!companySelect) {
-			
+
 			return
 		};
 
@@ -83,22 +85,22 @@ const SalesOverview = ({ companies }) => {
 		}
 	}
 
-	async function handleRegisterUser(users){
-		if(users.length === 0){
+	async function handleRegisterUser(users) {
+		if (users.length === 0) {
 			await Swal.fire({
 				icon: "info",
-				titleText:"Nenhum operário cadastrado",
+				titleText: "Nenhum operário cadastrado",
 				showDenyButton: false,
 				showCancelButton: false,
 				showConfirmButton: true,
 				denyButtonText: "Cancelar",
 				confirmButtonText: "Confirmar",
 			});
-			
-		setUsers([]);
+
+			setUsers([]);
 			return
 		}
-	
+
 
 		setUsers(users);
 	}
@@ -192,7 +194,6 @@ const SalesOverview = ({ companies }) => {
 		setIsLoading(false);
 	}
 
-	const [openModal, setOpenModal] = useState(false);
 	function handleOpenModal(newObjects) {
 		setObjCreateSolicition({
 			objects: newObjects,

@@ -10,14 +10,15 @@ import Home from 'src/home';
 import FaceRecoginitionLogin from 'src/faceRecognition/authentication/Login';
 import Recognition from 'src/faceRecognition/Recognition/recognition';
 import CreateUserFaceRecognition from 'src/faceRecognition/CreateUser/create';
+import { element } from 'prop-types';
+import Configuracao from 'src/views/test/Configuracao';
 
-/* ***Layouts**** */
 const FullLayout = Loadable(lazy(() => import('../layouts/full/FullLayout')));
 const BlankLayout = Loadable(lazy(() => import('../layouts/blank/BlankLayout')));
 
-/* ****Pages***** */
 const Dashboard = Loadable(lazy(() => import('../views/dashboard/Dashboard')))
 const SamplePage = Loadable(lazy(() => import('../views/sample-page/SamplePage')))
+const Configuration = Loadable(lazy(() => import('src/views/test/Configuracao')))
 const TypographyPage = Loadable(lazy(() => import('../views/utilities/TypographyPage')))
 const Error = Loadable(lazy(() => import('../views/authentication/Error')));
 const Register = Loadable(lazy(() => import('../views/authentication/Register')));
@@ -28,15 +29,15 @@ const Router = [
     path: '/',
     element: <BlankLayout />,
     children: [
-      { path: '/', element: <Home/> },
+      { path: '/', element: <Home /> },
     ],
   },
   {
-    path:'/faceRecoginition',
-    children:[
-      {path:'/faceRecoginition/login',element:<FaceRecoginitionLogin/>},
-      {path:'/faceRecoginition/Recognition', element:<Recognition/>},
-      {path:'/faceRecoginition/createUser', element:<CreateUserFaceRecognition/>},
+    path: '/faceRecoginition',
+    children: [
+      { path: '/faceRecoginition/login', element: <FaceRecoginitionLogin /> },
+      { path: '/faceRecoginition/Recognition', element: <Recognition /> },
+      { path: '/faceRecoginition/createUser', element: <CreateUserFaceRecognition /> },
     ]
   },
 
@@ -47,10 +48,11 @@ const Router = [
       { path: '/dashboard', exact: true, element: <Dashboard /> },
       { path: '/Localiza', exact: true, element: <SamplePage /> },
       { path: '/ui/Perfil', exact: true, element: <TypographyPage /> },
+      { path: "/configuracao", expect: true, element: <Configuration /> },
       { path: '*', element: <Navigate to="/auth/404" /> },
     ],
   },
- 
+
   {
     path: '/auth',
     element: <BlankLayout />,
@@ -73,17 +75,17 @@ const Router = [
   },
   {
     path: "/localizador",
-    
+
     children: [
       { path: '404', element: <Error /> },
       { path: '/localizador/home', element: <Localizador /> },
     ]
   },
   {
-    path: `/resetPass/:id`, // Add ":id" to capture the ID parameter
+    path: `/resetPass/:id`,
     children: [
       { path: '404', element: <Error /> },
-      { path: '', element: <ResetPassword /> }, // Render the ResetPassword component
+      { path: '', element: <ResetPassword /> },
     ],
   }
 ];

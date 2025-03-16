@@ -149,9 +149,7 @@ export default function ModalCrud({
 		}
 		setLoading(false);
 	}
-	const handleChange = (event) => {
-		setPath(event.target.value);
-	};
+
 	const handleChangePermissions = (event) => {
 		const {
 			target: { value },
@@ -179,7 +177,6 @@ export default function ModalCrud({
 		flexDirection: "column",
 	};
 
-	// place deletion
 	const [itemsDeletion, setItemsDeletion] = useState([]);
 	const [pathDelete, setPathDelete] = useState("");
 	const [itemSelected, setItemSelected] = useState("");
@@ -256,7 +253,6 @@ export default function ModalCrud({
 		setLoading(false);
 	}
 
-	//place edition
 	const [newName, setNewName] = useState("");
 	async function edition() {
 		try {
@@ -294,242 +290,242 @@ export default function ModalCrud({
 	}
 
 	return (
-		<Modal
-			disableEnforceFocus
-			open={openModal}
-			aria-labelledby="modal-modal-title"
-			aria-describedby="modal-modal-description"
-			onClose={action}
-		>
-			<Box sx={style}>
-				<Typography
-					id="modal-modal-title"
-					variant="h6"
-					component="h2"
-					style={{ marginBottom: 20 }}
-				>
-					CONFIGURAÇÃO
-				</Typography>
-				{verb == "Cadastrar" ? (
-					<FormControl fullWidth>
-						<FormControl>
-							<InputLabel id="demo-simple-select-label">Cadastrar</InputLabel>
-							<Select
-								labelId="demo-simple-select-label"
-								id="demo-simple-select"
-								value={path}
-								label="Age"
-								onChange={handleChange}
-								style={{ margin: 5 }}
-							>
-								<MenuItem value={"place"}>Ambiente</MenuItem>
-								<MenuItem value={"objects"}>Objeto</MenuItem>
-								<MenuItem value={"epis"}>EPI</MenuItem>
-								<MenuItem value={"companies"}>Empresa</MenuItem>
-								<MenuItem value={"user"}>Operador</MenuItem>
-								{JSON.parse(user).role === "ADMIN" ? (
-									<MenuItem value={"manager"}>Gerente</MenuItem>
-								) : null}
-							</Select>
+		<></>
+		// <Modal
+		// 	disableEnforceFocus
+		// 	open={openModal}
+		// 	aria-labelledby="modal-modal-title"
+		// 	aria-describedby="modal-modal-description"
+		// 	onClose={action}
+		// >
+		// 	<Box sx={style}>
+		// 		<Typography
+		// 			id="modal-modal-title"
+		// 			variant="h6"
+		// 			component="h2"
+		// 			style={{ marginBottom: 20 }}
+		// 		>
+		// 			CONFIGURAÇÃO
+		// 		</Typography>
+		// 		{verb == "Cadastrar" ? (
+		// 			<FormControl fullWidth>
+		// 				<FormControl>
+		// 					<InputLabel id="demo-simple-select-label">Cadastrar</InputLabel>
+		// 					<Select
+		// 						labelId="demo-simple-select-label"
+		// 						id="demo-simple-select"
+		// 						value={path}
+		// 						label="Age"
+		// 						style={{ margin: 5 }}
+		// 					>
+		// 						<MenuItem value={"place"}>Ambiente</MenuItem>
+		// 						<MenuItem value={"objects"}>Objeto</MenuItem>
+		// 						<MenuItem value={"epis"}>EPI</MenuItem>
+		// 						<MenuItem value={"companies"}>Empresa</MenuItem>
+		// 						<MenuItem value={"user"}>Operador</MenuItem>
+		// 						{JSON.parse(user).role === "ADMIN" ? (
+		// 							<MenuItem value={"manager"}>Gerente</MenuItem>
+		// 						) : null}
+		// 					</Select>
 
-							{path == "manager" ? (
-								<FormControl fullWidth>
-									<FormControl style={{ margin: 10 }}>
-										<InputLabel id="demo-simple-select-label">
-											Permissões
-										</InputLabel>
-										<Select
-											multiple
-											displayEmpty
-											value={permissionions}
-											onChange={handleChangePermissions}
-											input={<OutlinedInput />}
-											renderValue={(selected) => {
-												if (selected.length === 0) {
-													return <em>Permissões</em>;
-												}
+		// 					{path == "manager" ? (
+		// 						<FormControl fullWidth>
+		// 							<FormControl style={{ margin: 10 }}>
+		// 								<InputLabel id="demo-simple-select-label">
+		// 									Permissões
+		// 								</InputLabel>
+		// 								<Select
+		// 									multiple
+		// 									displayEmpty
+		// 									value={permissionions}
+		// 									onChange={handleChangePermissions}
+		// 									input={<OutlinedInput />}
+		// 									renderValue={(selected) => {
+		// 										if (selected.length === 0) {
+		// 											return <em>Permissões</em>;
+		// 										}
 
-												return selected.join(", ");
-											}}
-											MenuProps={MenuProps}
-											inputProps={{ "aria-label": "Without label" }}
-										>
-											<MenuItem disabled value="">
-												<em>Permissões</em>
-											</MenuItem>
-											<MenuItem value={"OBJECTS"}>OBJECTS</MenuItem>
-											<MenuItem value={"PLACES"}>Ambientes</MenuItem>
-											<MenuItem value={"COMPANIES"}>Empresas</MenuItem>
-											<MenuItem value={"EPIS"}>EPIs</MenuItem>
-										</Select>
-									</FormControl>
-									<FormControl style={{ margin: 10 }}>
-										<InputLabel id="demo-simple-select-label">
-											Hierarquia
-										</InputLabel>
-										<Select
-											labelId="demo-simple-select-label"
-											id="demo-simple-select"
-											value={role}
-											label="Age"
-											onChange={(e) => setRole(e.target.value)}
-										>
-											<MenuItem value={"MANAGER"}>Gerente</MenuItem>
-											<MenuItem value={"ADMIN"}>Administrador</MenuItem>
-										</Select>
-									</FormControl>
-									<FormControl style={{ margin: 10 }}>
-										<InputLabel id="demo-simple-select-label">
-											Empresas
-										</InputLabel>
-										<Select
-											multiple
-											displayEmpty
-											value={companiesId}
-											onChange={handleChangeCompanies}
-											input={<OutlinedInput />}
-											renderValue={(selected) => {
-												if (selected.length === 0) {
-													return <em>Empresas</em>;
-												}
+		// 										return selected.join(", ");
+		// 									}}
+		// 									MenuProps={MenuProps}
+		// 									inputProps={{ "aria-label": "Without label" }}
+		// 								>
+		// 									<MenuItem disabled value="">
+		// 										<em>Permissões</em>
+		// 									</MenuItem>
+		// 									<MenuItem value={"OBJECTS"}>OBJECTS</MenuItem>
+		// 									<MenuItem value={"PLACES"}>Ambientes</MenuItem>
+		// 									<MenuItem value={"COMPANIES"}>Empresas</MenuItem>
+		// 									<MenuItem value={"EPIS"}>EPIs</MenuItem>
+		// 								</Select>
+		// 							</FormControl>
+		// 							<FormControl style={{ margin: 10 }}>
+		// 								<InputLabel id="demo-simple-select-label">
+		// 									Hierarquia
+		// 								</InputLabel>
+		// 								<Select
+		// 									labelId="demo-simple-select-label"
+		// 									id="demo-simple-select"
+		// 									value={role}
+		// 									label="Age"
+		// 									onChange={(e) => setRole(e.target.value)}
+		// 								>
+		// 									<MenuItem value={"MANAGER"}>Gerente</MenuItem>
+		// 									<MenuItem value={"ADMIN"}>Administrador</MenuItem>
+		// 								</Select>
+		// 							</FormControl>
+		// 							<FormControl style={{ margin: 10 }}>
+		// 								<InputLabel id="demo-simple-select-label">
+		// 									Empresas
+		// 								</InputLabel>
+		// 								<Select
+		// 									multiple
+		// 									displayEmpty
+		// 									value={companiesId}
+		// 									onChange={handleChangeCompanies}
+		// 									input={<OutlinedInput />}
+		// 									renderValue={(selected) => {
+		// 										if (selected.length === 0) {
+		// 											return <em>Empresas</em>;
+		// 										}
 
-												return selected.join(", ");
-											}}
-											MenuProps={MenuProps}
-											inputProps={{ "aria-label": "Without label" }}
-										>
-											<MenuItem disabled value="">
-												<em>Empresas</em>
-											</MenuItem>
-											{companies.map((company) => {
-												return (
-													<MenuItem value={company.name} key={company.id}>
-														{company.name}
-													</MenuItem>
-												);
-											})}
-										</Select>
-									</FormControl>
-									<TextField
-										style={{ margin: 5 }}
-										onChange={(event) => setEmail(event.target.value)}
-										id="outlined-basic"
-										label="Email"
-										variant="outlined"
-									/>
-								</FormControl>
-							) : null}
-						</FormControl>
+		// 										return selected.join(", ");
+		// 									}}
+		// 									MenuProps={MenuProps}
+		// 									inputProps={{ "aria-label": "Without label" }}
+		// 								>
+		// 									<MenuItem disabled value="">
+		// 										<em>Empresas</em>
+		// 									</MenuItem>
+		// 									{companies.map((company) => {
+		// 										return (
+		// 											<MenuItem value={company.name} key={company.id}>
+		// 												{company.name}
+		// 											</MenuItem>
+		// 										);
+		// 									})}
+		// 								</Select>
+		// 							</FormControl>
+		// 							<TextField
+		// 								style={{ margin: 5 }}
+		// 								onChange={(event) => setEmail(event.target.value)}
+		// 								id="outlined-basic"
+		// 								label="Email"
+		// 								variant="outlined"
+		// 							/>
+		// 						</FormControl>
+		// 					) : null}
+		// 				</FormControl>
 
-						<FormControl>
-							<TextField
-								style={{ margin: 5 }}
-								onChange={(event) => setName(event.target.value)}
-								id="outlined-basic"
-								label="Nome"
-								variant="outlined"
-							/>
+		// 				<FormControl>
+		// 					<TextField
+		// 						style={{ margin: 5 }}
+		// 						onChange={(event) => setName(event.target.value)}
+		// 						id="outlined-basic"
+		// 						label="Nome"
+		// 						variant="outlined"
+		// 					/>
 
-							<Button variant="contained" onClick={handleCreate}>
-								{isLoading ? (
-									<CircularProgress size={20} />
-								) : (
-									<span>Criar</span>
-								)}
-							</Button>
-						</FormControl>
-					</FormControl>
-				) : verb == "Deletar" ? (
-					<FormControl fullWidth>
-						<InputLabel id="demo-simple-select-label">Deletar</InputLabel>
-						<Select
-							labelId="demo-simple-select-label"
-							id="demo-simple-select"
-							value={pathDelete}
-							label="Age"
-							onChange={(index) => getAllObjects(index.target.value)}
-							style={{ margin: 5 }}
-						>
-							<MenuItem value={"place"}>Ambiente</MenuItem>
-							<MenuItem value={"objects"}>Objeto</MenuItem>
-							<MenuItem value={"epis"}>EPI</MenuItem>
-							<MenuItem value={"companies"}>Empresa</MenuItem>
-						</Select>
-						<FormControl>
-							<InputLabel id="demo-simple-select-label">Deletar</InputLabel>
-							<Select
-								labelId="demo-simple-select-label"
-								id="demo-simple-select"
-								label="Age"
-								onChange={(e) => setItemSelected(e.target.value)}
-								style={{ margin: 5 }}
-							>
-								{itemsDeletion.map((object) => {
-									return <MenuItem value={object.id}>{object.name}</MenuItem>;
-								})}
-							</Select>
+		// 					<Button variant="contained" onClick={handleCreate}>
+		// 						{isLoading ? (
+		// 							<CircularProgress size={20} />
+		// 						) : (
+		// 							<span>Criar</span>
+		// 						)}
+		// 					</Button>
+		// 				</FormControl>
+		// 			</FormControl>
+		// 		) : verb == "Deletar" ? (
+		// 			<FormControl fullWidth>
+		// 				<InputLabel id="demo-simple-select-label">Deletar</InputLabel>
+		// 				<Select
+		// 					labelId="demo-simple-select-label"
+		// 					id="demo-simple-select"
+		// 					value={pathDelete}
+		// 					label="Age"
+		// 					onChange={(index) => getAllObjects(index.target.value)}
+		// 					style={{ margin: 5 }}
+		// 				>
+		// 					<MenuItem value={"place"}>Ambiente</MenuItem>
+		// 					<MenuItem value={"objects"}>Objeto</MenuItem>
+		// 					<MenuItem value={"epis"}>EPI</MenuItem>
+		// 					<MenuItem value={"companies"}>Empresa</MenuItem>
+		// 				</Select>
+		// 				<FormControl>
+		// 					<InputLabel id="demo-simple-select-label">Deletar</InputLabel>
+		// 					<Select
+		// 						labelId="demo-simple-select-label"
+		// 						id="demo-simple-select"
+		// 						label="Age"
+		// 						onChange={(e) => setItemSelected(e.target.value)}
+		// 						style={{ margin: 5 }}
+		// 					>
+		// 						{itemsDeletion.map((object) => {
+		// 							return <MenuItem value={object.id}>{object.name}</MenuItem>;
+		// 						})}
+		// 					</Select>
 
-							<Button variant="contained" onClick={deletionItem}>
-								{isLoading ? (
-									<CircularProgress size={20} />
-								) : (
-									<span>Deletar</span>
-								)}
-							</Button>
-						</FormControl>
-					</FormControl>
-				) : verb == "Editar" ? (
-					<FormControl fullWidth>
-						<InputLabel id="demo-simple-select-label">Editar</InputLabel>
-						<Select
-							labelId="demo-simple-select-label"
-							id="demo-simple-select"
-							value={pathDelete}
-							label="Age"
-							onChange={(index) => getAllObjects(index.target.value)}
-							style={{ margin: 5 }}
-						>
-							<MenuItem value={"place"}>Ambiente</MenuItem>
-							<MenuItem value={"objects"}>Objeto</MenuItem>
-							<MenuItem value={"epis"}>EPI</MenuItem>
-							<MenuItem value={"companies"}>Empresa</MenuItem>
-							<MenuItem value={"user"}>Operador</MenuItem>
-						</Select>
-						<FormControl>
-							<InputLabel id="demo-simple-select-label">Editar</InputLabel>
-							<Select
-								labelId="demo-simple-select-label"
-								id="demo-simple-select"
-								label="Age"
-								onChange={(e) => setItemSelected(e.target.value)}
-								style={{ margin: 5 }}
-							>
-								<MenuItem disabled value={null}>
-									Selecione a categoria
-								</MenuItem>
-								{itemsDeletion.map((object) => {
-									return <MenuItem value={object.id}>{object.name}</MenuItem>;
-								})}
-							</Select>
-							<TextField
-								style={{ margin: 5 }}
-								onChange={(event) => setNewName(event.target.value)}
-								id="outlined-basic"
-								label="Novo nome"
-								variant="outlined"
-							/>
+		// 					<Button variant="contained" onClick={deletionItem}>
+		// 						{isLoading ? (
+		// 							<CircularProgress size={20} />
+		// 						) : (
+		// 							<span>Deletar</span>
+		// 						)}
+		// 					</Button>
+		// 				</FormControl>
+		// 			</FormControl>
+		// 		) : verb == "Editar" ? (
+		// 			<FormControl fullWidth>
+		// 				<InputLabel id="demo-simple-select-label">Editar</InputLabel>
+		// 				<Select
+		// 					labelId="demo-simple-select-label"
+		// 					id="demo-simple-select"
+		// 					value={pathDelete}
+		// 					label="Age"
+		// 					onChange={(index) => getAllObjects(index.target.value)}
+		// 					style={{ margin: 5 }}
+		// 				>
+		// 					<MenuItem value={"place"}>Ambiente</MenuItem>
+		// 					<MenuItem value={"objects"}>Objeto</MenuItem>
+		// 					<MenuItem value={"epis"}>EPI</MenuItem>
+		// 					<MenuItem value={"companies"}>Empresa</MenuItem>
+		// 					<MenuItem value={"user"}>Operador</MenuItem>
+		// 				</Select>
+		// 				<FormControl>
+		// 					<InputLabel id="demo-simple-select-label">Editar</InputLabel>
+		// 					<Select
+		// 						labelId="demo-simple-select-label"
+		// 						id="demo-simple-select"
+		// 						label="Age"
+		// 						onChange={(e) => setItemSelected(e.target.value)}
+		// 						style={{ margin: 5 }}
+		// 					>
+		// 						<MenuItem disabled value={null}>
+		// 							Selecione a categoria
+		// 						</MenuItem>
+		// 						{itemsDeletion.map((object) => {
+		// 							return <MenuItem value={object.id}>{object.name}</MenuItem>;
+		// 						})}
+		// 					</Select>
+		// 					<TextField
+		// 						style={{ margin: 5 }}
+		// 						onChange={(event) => setNewName(event.target.value)}
+		// 						id="outlined-basic"
+		// 						label="Novo nome"
+		// 						variant="outlined"
+		// 					/>
 
-							<Button variant="contained" onClick={edition}>
-								{isLoading ? (
-									<CircularProgress size={20} />
-								) : (
-									<span>Editar</span>
-								)}
-							</Button>
-						</FormControl>
-					</FormControl>
-				) : null}
-			</Box>
-		</Modal>
+		// 					<Button variant="contained" onClick={edition}>
+		// 						{isLoading ? (
+		// 							<CircularProgress size={20} />
+		// 						) : (
+		// 							<span>Editar</span>
+		// 						)}
+		// 					</Button>
+		// 				</FormControl>
+		// 			</FormControl>
+		// 		) : null}
+		// 	</Box>
+		// </Modal>
 	);
 }

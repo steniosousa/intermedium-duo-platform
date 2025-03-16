@@ -1,17 +1,18 @@
-import React, { useState } from 'react';
-import { InputLabel, Select, FormControl, MenuItem, TextField, Button, Grid, OutlinedInput, Chip, Box, CircularProgress } from '@mui/material';
+import React, { useContext, useState } from 'react';
+import { InputLabel, Select, FormControl, MenuItem, Button, Grid, } from '@mui/material';
 import DashboardCard from '../../../components/shared/DashboardCard';
 import Swal from 'sweetalert2';
 import ModalCrud from 'src/components/modal-Crud/modal';
 import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import SaveAsIcon from '@mui/icons-material/SaveAs';
 import DeleteForeverIcon from '@mui/icons-material/DeleteForever';
-const MonthlyEarnings = ({ companies, findCompanies }) => {
+import AuthContext from 'src/contexto/AuthContext';
+
+const MonthlyEarnings = () => {
   const [openModal, setOpenModal] = useState(false)
   const [verb, setVerb] = useState('')
+  const { companies, findCompanies } = useContext(AuthContext)
   const [companySelected, setCompanySelected] = useState('')
-
-
   async function handleopenModal(actionModal) {
     if (!companySelected) {
       await Swal.fire({
@@ -28,8 +29,6 @@ const MonthlyEarnings = ({ companies, findCompanies }) => {
     setOpenModal(!openModal)
     setVerb(actionModal)
   }
-
-
   return (
     <DashboardCard
       background="#f2f2f2"
@@ -42,7 +41,7 @@ const MonthlyEarnings = ({ companies, findCompanies }) => {
             label="Age"
             onChange={(e) => setCompanySelected(e.target.value)}
           >
-            {companies.map((company) => {
+            {companies && companies.map((company) => {
               return (
                 <MenuItem key={company.id} value={company.id}>{company.name}</MenuItem>
               )
@@ -70,7 +69,6 @@ const MonthlyEarnings = ({ companies, findCompanies }) => {
             Edição
           </span>
           <SaveAsIcon />
-
         </Button>
       </Grid>
 

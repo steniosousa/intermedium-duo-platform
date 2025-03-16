@@ -22,6 +22,12 @@ const Menuitems = [
     icon: IconAperture,
     href: '/localiza',
   },
+  {
+    id: uniqueId(),
+    title: 'Configurações',
+    icon: IconCopy,
+    href: '/Configuracao',
+  },
   // {
   //   navlabel: true,
   //   subheader: 'Utilitários',
