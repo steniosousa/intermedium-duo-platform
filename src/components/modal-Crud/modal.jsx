@@ -25,7 +25,6 @@ export default function ModalCrud({
 	findCompanies,
 }) {
 	const [path, setPath] = useState("");
-	const { user } = useContext(AuthContext);
 	const [isLoading, setLoading] = useState(false);
 	const [permissionions, setPermissionions] = useState([]);
 	const [email, setEmail] = useState("");

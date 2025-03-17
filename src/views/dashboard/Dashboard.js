@@ -16,25 +16,28 @@ const Dashboard = () => {
   const [cleanigId, setCleaningId] = useState('')
   const { user, companies } = useContext(AuthContext)
 
-
+  useEffect(() => { console.log(JSON.parse(user)) }, [])
   return (
     <PageContainer title="Dashboard" description="this is Dashboard">
-      <Box>
-        <Grid container spacing={3}>
-          <Grid item xs={12} lg={8}>
-            <SalesOverview companies={companies} />
-          </Grid>
-          <Grid item xs={12} lg={4}>
-            <Grid container spacing={3}>
-              <Grid item xs={12} >
-                <AreaForms companies={companies} />
+      {user && JSON.parse(user).role === "VIEWR" ? (
+        <AreaForms companies={companies} />
+      ) : (
+        <Box>
+          <Grid container spacing={3}>
+            <Grid item xs={12} lg={8}>
+              <SalesOverview companies={companies} />
+            </Grid>
+            <Grid item xs={12} lg={4}>
+              <Grid container spacing={3}>
+                <Grid item xs={12} >
+                  <AreaForms companies={companies} />
+                </Grid>
               </Grid>
-
             </Grid>
           </Grid>
+        </Box>
+      )}
 
-        </Grid>
-      </Box>
     </PageContainer>
   );
 };

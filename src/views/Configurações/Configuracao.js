@@ -20,7 +20,6 @@ export default function Configuracao() {
   const [role, setRole] = useState("");
   const [name, setName] = useState("");
   const [epis, setAllEpis] = useState([])
-
   const [objects, setObjects] = useState([]);
   const [places, setPlaces] = useState([]);
   const [users, setUsers] = useState([]);
@@ -140,6 +139,8 @@ export default function Configuracao() {
     const {
       target: { value },
     } = event;
+
+    console.log(value)
     setCompaniesId(typeof value === "string" ? value.split(",") : value);
   };
   async function handleCreateManager(send) {
@@ -158,9 +159,14 @@ export default function Configuracao() {
       setLoading(false);
       return;
     }
+    const companiesId = companies
+      .filter(item => send.companyId.includes(item.name))
+      .map(item => item.id);
+
+
+    send.companyId = companiesId
     try {
       await Api.post(`manager/create`, send);
-
       await Swal.fire({
         icon: "success",
         title: "Criação bem sucessedida",
@@ -185,11 +191,10 @@ export default function Configuracao() {
   }
   async function handleCreate() {
     if (path == "manager") {
-
       const send = {
         name,
         email: email,
-        companyId: companySelected,
+        companyId: companiesId,
         role,
         permissions: permissionions,
       };
@@ -198,7 +203,8 @@ export default function Configuracao() {
     }
     if (isLoading) return;
     setLoading(true);
-    if (!name || !companySelected) {
+    if (path != "companies" && !name || path != "companies" && !companySelected) {
+      console.log(path, name, companySelected)
       await Swal.fire({
         icon: "warning",
         title: "Preencha todos os campos",
@@ -302,35 +308,13 @@ export default function Configuracao() {
 
             {path == "manager" ? (
               <FormControl fullWidth>
-                <FormControl style={{ margin: 10 }}>
-                  <InputLabel id="demo-simple-select-label">
-                    Permissões
-                  </InputLabel>
-                  <Select
-                    multiple
-                    displayEmpty
-                    value={permissionions}
-                    onChange={handleChangePermissions}
-                    input={<OutlinedInput />}
-                    renderValue={(selected) => {
-                      if (selected.length === 0) {
-                        return <em>Permissões</em>;
-                      }
-
-                      return selected.join(", ");
-                    }}
-                    MenuProps={MenuProps}
-                    inputProps={{ "aria-label": "Without label" }}
-                  >
-                    <MenuItem disabled value="">
-                      <em>Permissões</em>
-                    </MenuItem>
-                    <MenuItem value={"OBJECTS"}>OBJECTS</MenuItem>
-                    <MenuItem value={"PLACES"}>Ambientes</MenuItem>
-                    <MenuItem value={"COMPANIES"}>Empresas</MenuItem>
-                    <MenuItem value={"EPIS"}>EPIs</MenuItem>
-                  </Select>
-                </FormControl>
+                <TextField
+                  style={{ margin: 5 }}
+                  onChange={(event) => setName(event.target.value)}
+                  id="outlined-basic"
+                  label="Nome"
+                  variant="outlined"
+                />
                 <FormControl style={{ margin: 10 }}>
                   <InputLabel id="demo-simple-select-label">
                     Hierarquia
@@ -342,10 +326,45 @@ export default function Configuracao() {
                     label="Age"
                     onChange={(e) => setRole(e.target.value)}
                   >
+                    <MenuItem value={"VIEWR"}>Visualizador</MenuItem>
                     <MenuItem value={"MANAGER"}>Gerente</MenuItem>
                     <MenuItem value={"ADMIN"}>Administrador</MenuItem>
                   </Select>
                 </FormControl>
+                {role !== "VIEWR" ? (
+                  <FormControl style={{ margin: 10 }}>
+                    <InputLabel id="demo-simple-select-label">
+                      Permissões
+                    </InputLabel>
+                    <Select
+                      multiple
+                      displayEmpty
+                      value={permissionions}
+                      onChange={handleChangePermissions}
+                      input={<OutlinedInput />}
+                      renderValue={(selected) => {
+                        if (selected.length === 0) {
+                          return <em>Permissões</em>;
+                        }
+
+                        return selected.join(", ");
+                      }}
+                      MenuProps={MenuProps}
+                      inputProps={{ "aria-label": "Without label" }}
+                    >
+                      <MenuItem disabled value="">
+                        <em>Permissões</em>
+                      </MenuItem>
+                      <MenuItem value={"OBJECTS"}>OBJECTS</MenuItem>
+                      <MenuItem value={"PLACES"}>Ambientes</MenuItem>
+                      <MenuItem value={"COMPANIES"}>Empresas</MenuItem>
+                      <MenuItem value={"EPIS"}>EPIs</MenuItem>
+                    </Select>
+                  </FormControl>
+
+                ) : null}
+
+
                 <FormControl style={{ margin: 10 }}>
                   <InputLabel id="demo-simple-select-label">
                     Empresas
