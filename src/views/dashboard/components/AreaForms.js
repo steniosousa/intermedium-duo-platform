@@ -143,7 +143,7 @@ const AreaForms = ({ companies }) => {
             })
             return
         }
-        if(!dateStart || !dateEnd){
+        if (!dateStart || !dateEnd) {
             await Swal.fire({
                 icon: 'info',
                 title: 'Selecione uma faixa de data',
@@ -153,18 +153,17 @@ const AreaForms = ({ companies }) => {
                 denyButtonText: 'Cancelar',
                 confirmButtonText: 'Confirmar'
             })
-            return 
+            return
         }
         try {
             const { data } = await Api.get('/user/pdf/', {
                 params: {
                     companyId: companySelected,
-                    startDate:dateStart,
-                    endDate:dateEnd
+                    startDate: dateStart,
+                    endDate: dateEnd
 
                 }
             })
-            console.log(data)
             const confirm = await Swal.fire({
                 icon: 'question',
                 title: 'Gerar relatório?',

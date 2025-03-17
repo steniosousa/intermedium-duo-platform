@@ -57,7 +57,6 @@ const ProductPerformance = ({ userId, setCleaning }) => {
             const { data } = await Api.get('/cleaning/recover', {
                 params: { userId, page }
             });
-            console.log(data.cleanings)
             if (status !== "") {
                 const filter = data.cleanings.filter((item) => item.status === status);
                 setCleanings(filter);

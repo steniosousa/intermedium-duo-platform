@@ -12,7 +12,6 @@ export class MapContainer extends Component {
           lat: -3.71839,
           lng: -38.5434
         }}>
-        {console.log(this.props.props)}
         <Marker
           title={this.props.props.time}
           name={this.props.props.time}

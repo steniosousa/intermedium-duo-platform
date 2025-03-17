@@ -140,7 +140,6 @@ export default function Configuracao() {
       target: { value },
     } = event;
 
-    console.log(value)
     setCompaniesId(typeof value === "string" ? value.split(",") : value);
   };
   async function handleCreateManager(send) {
@@ -204,7 +203,6 @@ export default function Configuracao() {
     if (isLoading) return;
     setLoading(true);
     if (path != "companies" && !name || path != "companies" && !companySelected) {
-      console.log(path, name, companySelected)
       await Swal.fire({
         icon: "warning",
         title: "Preencha todos os campos",

@@ -16,7 +16,6 @@ const Dashboard = () => {
   const [cleanigId, setCleaningId] = useState('')
   const { user, companies } = useContext(AuthContext)
 
-  useEffect(() => { console.log(JSON.parse(user)) }, [])
   return (
     <PageContainer title="Dashboard" description="this is Dashboard">
       {user && JSON.parse(user).role === "VIEWR" ? (
@@ -37,7 +36,6 @@ const Dashboard = () => {
           </Grid>
         </Box>
       )}
-
     </PageContainer>
   );
 };

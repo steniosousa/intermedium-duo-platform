@@ -14,7 +14,6 @@ const SamplePage = () => {
   const [openModal, setOpenModal] = useState(false)
 
   async function getCoods(plateSelect) {
-    console.log(plateSelect)
     try {
       const { data } = await Api.get('/truck/coords', {
         params: {

@@ -10,7 +10,7 @@ export default function ModalSolicitation({ action, openModal, initialObject }) 
         changeHour(event.target.value, hour)
 
         setTime(event.target.value);
-      };
+    };
     const style = {
         position: 'absolute',
         top: '50%',
@@ -35,28 +35,27 @@ export default function ModalSolicitation({ action, openModal, initialObject }) 
             if (item === date) {
 
                 const time = hour.split(':')
-                const newDate = new Date(item); 
-                newDate.setHours(time[0]); 
-                newDate.setMinutes(time[1]);  
-                console.log(newDate)       
+                const newDate = new Date(item);
+                newDate.setHours(time[0]);
+                newDate.setMinutes(time[1]);
 
                 setDates((oldState) => {
                     const newDateObj = new Date(newDate); // Cria o objeto de data a partir do novo horário
                     const existingIndex = oldState.findIndex((date) => date.getDate() === newDateObj.getDate()); // Verifica se a data já existe
-                  
+
                     if (existingIndex === -1) {
-                      // Se não existir, apenas adiciona a nova data
-                      return [...oldState, newDateObj];
+                        // Se não existir, apenas adiciona a nova data
+                        return [...oldState, newDateObj];
                     } else {
-                      // Se existir, substitui a data existente pela nova
-                      const updatedState = [...oldState];
-                      updatedState[existingIndex] = newDateObj;
-                      return updatedState;
+                        // Se existir, substitui a data existente pela nova
+                        const updatedState = [...oldState];
+                        updatedState[existingIndex] = newDateObj;
+                        return updatedState;
                     }
-                  });        
-                
-                
-                }
+                });
+
+
+            }
         })
 
     }
@@ -131,22 +130,22 @@ export default function ModalSolicitation({ action, openModal, initialObject }) 
                                 const data = dateObject.format("DD/MM/YYYY");
 
                                 return (
-                                    <Grid key={date}  style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', alignSelf:'center' }}>
+                                    <Grid key={date} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'space-around', alignSelf: 'center' }}>
                                         <Typography variant="body1" color="textSecondary" >
-                                            {data} 
+                                            {data}
                                         </Typography>
-                                        <Typography variant="body1" color="textSecondary" style={{marginLeft:10, marginRight:10, fontWeight:'bold'}}>
-                                           às
+                                        <Typography variant="body1" color="textSecondary" style={{ marginLeft: 10, marginRight: 10, fontWeight: 'bold' }}>
+                                            às
                                         </Typography>
                                         <TextField
-        label="Escolha a Hora"
-        type="time"
-        onChange={(event)=>handleChange(event, date)}
-        InputLabelProps={{
-          shrink: true,
-        }}
-        fullWidth
-      />
+                                            label="Escolha a Hora"
+                                            type="time"
+                                            onChange={(event) => handleChange(event, date)}
+                                            InputLabelProps={{
+                                                shrink: true,
+                                            }}
+                                            fullWidth
+                                        />
                                     </Grid>
                                 )
 

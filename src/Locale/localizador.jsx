@@ -1,4 +1,4 @@
-import React, {  useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
     Box,
     Typography,
@@ -56,9 +56,8 @@ export default function Localizador() {
             const img = new Image();
             img.src = imageSrc;
 
-            const detections = await startDetections(                                       )
-            console.log(detections)
-          
+            const detections = await startDetections()
+
         }
     };
     return (
@@ -209,7 +208,7 @@ export default function Localizador() {
                                             </Button>
                                         )}
                                     </Box>
-                                    
+
                                 </>
                             </Card>
                         </Grid>

@@ -17,14 +17,12 @@ export async function startDetections(img) {
     .withFaceDescriptors();
 
 
-  console.log(detections)
 
   if (detections.length > 0) {
     // Check if the first person is detected
     if (!firstPersonDescriptor) {
       // Save the descriptor of the first person detected
       firstPersonDescriptor = detections[0].descriptor;
-      console.log('First person descriptor saved:', firstPersonDescriptor);
     }
 
     // Compare with saved descriptor
