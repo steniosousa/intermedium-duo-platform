@@ -1,8 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 import { Grid, Box } from '@mui/material';
 import PageContainer from 'src/components/container/PageContainer';
-
-// components
 import SalesOverview from './components/SalesOverview';
 import RecentTransactions from './components/RecentTransactions';
 import ProductPerformance from './components/ProductPerformance';
@@ -14,8 +12,7 @@ import AreaForms from './components/AreaForms';
 const Dashboard = () => {
   const [userId, setUserId] = useState('')
   const [cleanigId, setCleaningId] = useState('')
-  const { user, companies } = useContext(AuthContext)
-
+  const { user, companies,findCompanies } = useContext(AuthContext)
   return (
     <PageContainer title="Dashboard" description="this is Dashboard">
       {user && JSON.parse(user).role === "VIEWR" ? (

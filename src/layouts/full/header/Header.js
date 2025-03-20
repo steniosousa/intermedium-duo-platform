@@ -1,15 +1,10 @@
 import React from 'react';
 import { Box, AppBar, Toolbar, styled, Stack, IconButton, Badge, Button } from '@mui/material';
 import PropTypes from 'prop-types';
-
-// components
 import Profile from './Profile';
-import { IconBellRinging, IconMenu } from '@tabler/icons';
-
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
 const Header = (props) => {
-
-
-
   const AppBarStyled = styled(AppBar)(({ theme }) => ({
     boxShadow: 'none',
     background: theme.palette.background.paper,
@@ -38,7 +33,7 @@ const Header = (props) => {
             },
           }}
         >
-          <IconMenu width="20" height="20" />
+           <MenuBookIcon width="20" height="20" /> 
         </IconButton>
 
 
@@ -55,13 +50,13 @@ const Header = (props) => {
           }}
         >
           <Badge variant="dot" color="primary">
-            <IconBellRinging size="21" stroke="1.5" />
+           <NotificationsActiveIcon size="21" stroke="1.5" /> 
           </Badge>
 
         </IconButton>
         <Box flexGrow={1} />
         <Stack spacing={1} direction="row" alignItems="center">
-          <Button variant="contained" color="secondary"  target="_blank" style={{color:'white'}} >
+          <Button variant="contained" color="secondary" target="_blank" style={{ color: 'white' }} >
             Seja bem-vindo
           </Button>
           <Profile />

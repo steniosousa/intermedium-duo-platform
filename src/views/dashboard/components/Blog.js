@@ -2,7 +2,6 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { CardContent, Typography, Grid, Rating, Tooltip, Fab } from '@mui/material';
 import { Stack } from '@mui/system';
-import { IconBasket } from '@tabler/icons';
 import BlankCard from '../../../components/shared/BlankCard';
 
 
@@ -23,7 +22,6 @@ const Blog = ({ clear }) => {
                                     color="primary"
                                     sx={{ bottom: '75px', right: '15px', position: 'absolute' }}
                                 >
-                                    <IconBasket size="16" />
                                 </Fab>
                             </Tooltip>
                             <CardContent sx={{ p: 3, pt: 2 }}>

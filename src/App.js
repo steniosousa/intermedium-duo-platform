@@ -10,31 +10,31 @@ import { useNavigate } from "react-router-dom";
 function App() {
   const routing = useRoutes(Router);
   const theme = baselightTheme;
-  const { setUser, setOperator } = useContext(AuthContext)
+  const { setUser, setOperator,findCompanies } = useContext(AuthContext)
   const navigate = useNavigate();
-
   useEffect(() => {
+    findCompanies()
     const platform = localStorage.getItem('manager')
     const app = localStorage.getItem("userApp")
     const FaceRecognition = localStorage.getItem('FaceRecognition')
     const path = window.location.pathname
 
-    if(FaceRecognition){
+    if (FaceRecognition) {
       setUser(FaceRecognition)
-      if(path === "/faceRecoginition/Recognition"){
+      if (path === "/faceRecoginition/Recognition") {
         navigate('/faceRecoginition/Recognition')
         return
       }
       navigate('/faceRecoginition/createUser')
-    }else if (platform) {
+    } else if (platform) {
       setUser(platform)
       navigate('/dashboard')
-    }else if(app){
+    } else if (app) {
       setOperator(app)
       navigate('/app/home')
     }
 
-   
+
   }, [])
   return (
     <ThemeProvider theme={theme}>

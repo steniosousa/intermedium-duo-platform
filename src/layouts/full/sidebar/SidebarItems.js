@@ -13,7 +13,7 @@ const SidebarItems = () => {
   const [menu, setMenu] = useState([])
 
   useEffect(() => {
-    if (JSON.parse(user).role === "VIEWR") {
+    if (JSON.parse(user).role&&JSON.parse(user).role === "VIEWR") {
       const itemFilter = Menuitems.filter((e) => e.id === "1")
       setMenu([...menu, itemFilter[0]])
       return

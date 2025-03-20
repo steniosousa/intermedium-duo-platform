@@ -1,7 +1,6 @@
-import {
-  IconAperture, IconCopy, IconLayoutDashboard, IconUserCircle, IconMoodHappy
-} from '@tabler/icons';
-
+import SpaceDashboardIcon from '@mui/icons-material/SpaceDashboard';
+import AccessibilityNewIcon from '@mui/icons-material/AccessibilityNew';
+import ConstructionIcon from '@mui/icons-material/Construction';
 import { uniqueId } from 'lodash';
 
 const Menuitems = [
@@ -13,63 +12,22 @@ const Menuitems = [
   {
     id: uniqueId(),
     title: 'Dashboard',
-    icon: IconLayoutDashboard,
+    icon:SpaceDashboardIcon,
     href: '/dashboard',
   },
   {
     id: uniqueId(),
-    title: 'Operários',
-    icon: IconUserCircle,
+    title: 'Operadores',
+    icon:AccessibilityNewIcon,
     href: '/operarios',
   },
   {
     id: uniqueId(),
     title: 'Configurações',
-    icon: IconCopy,
+    icon:ConstructionIcon,
     href: '/Configuracao',
   },
-  // {
-  //   navlabel: true,
-  //   subheader: 'Utilitários',
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Perfil',
-  //   icon: IconUserCircle,
-  //   href: '/ui/Perfil',
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Shadow',
-  //   icon: IconCopy,
-  //   href: '/ui/shadow',
-  // },
-  // {
-  //   navlabel: true,
-  //   subheader: 'Autenticação',
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Login',
-  //   icon: IconLogin,
-  //   href: '/auth/login',
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Register',
-  //   icon: IconUserPlus,
-  //   href: '/auth/register',
-  // },
-  // {
-  //   navlabel: true,
-  //   subheader: 'Extra',
-  // },
-  // {
-  //   id: uniqueId(),
-  //   title: 'Icons',
-  //   icon: IconMoodHappy,
-  //   href: '/icons',
-  // },
+ 
 
 ];
 

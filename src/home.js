@@ -4,7 +4,7 @@ import { CleanHands, Face } from '@mui/icons-material';
 import { useNavigate } from 'react-router';
 
 export default function Home() {
-    const navigate = useNavigate()
+  const navigate = useNavigate()
   return (
     <Box
       sx={{
@@ -51,7 +51,6 @@ export default function Home() {
             </Paper>
           </Grid>
 
-          {/* Módulo 2: Leitura Facial */}
           <Grid item xs={12} md={6}>
             <Paper
               sx={{

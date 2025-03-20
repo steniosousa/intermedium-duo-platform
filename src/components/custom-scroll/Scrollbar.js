@@ -1,6 +1,6 @@
 import PropTypes from 'prop-types';
 import SimpleBar from 'simplebar-react';
-import 'simplebar/dist/simplebar.min.css';
+import 'simplebar/simplebar.min.css';
 import { Box, styled } from '@mui/material';
 
 const SimpleBarStyle = styled(SimpleBar)(() => ({

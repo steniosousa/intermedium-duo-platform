@@ -15,8 +15,7 @@ import {
   FormControl,
   OutlinedInput
 } from '@mui/material';
-
-import { IconListCheck, IconUser } from '@tabler/icons';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 import ProfileImg from 'src/assets/images/profile/user-1.jpg';
 import { useContext } from 'react';
@@ -154,7 +153,7 @@ const Profile = () => {
       >
         <MenuItem>
           <ListItemIcon>
-            <IconUser width={20} />
+            <AccountCircleIcon width={20} />
           </ListItemIcon>
           <ListItemText onClick={() => setOpenModal(!openModal)}>Editar Perfil</ListItemText>
         </MenuItem>

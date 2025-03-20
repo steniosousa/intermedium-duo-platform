@@ -18,7 +18,7 @@ import React, { useEffect } from "react";
 import { useState } from "react";
 import { DayPicker } from "react-day-picker";
 import DashboardCard from "../../../components/shared/DashboardCard";
-import "react-day-picker/dist/style.css";
+import "react-day-picker/style.css";
 import Api from "src/api/service";
 import ModalSolicitation from "src/components/modal-Solicitation/modal";
 import Swal from "sweetalert2";

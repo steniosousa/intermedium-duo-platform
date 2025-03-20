@@ -1,7 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { NavLink } from 'react-router-dom';
-// mui imports
 import {
   ListItemIcon,
   ListItem,
@@ -12,8 +11,8 @@ import {
 } from '@mui/material';
 
 const NavItem = ({ item, level, pathDirect, onClick }) => {
-  const Icon = item.icon;
   const theme = useTheme();
+  const Icon = item.icon;
   const itemIcon = <Icon stroke={1.5} size="1.3rem" />;
 
   const ListItemStyled = styled(ListItem)(() => ({
