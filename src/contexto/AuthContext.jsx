@@ -101,6 +101,7 @@ export const AuthProvider = ({ children }) => {
     }
   }
   async function findCompanies() {
+    if (!user) return
     const managerId = JSON.parse(user).id
     try {
       const { data } = await Api.get('/companies/recover/companies', {
